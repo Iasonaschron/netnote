@@ -18,4 +18,4 @@ to start the server or ...
 
 to run the client. Please note that the server needs to be running, before you can start the client.
 
-Once this is working, you can try importing the project into your favorite IDE.
+Once this is working, you can try importing the project into your favorite IDE!
