@@ -20,7 +20,7 @@ public class Note {
     public String content;
 
     public Note() {
-        // Default constructor for object mappers
+        // for object mappers
     }
 
     public Note(String title, String content) {
