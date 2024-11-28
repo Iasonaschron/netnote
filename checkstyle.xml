@@ -86,13 +86,6 @@
             <property name="severity" value="warning"/>
         </module>
 
-        <module name="LineLength">
-            <property name="severity" value="warning"/>
-            <property name="fileExtensions" value="java"/>
-            <property name="max" value="150"/>
-            <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
-        </module>
-
         <module name="LeftCurly">
             <property name="severity" value="warning"/>
         </module>
@@ -101,5 +94,12 @@
             <property name="severity" value="warning"/>
         </module>
 
+    </module>
+
+    <module name="LineLength">
+        <property name="severity" value="warning"/>
+        <property name="fileExtensions" value="java"/>
+        <property name="max" value="150"/>
+        <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
     </module>
 </module>
