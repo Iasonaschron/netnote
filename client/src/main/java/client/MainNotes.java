@@ -1,6 +1,7 @@
 package client;
 
 import client.scenes.MainNotesCtrl;
+import client.scenes.NoteOverviewCtrl;
 import client.utils.ServerUtils;
 import com.google.inject.Injector;
 import javafx.application.Application;
@@ -29,9 +30,9 @@ public class MainNotes extends Application {
             return;
         }
 
-        //var overview = FXML.load(NoteOverviewCtrl.class, "client", "scenes", "NoteOverview");
+        var overview = FXML.load(NoteOverviewCtrl.class, "client", "scenes", "NoteOverview.fxml");
 
         var mainNotesCtrl = INJECTOR.getInstance(MainNotesCtrl.class);
-        mainNotesCtrl.initialize(primaryStage);
+        mainNotesCtrl.initialize(primaryStage, overview);
     }
 }
