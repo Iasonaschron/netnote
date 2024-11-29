@@ -2,7 +2,6 @@ package commons;
 
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
-import org.commonmark.renderer.markdown.MarkdownRenderer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +15,6 @@ public class MarkDownTest {
     @BeforeEach
     public void setUp(){
         Parser parser = Parser.builder().build();
-        MarkdownRenderer markRenderer = MarkdownRenderer.builder().build();
         rawText = "This is *Markdown*";
         processedText = "<p>This is <em>Markdown</em></p>\n";
         document = parser.parse(rawText);
