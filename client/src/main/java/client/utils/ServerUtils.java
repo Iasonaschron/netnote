@@ -63,6 +63,10 @@ public class ServerUtils {
                 .post(Entity.entity(quote, APPLICATION_JSON), Quote.class);
     }
 
+    /**
+     * checks if the server is running
+     * @return true, if the server is up, false if not
+     */
     public boolean isServerAvailable() {
         try {
             ClientBuilder.newClient(new ClientConfig()) //
@@ -92,6 +96,8 @@ public class ServerUtils {
 
     /**
      * Sends a new note to the server to be added.
+     * @param note note to add to the database
+     * @return note added to the database
      */
     public Note addNote(Note note) {
         return ClientBuilder.newClient(new ClientConfig())
