@@ -18,14 +18,27 @@ public class Note {
 
     public String title;
     public String content;
+    private String renderedHTML;
 
+    @SuppressWarnings("unused")
     public Note() {
         // for object mappers
     }
 
+    @SuppressWarnings("unused")
     public Note(String title, String content) {
         this.title = title;
         this.content = content;
+        renderRawText();
+    }
+
+    public void renderRawText(){
+        this.renderedHTML = MarkDownMethods.renderRaw_TextToText(content);
+    }
+
+    @SuppressWarnings("unused")
+    public String getHTML(){
+        return this.renderedHTML;
     }
 
     @Override
