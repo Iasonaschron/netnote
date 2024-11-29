@@ -1,13 +1,12 @@
 package commons;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 public class Note {
@@ -39,6 +38,11 @@ public class Note {
     @SuppressWarnings("unused")
     public String getHTML(){
         return this.renderedHTML;
+    }
+
+    public void setContent(String content){
+        this.content = content;
+        renderRawText();
     }
 
     @Override

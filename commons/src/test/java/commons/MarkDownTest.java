@@ -11,6 +11,7 @@ public class MarkDownTest {
     private String rawText;
     private Node document;
     private String processedText;
+    private Note testNote;
 
     @BeforeEach
     public void setUp(){
@@ -18,6 +19,7 @@ public class MarkDownTest {
         rawText = "This is *Markdown*";
         processedText = "<p>This is <em>Markdown</em></p>\n";
         document = parser.parse(rawText);
+        testNote = new Note("Something", rawText);
     }
 
     @Test
@@ -35,5 +37,14 @@ public class MarkDownTest {
     public void ProcessedRender_NodeToText(){
         assertEquals(rawText + "\n"
                 , MarkDownMethods.renderProcessed_NodeToText(document));
+    }
+
+    @Test
+    public void testNote(){
+        assertEquals(processedText, testNote.getHTML());
+        testNote.setContent("AAAAAAAAAAAAAA");
+        assertEquals("<p>AAAAAAAAAAAAAA</p>\n", testNote.getHTML());
+        testNote.setContent(rawText);
+        assertEquals(processedText, testNote.getHTML());
     }
 }
