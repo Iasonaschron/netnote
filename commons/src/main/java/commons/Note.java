@@ -31,6 +31,9 @@ public class Note {
         renderRawText();
     }
 
+    /**
+     * Renders the raw Text currently in content into HTML
+     */
     public void renderRawText(){
         this.renderedHTML = MarkDownMethods.renderRaw_TextToText(content);
     }
@@ -40,6 +43,10 @@ public class Note {
         return this.renderedHTML;
     }
 
+    /**
+     * This is just a Setter, but also updates the HTML once the content is set
+     * @param content uh its just the content
+     */
     public void setContent(String content){
         this.content = content;
         renderRawText();
