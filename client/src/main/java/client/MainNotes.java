@@ -16,10 +16,23 @@ public class MainNotes extends Application {
     private static final Injector INJECTOR = createInjector(new NotesModule());
     private static final MyFXML FXML = new MyFXML(INJECTOR);
 
+
+    /**
+     * launches application
+     * @param args the command-line arguments
+     * @throws URISyntaxException if a URI syntax error occurs
+     * @throws IOException if an I/O error occurs
+     */
     public static void main(String[] args) throws URISyntaxException, IOException {
         launch(args);
     }
 
+    /**
+     * Starts the application by checking the server and setting up the main scene.
+     *
+     * @param primaryStage the main stage of the application
+     * @throws Exception if something goes wrong while loading the FXML
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
 
