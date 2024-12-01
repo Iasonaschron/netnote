@@ -25,6 +25,11 @@
 			<artifactId>jakarta.persistence-api</artifactId>
 			<version>3.1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.commonmark</groupId>
+			<artifactId>commonmark</artifactId>
+			<version>0.24.0</version>
+		</dependency>
 
 		<!-- test -->
 		<dependency>
