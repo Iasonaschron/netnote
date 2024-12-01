@@ -169,6 +169,9 @@ public class NoteOverviewCtrl implements Initializable {
         System.out.println(selectedNote);
     }
 
+    /**
+     * Deletes the currently selected note from the ListView.
+     */
     public void deleteNote() {
         Note selectedNote = listView.getSelectionModel().getSelectedItems().getFirst();
         server.deleteNoteById(selectedNote.getId());

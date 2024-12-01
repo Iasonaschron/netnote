@@ -41,6 +41,12 @@ public class AddQuoteCtrl {
     @FXML
     private TextField quote;
 
+    /**
+     * Constructs a new instance and initializes dependencies
+     *
+     * @param server The server utility for interacting with the back-end
+     * @param mainCtrl The main controller for managing scenes
+     */
     @Inject
     public AddQuoteCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.mainCtrl = mainCtrl;
@@ -48,11 +54,17 @@ public class AddQuoteCtrl {
 
     }
 
+    /**
+     * Cancels the current operation and clears all input fields
+     */
     public void cancel() {
         clearFields();
         mainCtrl.showOverview();
     }
 
+    /**
+     * Attempts adding a quote to the server, displaying an error if something goes wrong
+     */
     public void ok() {
         try {
             server.addQuote(getQuote());
@@ -69,18 +81,31 @@ public class AddQuoteCtrl {
         mainCtrl.showOverview();
     }
 
+    /**
+     * Creates a Quote object with the current input values
+     *
+     * @return A Quote object containing the person and the quote
+     */
     private Quote getQuote() {
         var p = new Person(firstName.getText(), lastName.getText());
         var q = quote.getText();
         return new Quote(p, q);
     }
 
+    /**
+     * Clears all input fields
+     */
     private void clearFields() {
         firstName.clear();
         lastName.clear();
         quote.clear();
     }
 
+    /**
+     * Handles user interaction with the keyboard
+     *
+     * @param e The KeyEvent triggered by a key press
+     */
     public void keyPressed(KeyEvent e) {
         switch (e.getCode()) {
             case ENTER:

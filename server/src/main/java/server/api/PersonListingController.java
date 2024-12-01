@@ -32,16 +32,32 @@ public class PersonListingController {
 
     private List<Person> people = new LinkedList<>();
 
+    /**
+     * Constructor initializing the controller with a predefined list of people.
+     * Adds two sample people to the list: Mickey Mouse and Donald Duck.
+     */
     public PersonListingController() {
         people.add(new Person("Mickey", "Mouse"));
         people.add(new Person("Donald", "Duck"));
     }
 
+    /**
+     * Handles GET requests to retrieve the list of people.
+     *
+     * @return a list of all people
+     */
     @GetMapping("/")
     public List<Person> list() {
         return people;
     }
 
+    /**
+     * Handles POST requests to add a new person to the list.
+     * If the person does not already exist in the list, they will be added.
+     *
+     * @param p the person to add to the list
+     * @return the updated list of people
+     */
     @PostMapping("/")
     public List<Person> add(@RequestBody Person p) {
         if (!people.contains(p)) {
