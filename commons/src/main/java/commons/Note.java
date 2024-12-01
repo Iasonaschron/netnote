@@ -6,7 +6,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 public class Note {
@@ -17,7 +16,7 @@ public class Note {
 
     public String title;
     public String content;
-    private String renderedHTML;
+    private String html;
 
     @SuppressWarnings("unused")
     public Note() {
@@ -34,20 +33,21 @@ public class Note {
     /**
      * Renders the raw Text currently in content into HTML
      */
-    public void renderRawText(){
-        this.renderedHTML = MarkDownMethods.renderRaw_TextToText(content);
+    public void renderRawText() {
+        this.html = MarkDownMethods.renderRaw_TextToText(content);
     }
 
     @SuppressWarnings("unused")
-    public String getHTML(){
-        return this.renderedHTML;
+    public String getHTML() {
+        return this.html;
     }
 
     /**
      * This is just a Setter, but also updates the HTML once the content is set
+     * 
      * @param content uh its just the content
      */
-    public void setContent(String content){
+    public void setContent(String content) {
         this.content = content;
         renderRawText();
     }
