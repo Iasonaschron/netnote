@@ -23,6 +23,11 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
+	<dependency>
+		<groupId>org.commonmark</groupId>
+		<artifactId>commonmark</artifactId>
+		<version>0.24.0</version>
+	</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
 			<artifactId>jersey-client</artifactId>
