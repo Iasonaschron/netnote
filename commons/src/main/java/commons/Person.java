@@ -31,10 +31,10 @@ public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    private long id;
 
-    public String firstName;
-    public String lastName;
+    private String firstName;
+    private String lastName;
 
     @SuppressWarnings("unused")
     private Person() {
@@ -44,6 +44,14 @@ public class Person {
     public Person(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     @Override

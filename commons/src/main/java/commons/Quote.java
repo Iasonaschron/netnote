@@ -33,11 +33,11 @@ public class Quote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    private long id;
 
     @OneToOne(cascade = CascadeType.PERSIST)
-    public Person person;
-    public String quote;
+    private Person person;
+    private String quote;
 
     @SuppressWarnings("unused")
     private Quote() {
@@ -47,6 +47,14 @@ public class Quote {
     public Quote(Person person, String quote) {
         this.person = person;
         this.quote = quote;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public String getQuote() {
+        return quote;
     }
 
     @Override
