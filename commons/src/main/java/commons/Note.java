@@ -18,6 +18,7 @@ public class Note {
     public String content;
     private String html;
 
+
     @SuppressWarnings("unused")
     public Note() {
         // for object mappers
