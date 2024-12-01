@@ -64,6 +64,14 @@ public class Note {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return title;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
     }
 }

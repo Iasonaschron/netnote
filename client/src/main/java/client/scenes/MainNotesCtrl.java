@@ -1,13 +1,45 @@
 package client.scenes;
 
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
+/**
+ * The main controller class responsible for managing the primary stage and navigating between scenes
+ * in the Notes application.
+ */
 public class MainNotesCtrl {
     private Stage primaryStage;
 
-    public void initialize(Stage primaryStage) {
+    private NoteOverviewCtrl noteOverviewCtrl;
+    private Scene overview;
+
+    /**
+     * Initializes the main application window and sets up the overview scene.
+     *
+     * @param primaryStage the primary stage of the application
+     * @param overview a Pair containing the note overview controller and the Parent
+     *                 node representing the overview scene layout
+     */
+    public void initialize(Stage primaryStage, Pair<NoteOverviewCtrl, Parent> overview) {
         this.primaryStage = primaryStage;
 
+        this.noteOverviewCtrl = overview.getKey();
+        this.overview = new Scene(overview.getValue());
+
+        showOverview();
         primaryStage.show();
     }
+
+    /**
+     * Displays the overview scene in the primary stage.
+     * Sets the stage title and ensures the notes are refreshed.
+     */
+    public void showOverview() {
+        primaryStage.setTitle("Notes: Overview");
+        primaryStage.setScene(overview);
+        noteOverviewCtrl.refresh();
+    }
+
 }
