@@ -65,6 +65,7 @@ public class ServerUtils {
 
     /**
      * checks if the server is running
+     * 
      * @return true, if the server is up, false if not
      */
     public boolean isServerAvailable() {
@@ -96,6 +97,7 @@ public class ServerUtils {
 
     /**
      * Sends a new note to the server to be added.
+     * 
      * @param note note to add to the database
      * @return note added to the database
      */
@@ -106,4 +108,24 @@ public class ServerUtils {
                 .post(Entity.entity(note, APPLICATION_JSON), Note.class);
     }
 
+    /**
+     * Deletes a note from the server.
+     * 
+     * @param noteId the ID of the note to be deleted
+     * @return true if the note was successfully deleted, false otherwise
+     */
+    public boolean deleteNoteById(long noteId) {
+        try {
+            ClientBuilder.newClient(new ClientConfig())
+                    .target(SERVER).path("api/notes/" + noteId)
+                    .request(APPLICATION_JSON)
+                    .delete();
+            return true;
+        } catch (ProcessingException e) {
+            if (e.getCause() instanceof ConnectException) {
+                return false;
+            }
+        }
+        return false;
+    }
 }

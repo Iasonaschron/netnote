@@ -74,7 +74,7 @@
                         <StackPane prefHeight="50.0" prefWidth="23.0" />
                         <StackPane prefHeight="50.0" prefWidth="57.0">
                            <children>
-                              <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="56.0" text="Delete" />
+                              <Button fx:id="delete" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#deleteNote" prefHeight="30.0" prefWidth="56.0" text="Delete" />
                            </children>
                         </StackPane>
                         <StackPane prefHeight="50.0" prefWidth="61.0">
