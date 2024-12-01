@@ -74,4 +74,8 @@ public class Note {
     public String getContent() {
         return content;
     }
+
+    public long getId() {
+        return id;
+    }
 }

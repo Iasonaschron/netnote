@@ -18,7 +18,8 @@ import java.util.ResourceBundle;
 
 /**
  * Controller for the Note Overview scene.
- * Manages a list of notes and provides functionality for creating, viewing, and editing notes.
+ * Manages a list of notes and provides functionality for creating, viewing, and
+ * editing notes.
  */
 public class NoteOverviewCtrl implements Initializable {
 
@@ -33,6 +34,9 @@ public class NoteOverviewCtrl implements Initializable {
 
     @FXML
     private Button done;
+
+    @FXML
+    private Button delete;
 
     private ObservableList<Note> data;
 
@@ -79,8 +83,10 @@ public class NoteOverviewCtrl implements Initializable {
      * Initializes the ListView and sets up a cell factory to display note titles.
      * Also attaches a listener to update the input fields when a note is selected.
      *
-     * @param location  the location used to resolve relative paths for the root object, or null if none
-     * @param resources the resources used to localize the root object, or null if none
+     * @param location  the location used to resolve relative paths for the root
+     *                  object, or null if none
+     * @param resources the resources used to localize the root object, or null if
+     *                  none
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -161,5 +167,11 @@ public class NoteOverviewCtrl implements Initializable {
     public void getSelectedNote() {
         Note selectedNote = listView.getSelectionModel().getSelectedItems().getFirst();
         System.out.println(selectedNote);
+    }
+
+    public void deleteNote() {
+        Note selectedNote = listView.getSelectionModel().getSelectedItems().getFirst();
+        server.deleteNoteById(selectedNote.getId());
+        refresh();
     }
 }
