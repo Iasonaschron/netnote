@@ -109,6 +109,29 @@ public class ServerUtils {
     }
 
     /**
+     * Sends a note to the server to be updated.
+     *
+     * @param id id of the note to be updated
+     * @param note new version of the note to be updated in the database
+     * @return note updated in the database
+     */
+    public boolean saveNote(long id, Note note) {
+        try{
+            ClientBuilder.newClient(new ClientConfig())
+                    .target(SERVER).path("api/notes/" + id)
+                    .request(APPLICATION_JSON)
+                    .put(Entity.entity(note, APPLICATION_JSON), Note.class);
+            return true;
+        }
+        catch (ProcessingException e) {
+            if (e.getCause() instanceof ConnectException) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Deletes a note from the server.
      * 
      * @param noteId the ID of the note to be deleted

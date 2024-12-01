@@ -55,12 +55,12 @@
                <children>
                   <StackPane prefHeight="102.0" prefWidth="230.0">
                      <children>
-                        <TextField fx:id="title" prefHeight="42.0" prefWidth="230.0" promptText="Title" />
+                        <TextField fx:id="title" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="42.0" prefWidth="230.0" promptText="Title" />
                      </children>
                   </StackPane>
                   <StackPane prefHeight="382.0" prefWidth="230.0">
                      <children>
-                        <TextArea fx:id="content" prefHeight="322.0" prefWidth="208.0" promptText="Content" />
+                        <TextArea fx:id="content" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="322.0" prefWidth="208.0" promptText="Content" />
                      </children>
                   </StackPane>
                   <HBox prefHeight="117.0" prefWidth="230.0">
@@ -80,6 +80,7 @@
                         <StackPane prefHeight="50.0" prefWidth="61.0">
                            <children>
                               <Button fx:id="done" mnemonicParsing="false" onAction="#done" prefHeight="30.0" prefWidth="49.0" text="Done" textAlignment="CENTER" />
+                              <Button fx:id="save" mnemonicParsing="false" onAction="#save" text="Save" visible="false" />
                            </children>
                         </StackPane>
                      </children>

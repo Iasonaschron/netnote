@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 
 import commons.Note;
 import jakarta.ws.rs.WebApplicationException;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,6 +16,9 @@ import javafx.stage.Modality;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Controller for the Note Overview scene.
@@ -36,11 +40,16 @@ public class NoteOverviewCtrl implements Initializable {
     private Button done;
 
     @FXML
-    private Button delete;
+    private Button save;
 
     private ObservableList<Note> data;
 
     private final ServerUtils server;
+
+    private Note lastSelectedNote = null;
+
+    private ScheduledExecutorService scheduler;
+    private boolean isEditing = false;
 
     /**
      * Constructor for the NoteOverviewCtrl.
@@ -57,6 +66,9 @@ public class NoteOverviewCtrl implements Initializable {
      * Updates the ListView with the retrieved notes.
      */
     public void refresh() {
+        if(isEditing) {
+            return;
+        }
         var notes = server.getNotes();
         data = FXCollections.observableList(notes);
         listView.setItems(data);
@@ -68,6 +80,7 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void createNote() {
         clearFields();
+        save.visibleProperty().set(false);
         done.visibleProperty().set(true);
     }
 
@@ -103,6 +116,8 @@ public class NoteOverviewCtrl implements Initializable {
         });
 
         listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
+
+        startPolling();
     }
 
     /**
@@ -124,7 +139,9 @@ public class NoteOverviewCtrl implements Initializable {
         }
         title.setText(newValue.getTitle());
         content.setText(newValue.getContent());
+        lastSelectedNote = newValue;
         done.visibleProperty().set(false);
+        save.visibleProperty().set(false);
     }
 
     /**
@@ -144,8 +161,36 @@ public class NoteOverviewCtrl implements Initializable {
             return;
         }
 
+        isEditing = false;
         refresh();
         clearFields();
+    }
+
+    /**
+     * Updates the currently selected note by sending it to the server.
+     * Displays an error alert if the server operation fails.
+     * Refreshes the list of notes after successfully updating the note.
+     */
+    public void save() {
+        Note selectedNote = lastSelectedNote;
+        String displayTitle = title.getText();
+        String displayContent = content.getText();
+        try {
+            server.saveNote(selectedNote.getId(), getNote());
+        }
+        catch (WebApplicationException e) {
+
+            var alert = new Alert(Alert.AlertType.ERROR);
+            alert.initModality(Modality.APPLICATION_MODAL);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+            return;
+        }
+        isEditing = false;
+        refresh();
+        title.setText(displayTitle);
+        content.setText(displayContent);
+        save.visibleProperty().set(false);
     }
 
     /**
@@ -154,24 +199,57 @@ public class NoteOverviewCtrl implements Initializable {
      * @return a new Note object with the entered title and content
      */
     private Note getNote() {
-        var t = title.getText();
+        String t = null;
+        if(title.getText() != null && !title.getText().isBlank()) {
+            t = title.getText();
+        }
         var c = content.getText();
 
-        return new Note(t, c);
+        Note temporary = new Note(t, c);
+        temporary.renderRawText();
+        return temporary;
     }
 
     /**
      * Retrieves the currently selected note from the ListView.
-     * Prints the note to the console for debugging purposes.
+     *
+     * @return Currently selected note object
      */
-    public void getSelectedNote() {
-        Note selectedNote = listView.getSelectionModel().getSelectedItems().getFirst();
-        System.out.println(selectedNote);
+    public Note getSelectedNote() {
+        return listView.getSelectionModel().getSelectedItems().getFirst();
     }
 
+    /**
+     * Deletes selected note from database
+     */
     public void deleteNote() {
-        Note selectedNote = listView.getSelectionModel().getSelectedItems().getFirst();
+        Note selectedNote = getSelectedNote();
         server.deleteNoteById(selectedNote.getId());
+        isEditing = false;
         refresh();
+        save.visibleProperty().set(false);
+    }
+
+    /**
+     * Updates the contents of a note in the database
+     */
+    public void updateNote(){
+        isEditing = true;
+        if(!done.isVisible() && title.getText() != null){
+            save.visibleProperty().set(true);
+        }
+        else{
+            done.visibleProperty().set(true);
+        }
+    }
+
+    /**
+     * Starts a periodic polling task to refresh the notes every 5 seconds.
+     */
+    private void startPolling() {
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(() -> {
+            Platform.runLater(this::refresh);
+        }, 0, 5, TimeUnit.SECONDS);
     }
 }

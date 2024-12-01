@@ -12,10 +12,10 @@ public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    private long id;
 
-    public String title;
-    public String content;
+    private String title;
+    private String content;
     private String html;
 
 
@@ -35,22 +35,7 @@ public class Note {
      * Renders the raw Text currently in content into HTML
      */
     public void renderRawText() {
-        this.html = MarkDownMethods.renderRaw_TextToText(content);
-    }
-
-    @SuppressWarnings("unused")
-    public String getHTML() {
-        return this.html;
-    }
-
-    /**
-     * This is just a Setter, but also updates the HTML once the content is set
-     * 
-     * @param content uh its just the content
-     */
-    public void setContent(String content) {
-        this.content = content;
-        renderRawText();
+        this.html = MarkDownMethods.renderRawTextToText(content);
     }
 
     @Override
@@ -72,11 +57,38 @@ public class Note {
         return title;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getContent() {
         return content;
     }
 
+    /**
+     * This is just a Setter, but also updates the HTML once the content is set
+     *
+     * @param content uh its just the content
+     */
+    public void setContent(String content) {
+        this.content = content;
+        renderRawText();
+    }
+
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    @SuppressWarnings("unused")
+    public String getHTML() {
+        return this.html;
+    }
+
+    public void setHTML(String html) {
+        this.html = html;
     }
 }
