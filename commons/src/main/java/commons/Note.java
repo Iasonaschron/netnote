@@ -12,10 +12,10 @@ public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    private long id;
 
-    public String title;
-    public String content;
+    private String title;
+    private String content;
     private String html;
 
 
@@ -35,7 +35,7 @@ public class Note {
      * Renders the raw Text currently in content into HTML
      */
     public void renderRawText() {
-        this.html = MarkDownMethods.renderRaw_TextToText(content);
+        this.html = MarkDownMethods.renderRawTextToText(content);
     }
 
     @SuppressWarnings("unused")
@@ -43,10 +43,14 @@ public class Note {
         return this.html;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     /**
      * This is just a Setter, but also updates the HTML once the content is set
      * 
-     * @param content uh its just the content
+     * @param content String containing the raw content
      */
     public void setContent(String content) {
         this.content = content;

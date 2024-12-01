@@ -23,7 +23,7 @@ public class NoteController {
 
     @PostMapping
     public ResponseEntity<Note> addNote(@RequestBody Note note) {
-        if (note.title == null || note.title.isEmpty() || note.content == null) {
+        if (note.getTitle() == null || note.getTitle().isEmpty() || note.getContent() == null) {
             return ResponseEntity.badRequest().build();
         }
         Note saved = repo.save(note);
@@ -44,8 +44,8 @@ public class NoteController {
             return ResponseEntity.badRequest().build();
         }
         Note existingNote = repo.findById(id).get();
-        existingNote.title = updatedNote.title;
-        existingNote.content = updatedNote.content;
+        existingNote.setTitle(updatedNote.getTitle());
+        existingNote.setContent(updatedNote.getContent());
         repo.save(existingNote);
         return ResponseEntity.ok(existingNote);
     }
