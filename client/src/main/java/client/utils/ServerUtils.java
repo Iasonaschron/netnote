@@ -38,6 +38,12 @@ public class ServerUtils {
 
     private static final String SERVER = "http://localhost:8080/";
 
+    /**
+     * Fetches quotes from the server using raw HTTP connections. This method prints the quotes to the console.
+     *
+     * @throws IOException if an I/O error occurs during the connection or reading of data
+     * @throws URISyntaxException if the URI is invalid
+     */
     public void getQuotesTheHardWay() throws IOException, URISyntaxException {
         var url = new URI("http://localhost:8080/api/quotes").toURL();
         var is = url.openConnection().getInputStream();
@@ -48,6 +54,11 @@ public class ServerUtils {
         }
     }
 
+    /**
+     * Retrieves a list of quotes from the server.
+     *
+     * @return a list of {@link Quote} objects retrieved from the server
+     */
     public List<Quote> getQuotes() {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(SERVER).path("api/quotes") //
@@ -56,6 +67,12 @@ public class ServerUtils {
                 });
     }
 
+    /**
+     * Adds a new quote to the server.
+     *
+     * @param quote the {@link Quote} object to be added
+     * @return the added {@link Quote} object with any updates from the server
+     */
     public Quote addQuote(Quote quote) {
         return ClientBuilder.newClient(new ClientConfig()) //
                 .target(SERVER).path("api/quotes") //
@@ -64,9 +81,9 @@ public class ServerUtils {
     }
 
     /**
-     * checks if the server is running
-     * 
-     * @return true, if the server is up, false if not
+     * Checks if the server is running by attempting to make a request to it.
+     *
+     * @return true if the server is up, false if the server is unavailable
      */
     public boolean isServerAvailable() {
         try {
@@ -83,7 +100,7 @@ public class ServerUtils {
     }
 
     /**
-     * Fetches the list of notes from the server.
+     * Retrieves a list of notes from the server.
      *
      * @return a list of {@link Note} objects retrieved from the server
      */
@@ -96,10 +113,10 @@ public class ServerUtils {
     }
 
     /**
-     * Sends a new note to the server to be added.
-     * 
-     * @param note note to add to the database
-     * @return note added to the database
+     * Adds a new note to the server.
+     *
+     * @param note the {@link Note} object to be added
+     * @return the added {@link Note} object with any updates from the server
      */
     public Note addNote(Note note) {
         return ClientBuilder.newClient(new ClientConfig())
@@ -109,10 +126,10 @@ public class ServerUtils {
     }
 
     /**
-     * Deletes a note from the server.
-     * 
+     * Deletes a note from the server based on its ID.
+     *
      * @param noteId the ID of the note to be deleted
-     * @return true if the note was successfully deleted, false otherwise
+     * @return true if the note was successfully deleted, false if there was an error
      */
     public boolean deleteNoteById(long noteId) {
         try {

@@ -31,36 +31,101 @@ import jakarta.persistence.OneToOne;
 @Entity
 public class Quote {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
 
-	@OneToOne(cascade = CascadeType.PERSIST)
-	public Person person;
-	public String quote;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Person person;
 
-	@SuppressWarnings("unused")
-	private Quote() {
-		// for object mappers
-	}
+    private String quote;
 
-	public Quote(Person person, String quote) {
-		this.person = person;
-		this.quote = quote;
-	}
+    /**
+     * Default constructor for object mapping frameworks like JPA.
+     */
+    @SuppressWarnings("unused")
+    public Quote() {
+        // for object mappers
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj);
-	}
+    /**
+     * Constructs a new Quote with the specified person and quote.
+     *
+     * @param person the person who said the quote
+     * @param quote the quote itself
+     */
+    public Quote(Person person, String quote) {
+        this.person = person;
+        this.quote = quote;
+    }
 
-	@Override
-	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
-	}
+    /**
+     * Returns the ID of the quote
+     *
+     * @return The ID of the quote
+     */
+    public long getId() {
+        return id;
+    }
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
-	}
+    /**
+     * Returns the person who said the quote.
+     *
+     * @return the person associated with the quote
+     */
+    public Person getPerson() {
+        return person;
+    }
+
+    /**
+     * Returns the quote text.
+     *
+     * @return the quote text
+     */
+    public String getQuote() {
+        return quote;
+    }
+
+    /**
+     * Sets the ID of the quote
+     *
+     * @param id The new ID for the quote
+     */
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    /**
+     * Compares this Quote object to another object for equality.
+     * The comparison is based on the fields of the Quote.
+     *
+     * @param obj the object to compare this Quote to
+     * @return true if the objects are equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    /**
+     * Returns a hash code for this Quote.
+     * The hash code is generated based on the fields of the Quote.
+     *
+     * @return the hash code for this Quote
+     */
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    /**
+     * Returns a string representation of the Quote.
+     * The string includes the fields of the Quote in a multi-line format.
+     *
+     * @return a string representation of the Quote
+     */
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
+    }
 }

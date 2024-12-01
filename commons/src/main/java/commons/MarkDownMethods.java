@@ -14,7 +14,7 @@ public class MarkDownMethods {
      * @param raw The String to parse into HTML
      * @return Returns the parsed HTML
      */
-    public static String renderRaw_TextToText(String raw){
+    public static String renderRawTextToText(String raw){
         Node document = parser.parse(raw);
         return Htmlrenderer.render(document);
     }
@@ -25,7 +25,7 @@ public class MarkDownMethods {
      * @return The raw Text the Node Translates to
      */
     @SuppressWarnings("unused")
-    public static String renderProcessed_NodeToText(Node document){
+    public static String renderProcessedNodeToText(Node document){
         return MarkRenderer.render(document);
     }
 
@@ -35,7 +35,7 @@ public class MarkDownMethods {
      * @return The Node the String Parses to
      */
     @SuppressWarnings("unused")
-    public static Node renderRaw_TextToNode(String raw){
+    public static Node renderRawTextToNode(String raw){
         return parser.parse(raw);
     }
 

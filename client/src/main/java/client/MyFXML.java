@@ -33,10 +33,24 @@ public class MyFXML {
 
     private Injector injector;
 
+    /**
+     * Constructs a new MyFXML instance with the given Guice injector.
+     *
+     * @param injector the Guice injector used for dependency injection
+     */
     public MyFXML(Injector injector) {
         this.injector = injector;
     }
 
+    /**
+     * Loads the FXML file specified by the given parts and returns a pair of the controller and the root node.
+     *
+     * @param <T> the type of the controller class
+     * @param c the class of the controller to load
+     * @param parts the parts of the path to the FXML file
+     * @return a pair of the controller and the root node of the loaded FXML
+     * @throws RuntimeException if the FXML file cannot be loaded
+     */
     public <T> Pair<T, Parent> load(Class<T> c, String... parts) {
         try {
             var loader = new FXMLLoader(getLocation(parts), null, null, new MyFactory(), StandardCharsets.UTF_8);
@@ -48,13 +62,28 @@ public class MyFXML {
         }
     }
 
+    /**
+     * Constructs a URL for the location of the FXML file based on the provided parts.
+     *
+     * @param parts the parts of the path to the FXML file
+     * @return the URL of the FXML file
+     */
     private URL getLocation(String... parts) {
         var path = Path.of("", parts).toString();
         return MyFXML.class.getClassLoader().getResource(path);
     }
 
+    /**
+     * A custom factory for creating controller instances and resolving dependencies.
+     */
     private class MyFactory implements BuilderFactory, Callback<Class<?>, Object> {
 
+        /**
+         * Returns a Builder for the specified type that injects dependencies using Guice.
+         *
+         * @param type the class type of the controller
+         * @return a Builder that can create the controller
+         */
         @Override
         @SuppressWarnings("rawtypes")
         public Builder<?> getBuilder(Class<?> type) {
@@ -66,6 +95,12 @@ public class MyFXML {
             };
         }
 
+        /**
+         * Returns a new instance of the specified type using Guice.
+         *
+         * @param type the class type of the object to create
+         * @return a new instance of the specified type
+         */
         @Override
         public Object call(Class<?> type) {
             return injector.getInstance(type);

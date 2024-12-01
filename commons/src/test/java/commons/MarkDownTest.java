@@ -24,19 +24,19 @@ public class MarkDownTest {
 
     @Test
     public void rawRender_TextToText(){
-        assertEquals(processedText, MarkDownMethods.renderRaw_TextToText(rawText));
+        assertEquals(processedText, MarkDownMethods.renderRawTextToText(rawText));
     }
 
     @Test
     public void rawRender_TextToNodeAndBack(){
         assertEquals(rawText + "\n",
-                MarkDownMethods.renderProcessed_NodeToText(MarkDownMethods.renderRaw_TextToNode(rawText)));
+                MarkDownMethods.renderProcessedNodeToText(MarkDownMethods.renderRawTextToNode(rawText)));
     }
 
     @Test
     public void ProcessedRender_NodeToText(){
         assertEquals(rawText + "\n"
-                , MarkDownMethods.renderProcessed_NodeToText(document));
+                , MarkDownMethods.renderProcessedNodeToText(document));
     }
 
     @Test
