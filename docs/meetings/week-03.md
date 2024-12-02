@@ -4,7 +4,7 @@
 | Time: | 14:45 - 15:30                                                                                               |
 | Location: | DW PC1 Cubicle 2                                                                                            |
 | Chair | Teodor Dragomir                                                                                             |
-| Minute Taker | Alexandru Grous                                                                                             |
+| Minute Taker | Alexandru Grosu                                                                                             |
 | Attendees: | Amandra Andree<br/>Hemant Anilkumar<br/>Iasonas Chronis<br/>Stijn van Drimmelen<br/>Vasco Dos Santos Roldão |
 
 ## Agenda Items:
