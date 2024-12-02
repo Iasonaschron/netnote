@@ -30,6 +30,13 @@ public class MainCtrl {
     private AddQuoteCtrl addCtrl;
     private Scene add;
 
+    /**
+     * Initializes the Main controller with the stages and scenes for the overview and adding quotes
+     *
+     * @param primaryStage The main stage for the application
+     * @param overview Pair containing the QuoteOverview controller and the associated parent
+     * @param add Pair containing the AddQuote controller and the associated parent
+     */
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
             Pair<AddQuoteCtrl, Parent> add) {
         this.primaryStage = primaryStage;
@@ -43,12 +50,18 @@ public class MainCtrl {
         primaryStage.show();
     }
 
+    /**
+     * Displays the overview scene in the primary stage
+     */
     public void showOverview() {
         primaryStage.setTitle("Quotes: Overview");
         primaryStage.setScene(overview);
         overviewCtrl.refresh();
     }
 
+    /**
+     * Displays the add quote scene in the primary stage
+     */
     public void showAdd() {
         primaryStage.setTitle("Quotes: Adding Quote");
         primaryStage.setScene(add);
