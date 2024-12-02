@@ -46,27 +46,48 @@ public class QuoteOverviewCtrl implements Initializable {
     @FXML
     private TableColumn<Quote, String> colQuote;
 
+    /**
+     * Constructs a QuoteOverviewCtrl instance with the given dependencies.
+     *
+     * @param server a ServerUtils object for making server requests
+     * @param mainCtrl the MainCtrl object for controlling the main view
+     */
     @Inject
     public QuoteOverviewCtrl(ServerUtils server, MainCtrl mainCtrl) {
         this.server = server;
         this.mainCtrl = mainCtrl;
     }
 
+    /**
+     * Initializes the columns of the table to display the quote's person's first name,
+     * last name, and the quote text.
+     *
+     * @param location the location used to resolve relative paths for the root object,
+     *                 or null if the location is not known
+     * @param resources the resources used to localize the root object, or null if
+     *                  no localization is required
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        colFirstName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.firstName));
-        colLastName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().person.lastName));
-        colQuote.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().quote));
+        colFirstName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().getPerson().getFirstName()));
+        colLastName.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().getPerson().getLastName()));
+        colQuote.setCellValueFactory(q -> new SimpleStringProperty(q.getValue().getQuote()));
     }
 
+    /**
+     * Opens the "add quote" dialog by invoking the main controller.
+     */
     public void addQuote() {
         mainCtrl.showAdd();
     }
 
+    /**
+     * Refreshes the quote list by fetching the latest quotes from the server
+     * and updating the table.
+     */
     public void refresh() {
         var quotes = server.getQuotes();
         data = FXCollections.observableList(quotes);
         table.setItems(data);
     }
-
 }

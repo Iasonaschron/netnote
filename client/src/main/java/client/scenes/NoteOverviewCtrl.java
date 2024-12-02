@@ -220,7 +220,7 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Deletes selected note from database
+     * Deletes the currently selected note from the ListView.
      */
     public void deleteNote() {
         Note selectedNote = getSelectedNote();
