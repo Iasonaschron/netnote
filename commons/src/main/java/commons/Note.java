@@ -44,7 +44,7 @@ public class Note {
     }
 
     /**
-     * Converts the raw content of the note into its HTML representation
+     * Renders the raw Text currently in content into HTML
      */
     public void renderRawText() {
         this.html = MarkDownMethods.renderRawTextToText(content);
@@ -68,11 +68,6 @@ public class Note {
         return content;
     }
 
-    /**
-     * Getter for the ID of the note
-     *
-     * @return The id of the note
-     */
     public long getId() {
         return id;
     }
