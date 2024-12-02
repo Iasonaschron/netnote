@@ -75,6 +75,7 @@ public class NoteController {
         Note existingNote = repo.findById(id).get();
         existingNote.setTitle(updatedNote.getTitle());
         existingNote.setContent(updatedNote.getContent());
+        existingNote.renderRawText();
         repo.save(existingNote);
         return ResponseEntity.ok(existingNote);
     }

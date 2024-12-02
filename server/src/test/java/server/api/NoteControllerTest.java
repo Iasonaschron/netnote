@@ -40,19 +40,19 @@ public class NoteControllerTest {
     @Test
     public void testGetAllNotes() {
         Note note1 = new Note();
-        note1.title = "Note 1";
-        note1.content = "Content 1";
+        note1.setTitle("Note 1");
+        note1.setContent("Content 1");
 
         Note note2 = new Note();
-        note2.title = "Note 2";
-        note2.content = "Content 2";
+        note2.setTitle("Note 2");
+        note2.setContent("Content 2");
 
         when(repo.findAll()).thenReturn(Arrays.asList(note1, note2));
 
         List<Note> notes = controller.getAllNotes();
         assertEquals(2, notes.size());
-        assertEquals("Note 1", notes.get(0).title);
-        assertEquals("Note 2", notes.get(1).title);
+        assertEquals("Note 1", notes.get(0).getTitle());
+        assertEquals("Note 2", notes.get(1).getTitle());
     }
 
     /**
@@ -63,8 +63,8 @@ public class NoteControllerTest {
     @Test
     public void testAddNote() {
         Note note = new Note();
-        note.title = "New Note";
-        note.content = "New Content";
+        note.setTitle("New Note");
+        note.setContent("New Content");
 
         when(repo.save(note)).thenReturn(note);
 
@@ -72,7 +72,7 @@ public class NoteControllerTest {
         assertEquals(200, response.getStatusCode().value());
         Note responseBody = response.getBody();
         assertNotNull(responseBody);
-        assertEquals("New Note", responseBody.title);
+        assertEquals("New Note", responseBody.getTitle());
     }
 
     /**
@@ -83,8 +83,8 @@ public class NoteControllerTest {
     @Test
     public void testAddNoteBadRequest() {
         Note note = new Note();
-        note.title = "";
-        note.content = "Content";
+        note.setTitle("");
+        note.setContent("Content");
 
         ResponseEntity<Note> response = controller.addNote(note);
         assertEquals(400, response.getStatusCode().value());
@@ -97,8 +97,8 @@ public class NoteControllerTest {
     @Test
     public void testGetNoteById() {
         Note note = new Note();
-        note.title = "Note";
-        note.content = "Content";
+        note.setTitle("Note");
+        note.setContent("Content");
 
         when(repo.existsById(1L)).thenReturn(true);
         when(repo.findById(1L)).thenReturn(Optional.of(note));
@@ -107,7 +107,7 @@ public class NoteControllerTest {
         assertEquals(200, response.getStatusCode().value());
         Note responseBody = response.getBody();
         assertNotNull(responseBody);
-        assertEquals("Note", responseBody.title);
+        assertEquals("Note", responseBody.getTitle());
     }
 
     /**
@@ -131,12 +131,12 @@ public class NoteControllerTest {
     @Test
     public void testUpdateNote() {
         Note existingNote = new Note();
-        existingNote.title = "Existing Note";
-        existingNote.content = "Existing Content";
+        existingNote.setTitle("Existing Note");
+        existingNote.setContent("Existing Content");
 
         Note updatedNote = new Note();
-        updatedNote.title = "Updated Note";
-        updatedNote.content = "Updated Content";
+        updatedNote.setTitle("Updated Note");
+        updatedNote.setContent("Updated Content");
 
         when(repo.existsById(1L)).thenReturn(true);
         when(repo.findById(1L)).thenReturn(Optional.of(existingNote));
@@ -146,7 +146,7 @@ public class NoteControllerTest {
         assertEquals(200, response.getStatusCode().value());
         Note responseBody = response.getBody();
         assertNotNull(responseBody);
-        assertEquals("Updated Note", responseBody.title);
+        assertEquals("Updated Note", responseBody.getTitle());
     }
 
     /**
@@ -157,8 +157,8 @@ public class NoteControllerTest {
     @Test
     public void testUpdateNoteNotFound() {
         Note updatedNote = new Note();
-        updatedNote.title = "Updated Note";
-        updatedNote.content = "Updated Content";
+        updatedNote.setTitle("Updated Note");
+        updatedNote.setContent("Updated Content");
 
         when(repo.existsById(1L)).thenReturn(false);
 

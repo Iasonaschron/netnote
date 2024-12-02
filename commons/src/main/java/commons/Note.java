@@ -1,9 +1,6 @@
 package commons;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -12,10 +9,16 @@ public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column
     private long id;
 
+    @Column
     private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
+
+    @Column(columnDefinition = "TEXT")
     private String html;
 
 
@@ -41,7 +44,7 @@ public class Note {
     }
 
     /**
-     * Converts the raw content of the note into its HTML representation
+     * Renders the raw Text currently in content into HTML
      */
     public void renderRawText() {
         this.html = MarkDownMethods.renderRawTextToText(content);
@@ -65,11 +68,6 @@ public class Note {
         return content;
     }
 
-    /**
-     * Getter for the ID of the note
-     *
-     * @return The id of the note
-     */
     public long getId() {
         return id;
     }
@@ -95,12 +93,21 @@ public class Note {
 
     /**
      * Sets the content of the note and updates the HTML attribute
-     * 
+     *
      * @param content String containing the raw content
      */
     public void setContent(String content) {
         this.content = content;
         renderRawText();
+    }
+
+    /**
+     * Sets the html independently of content
+     *
+     * @param html String containing new html
+     */
+    public void setHtml(String html) {
+        this.html = html;
     }
 
     /**

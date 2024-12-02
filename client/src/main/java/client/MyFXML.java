@@ -31,7 +31,7 @@ import javafx.util.Pair;
 
 public class MyFXML {
 
-    private Injector injector;
+    private final Injector injector;
 
     /**
      * Constructs a new MyFXML instance with the given Guice injector.

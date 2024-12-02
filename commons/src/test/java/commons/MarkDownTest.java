@@ -23,18 +23,18 @@ public class MarkDownTest {
     }
 
     @Test
-    public void rawRender_TextToText(){
+    public void rawRenderTextToText(){
         assertEquals(processedText, MarkDownMethods.renderRawTextToText(rawText));
     }
 
     @Test
-    public void rawRender_TextToNodeAndBack(){
+    public void rawRenderTextToNodeAndBack(){
         assertEquals(rawText + "\n",
                 MarkDownMethods.renderProcessedNodeToText(MarkDownMethods.renderRawTextToNode(rawText)));
     }
 
     @Test
-    public void ProcessedRender_NodeToText(){
+    public void ProcessedRenderNodeToText(){
         assertEquals(rawText + "\n"
                 , MarkDownMethods.renderProcessedNodeToText(document));
     }
