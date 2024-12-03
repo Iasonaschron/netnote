@@ -42,8 +42,7 @@
                         </StackPane>
                         <StackPane prefHeight="46.0" prefWidth="40.0">
                            <children>
-                              <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#createNote" prefHeight="30.0" prefWidth="46.0" />
-                              <Text mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="Add" textAlignment="CENTER" wrappingWidth="55.19998397827146" />
+                              <Button fx:id="add" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#createNote" prefHeight="30.0" prefWidth="46.0" text="Add" />
                            </children>
                         </StackPane>
                         <StackPane prefHeight="46.0" prefWidth="82.0" />
@@ -68,19 +67,18 @@
                         <StackPane prefHeight="50.0" prefWidth="89.0">
                            <children>
                               <TextField prefHeight="26.0" prefWidth="73.0" promptText="Search" />
-                              <StackPane prefHeight="50.0" prefWidth="80.0" />
+                              <StackPane prefHeight="50.0" prefWidth="90.0" />
                            </children>
                         </StackPane>
-                        <StackPane prefHeight="50.0" prefWidth="23.0" />
+                        <StackPane prefHeight="50.0" prefWidth="6.0" />
                         <StackPane prefHeight="50.0" prefWidth="57.0">
                            <children>
-                              <Button fx:id="delete" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#deleteNote" prefHeight="30.0" prefWidth="56.0" text="Delete" />
+                              <Button fx:id="delete" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#deleteNote" prefHeight="30.0" prefWidth="56.0" text="Delete" />
                            </children>
                         </StackPane>
                         <StackPane prefHeight="50.0" prefWidth="61.0">
                            <children>
                               <Button fx:id="done" mnemonicParsing="false" onAction="#done" prefHeight="30.0" prefWidth="49.0" text="Done" textAlignment="CENTER" />
-                              <Button fx:id="save" mnemonicParsing="false" onAction="#save" text="Save" visible="false" />
                            </children>
                         </StackPane>
                      </children>
@@ -89,7 +87,7 @@
             </VBox>
             <StackPane prefHeight="400.0" prefWidth="300.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="VASCO's JOB (MARKDOWN)" wrappingWidth="79.7926025390625" />
+                  <TextArea prefHeight="200.0" prefWidth="200.0" />
                </children>
             </StackPane>
          </children>

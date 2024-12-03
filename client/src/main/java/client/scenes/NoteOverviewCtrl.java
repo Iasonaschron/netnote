@@ -40,7 +40,10 @@ public class NoteOverviewCtrl implements Initializable {
     private Button done;
 
     @FXML
-    private Button save;
+    private Button delete;
+
+    @FXML
+    private Button add;
 
     private ObservableList<Note> data;
 
@@ -50,6 +53,8 @@ public class NoteOverviewCtrl implements Initializable {
 
     private ScheduledExecutorService scheduler;
     private boolean isEditing = false;
+
+    private boolean isSaveAction = false;
 
     /**
      * Constructor for the NoteOverviewCtrl.
@@ -80,8 +85,12 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void createNote() {
         clearFields();
-        save.visibleProperty().set(false);
-        done.visibleProperty().set(true);
+        listView.getSelectionModel().clearSelection();
+        add.disableProperty().set(true);
+        delete.disableProperty().set(true);
+        done.disableProperty().set(false);
+        done.setOnAction(event -> done());
+        isSaveAction = false;
     }
 
     /**
@@ -140,8 +149,12 @@ public class NoteOverviewCtrl implements Initializable {
         title.setText(newValue.getTitle());
         content.setText(newValue.getContent());
         lastSelectedNote = newValue;
-        done.visibleProperty().set(false);
-        save.visibleProperty().set(false);
+
+        delete.disableProperty().set(false);
+        add.disableProperty().set(false);
+        done.disableProperty().set(true);
+        done.setOnAction(event -> save());
+        isSaveAction = true;
     }
 
     /**
@@ -190,7 +203,8 @@ public class NoteOverviewCtrl implements Initializable {
         refresh();
         title.setText(displayTitle);
         content.setText(displayContent);
-        save.visibleProperty().set(false);
+        done.setOnAction(event -> done());
+        isSaveAction = false;
     }
 
     /**
@@ -203,6 +217,7 @@ public class NoteOverviewCtrl implements Initializable {
         if(title.getText() != null && !title.getText().isBlank()) {
             t = title.getText();
         }
+
         var c = content.getText();
 
         Note temporary = new Note(t, c);
@@ -224,10 +239,13 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void deleteNote() {
         Note selectedNote = getSelectedNote();
+        clearFields();
         server.deleteNoteById(selectedNote.getId());
         isEditing = false;
         refresh();
-        save.visibleProperty().set(false);
+        done.setOnAction(event -> done());
+        isSaveAction = false;
+        delete.disableProperty().set(true);
     }
 
     /**
@@ -235,11 +253,20 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void updateNote(){
         isEditing = true;
-        if(!done.isVisible() && title.getText() != null){
-            save.visibleProperty().set(true);
+
+        add.disableProperty().set(true);
+        delete.disableProperty().set(true);
+
+
+        if(isSaveAction && title.getText() != null){
+            done.disableProperty().set(false);
+            done.setOnAction(event -> save());
+            isSaveAction = true;
         }
         else{
-            done.visibleProperty().set(true);
+            done.disableProperty().set(false);
+            done.setOnAction(event -> done());
+            isSaveAction = false;
         }
     }
 
