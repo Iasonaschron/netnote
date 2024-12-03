@@ -53,6 +53,7 @@ public class NoteOverviewCtrl implements Initializable {
 
     private ScheduledExecutorService scheduler;
     private boolean isEditing = false;
+
     private boolean isSaveAction = false;
 
     /**
@@ -153,6 +154,7 @@ public class NoteOverviewCtrl implements Initializable {
         add.disableProperty().set(false);
         done.disableProperty().set(true);
         done.setOnAction(event -> save());
+        isSaveAction = true;
     }
 
     /**
@@ -256,13 +258,15 @@ public class NoteOverviewCtrl implements Initializable {
         delete.disableProperty().set(true);
 
 
-        if(done.isDisable() && title.getText() != null){
+        if(isSaveAction && title.getText() != null){
             done.disableProperty().set(false);
             done.setOnAction(event -> save());
+            isSaveAction = true;
         }
         else{
             done.disableProperty().set(false);
             done.setOnAction(event -> done());
+            isSaveAction = false;
         }
     }
 
