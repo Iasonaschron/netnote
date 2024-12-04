@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -71,7 +72,7 @@ public class NoteOverviewCtrl implements Initializable {
      * Updates the ListView with the retrieved notes.
      */
     public void refresh() {
-        if(isEditing) {
+        if (isEditing) {
             return;
         }
         var notes = server.getNotes();
@@ -91,6 +92,7 @@ public class NoteOverviewCtrl implements Initializable {
         done.disableProperty().set(false);
         done.setOnAction(event -> create());
         isSaveAction = false;
+        lastSelectedNote = null;
     }
 
     /**
@@ -164,7 +166,6 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void create() {
         if (!checkInput()) {
-            AlertMethods.createWarning("The note title cannot be empty.");
             return;
         }
         try {
@@ -186,7 +187,6 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void save() {
         if (!checkInput()) {
-            AlertMethods.createWarning("The note title cannot be empty.");
             return;
         }
 
@@ -195,8 +195,7 @@ public class NoteOverviewCtrl implements Initializable {
         String displayContent = content.getText();
         try {
             server.saveNote(selectedNote.getId(), getNote());
-        }
-        catch (NullPointerException | WebApplicationException e) {
+        } catch (NullPointerException | WebApplicationException e) {
             AlertMethods.createError(e.getMessage());
             return;
         }
@@ -216,6 +215,12 @@ public class NoteOverviewCtrl implements Initializable {
      */
     private boolean checkInput() {
         if (title.getText() == null || title.getText().isBlank()) {
+            AlertMethods.createWarning("The note title cannot be empty.");
+            return false;
+        }
+
+        if (data.stream().anyMatch(note -> note.getTitle().equalsIgnoreCase(title.getText()) && !note.equals(lastSelectedNote))) {
+            AlertMethods.createWarning("A note with this title already exists.");
             return false;
         }
 
@@ -234,7 +239,7 @@ public class NoteOverviewCtrl implements Initializable {
      */
     private Note getNote() {
         String t = null;
-        if(title.getText() != null && !title.getText().isBlank()) {
+        if (title.getText() != null && !title.getText().isBlank()) {
             t = title.getText();
         }
 
@@ -271,19 +276,18 @@ public class NoteOverviewCtrl implements Initializable {
     /**
      * Updates the contents of a note in the database
      */
-    public void updateNote(){
+    public void updateNote() {
         isEditing = true;
 
         add.disableProperty().set(true);
         delete.disableProperty().set(true);
 
 
-        if(isSaveAction && title.getText() != null){
+        if (isSaveAction && title.getText() != null) {
             done.disableProperty().set(false);
             done.setOnAction(event -> save());
             isSaveAction = true;
-        }
-        else{
+        } else {
             done.disableProperty().set(false);
             done.setOnAction(event -> create());
             isSaveAction = false;

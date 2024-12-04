@@ -49,7 +49,7 @@ public class QuoteOverviewCtrl implements Initializable {
     /**
      * Constructs a QuoteOverviewCtrl instance with the given dependencies.
      *
-     * @param server a ServerUtils object for making server requests
+     * @param server   a ServerUtils object for making server requests
      * @param mainCtrl the MainCtrl object for controlling the main view
      */
     @Inject
@@ -62,8 +62,8 @@ public class QuoteOverviewCtrl implements Initializable {
      * Initializes the columns of the table to display the quote's person's first name,
      * last name, and the quote text.
      *
-     * @param location the location used to resolve relative paths for the root object,
-     *                 or null if the location is not known
+     * @param location  the location used to resolve relative paths for the root object,
+     *                  or null if the location is not known
      * @param resources the resources used to localize the root object, or null if
      *                  no localization is required
      */

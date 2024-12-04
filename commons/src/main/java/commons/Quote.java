@@ -52,7 +52,7 @@ public class Quote {
      * Constructs a new Quote with the specified person and quote.
      *
      * @param person the person who said the quote
-     * @param quote the quote itself
+     * @param quote  the quote itself
      */
     public Quote(Person person, String quote) {
         this.person = person;

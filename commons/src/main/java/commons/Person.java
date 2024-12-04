@@ -48,7 +48,7 @@ public class Person {
      * Constructs a new Person object with the provided first and last names.
      *
      * @param firstName the first name of the person
-     * @param lastName the last name of the person
+     * @param lastName  the last name of the person
      */
     public Person(String firstName, String lastName) {
         this.firstName = firstName;
