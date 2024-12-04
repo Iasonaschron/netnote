@@ -219,6 +219,8 @@ public class NoteOverviewCtrl implements Initializable {
             return false;
         }
 
+        title.setText(title.getText().trim());
+
         if (data.stream().anyMatch(note -> note.getTitle().equalsIgnoreCase(title.getText()) && !note.equals(lastSelectedNote))) {
             AlertMethods.createWarning("A note with this title already exists.");
             return false;
@@ -227,8 +229,6 @@ public class NoteOverviewCtrl implements Initializable {
         if (content.getText() == null) {
             content.setText("");
         }
-
-        title.setText(title.getText().trim());
         return true;
     }
 
