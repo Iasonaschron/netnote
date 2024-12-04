@@ -4,6 +4,7 @@ import client.utils.ServerUtils;
 import com.google.inject.Inject;
 
 import commons.Note;
+import commons.AlertMethods;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -12,7 +13,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.stage.Modality;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -89,7 +89,7 @@ public class NoteOverviewCtrl implements Initializable {
         add.disableProperty().set(true);
         delete.disableProperty().set(true);
         done.disableProperty().set(false);
-        done.setOnAction(event -> done());
+        done.setOnAction(event -> create());
         isSaveAction = false;
     }
 
@@ -162,15 +162,15 @@ public class NoteOverviewCtrl implements Initializable {
      * Displays an error alert if the server operation fails.
      * Refreshes the list of notes after successfully adding a note.
      */
-    public void done() {
+    public void create() {
+        if (!checkInput()) {
+            AlertMethods.createWarning("The note title cannot be empty.");
+            return;
+        }
         try {
             server.addNote(getNote());
-        } catch (WebApplicationException e) {
-
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+        } catch (NullPointerException | WebApplicationException e) {
+            AlertMethods.createError(e.getMessage());
             return;
         }
 
@@ -185,26 +185,46 @@ public class NoteOverviewCtrl implements Initializable {
      * Refreshes the list of notes after successfully updating the note.
      */
     public void save() {
+        if (!checkInput()) {
+            AlertMethods.createWarning("The note title cannot be empty.");
+            return;
+        }
+
         Note selectedNote = lastSelectedNote;
         String displayTitle = title.getText();
         String displayContent = content.getText();
         try {
             server.saveNote(selectedNote.getId(), getNote());
         }
-        catch (WebApplicationException e) {
-
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+        catch (NullPointerException | WebApplicationException e) {
+            AlertMethods.createError(e.getMessage());
             return;
         }
+
         isEditing = false;
         refresh();
         title.setText(displayTitle);
         content.setText(displayContent);
-        done.setOnAction(event -> done());
+        done.setOnAction(event -> create());
         isSaveAction = false;
+    }
+
+    /**
+     * Checks whether the current title is valid, makes a few minor tweaks to the text
+     *
+     * @return True if the input is valid, false otherwise
+     */
+    private boolean checkInput() {
+        if (title.getText() == null || title.getText().isBlank()) {
+            return false;
+        }
+
+        if (content.getText() == null) {
+            content.setText("");
+        }
+
+        title.setText(title.getText().trim());
+        return true;
     }
 
     /**
@@ -243,7 +263,7 @@ public class NoteOverviewCtrl implements Initializable {
         server.deleteNoteById(selectedNote.getId());
         isEditing = false;
         refresh();
-        done.setOnAction(event -> done());
+        done.setOnAction(event -> create());
         isSaveAction = false;
         delete.disableProperty().set(true);
     }
@@ -265,7 +285,7 @@ public class NoteOverviewCtrl implements Initializable {
         }
         else{
             done.disableProperty().set(false);
-            done.setOnAction(event -> done());
+            done.setOnAction(event -> create());
             isSaveAction = false;
         }
     }

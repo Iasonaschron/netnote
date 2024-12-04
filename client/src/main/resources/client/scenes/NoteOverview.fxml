@@ -78,7 +78,7 @@
                         </StackPane>
                         <StackPane prefHeight="50.0" prefWidth="61.0">
                            <children>
-                              <Button fx:id="done" mnemonicParsing="false" onAction="#done" prefHeight="30.0" prefWidth="49.0" text="Done" textAlignment="CENTER" />
+                              <Button fx:id="done" mnemonicParsing="false" onAction="#create" prefHeight="30.0" prefWidth="49.0" text="Done" textAlignment="CENTER" />
                            </children>
                         </StackPane>
                      </children>

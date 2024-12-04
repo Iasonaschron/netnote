@@ -68,6 +68,11 @@ public class Note {
         return content;
     }
 
+    /**
+     * Getter for the id of the note
+     *
+     * @return The id of the note
+     */
     public long getId() {
         return id;
     }
