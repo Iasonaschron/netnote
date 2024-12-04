@@ -19,9 +19,10 @@ public class MainNotes extends Application {
 
     /**
      * launches application
+     *
      * @param args the command-line arguments
      * @throws URISyntaxException if a URI syntax error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException        if an I/O error occurs
      */
     public static void main(String[] args) throws URISyntaxException, IOException {
         launch(args);

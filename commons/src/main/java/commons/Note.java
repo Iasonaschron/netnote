@@ -33,7 +33,7 @@ public class Note {
     /**
      * Constructs a new Note with the given title and content
      *
-     * @param title The title of the note
+     * @param title   The title of the note
      * @param content The content of the note
      */
     @SuppressWarnings("unused")

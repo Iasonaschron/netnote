@@ -46,7 +46,7 @@ public class MainNotesCtrl {
 
     /**
      * Returns the NoteOverviewCtrl instance associated with the main controller.
-     * 
+     *
      * @return the NoteOverviewCtrl instance
      */
     public Object getNoteOverviewCtrl() {
@@ -55,7 +55,7 @@ public class MainNotesCtrl {
 
     /**
      * Returns the primary stage of the application.
-     * 
+     *
      * @return the primary stage
      */
     public Object getPrimaryStage() {

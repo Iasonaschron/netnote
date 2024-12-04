@@ -45,8 +45,8 @@ public class MyFXML {
     /**
      * Loads the FXML file specified by the given parts and returns a pair of the controller and the root node.
      *
-     * @param <T> the type of the controller class
-     * @param c the class of the controller to load
+     * @param <T>   the type of the controller class
+     * @param c     the class of the controller to load
      * @param parts the parts of the path to the FXML file
      * @return a pair of the controller and the root node of the loaded FXML
      * @throws RuntimeException if the FXML file cannot be loaded

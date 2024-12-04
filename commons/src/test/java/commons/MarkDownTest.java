@@ -14,7 +14,7 @@ public class MarkDownTest {
     private Note testNote;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         Parser parser = Parser.builder().build();
         rawText = "This is *Markdown*";
         processedText = "<p>This is <em>Markdown</em></p>\n";
@@ -23,24 +23,24 @@ public class MarkDownTest {
     }
 
     @Test
-    public void rawRenderTextToText(){
+    public void rawRenderTextToText() {
         assertEquals(processedText, MarkDownMethods.renderRawTextToText(rawText));
     }
 
     @Test
-    public void rawRenderTextToNodeAndBack(){
+    public void rawRenderTextToNodeAndBack() {
         assertEquals(rawText + "\n",
                 MarkDownMethods.renderProcessedNodeToText(MarkDownMethods.renderRawTextToNode(rawText)));
     }
 
     @Test
-    public void ProcessedRenderNodeToText(){
+    public void ProcessedRenderNodeToText() {
         assertEquals(rawText + "\n"
                 , MarkDownMethods.renderProcessedNodeToText(document));
     }
 
     @Test
-    public void testNote(){
+    public void testNote() {
         assertEquals(processedText, testNote.getHTML());
         testNote.setContent("AAAAAAAAAAAAAA");
         assertEquals("<p>AAAAAAAAAAAAAA</p>\n", testNote.getHTML());
