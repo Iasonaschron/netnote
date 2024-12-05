@@ -204,8 +204,8 @@ public class NoteOverviewCtrl implements Initializable {
         refresh();
         title.setText(displayTitle);
         content.setText(displayContent);
-        done.setOnAction(event -> create());
-        isSaveAction = false;
+        done.setOnAction(event -> save());
+        isSaveAction = true;
     }
 
     /**
