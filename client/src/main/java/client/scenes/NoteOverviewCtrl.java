@@ -270,8 +270,7 @@ public class NoteOverviewCtrl implements Initializable {
         title.setText(title.getText().trim());
 
         if (visibleNotes.stream().anyMatch(
-                note -> note.getTitle().equalsIgnoreCase(title.getText()) && !note.equals(lastSelectedNote)
-        && !isSaveAction)) {
+                note -> note.getTitle().equalsIgnoreCase(title.getText()) && !note.equals(lastSelectedNote))) {
             AlertMethods.createWarning("A note with this title already exists.");
             return false;
         }
