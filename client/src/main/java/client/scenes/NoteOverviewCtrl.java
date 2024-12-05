@@ -2,9 +2,8 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-
-import commons.Note;
 import commons.AlertMethods;
+import commons.Note;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -13,6 +12,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 
 import java.net.URL;
 import java.util.List;
@@ -28,6 +29,11 @@ import java.util.concurrent.TimeUnit;
  * editing notes.
  */
 public class NoteOverviewCtrl implements Initializable {
+
+    @FXML
+    private WebView webview;
+
+    private WebEngine webEngine;
 
     @FXML
     private ListView<Note> listView;
@@ -151,6 +157,9 @@ public class NoteOverviewCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        webEngine = webview.getEngine();
+
         listView.setCellFactory(_ -> new ListCell<>() {
             @Override
             protected void updateItem(Note item, boolean empty) {
@@ -187,8 +196,10 @@ public class NoteOverviewCtrl implements Initializable {
         }
         title.setText(newValue.getTitle());
         content.setText(newValue.getContent());
-        lastSelectedNote = newValue;
 
+        webEngine.loadContent(newValue.getHTML());
+
+        lastSelectedNote = newValue;
         delete.disableProperty().set(false);
         add.disableProperty().set(false);
         done.disableProperty().set(true);
@@ -241,8 +252,7 @@ public class NoteOverviewCtrl implements Initializable {
         refresh();
         title.setText(displayTitle);
         content.setText(displayContent);
-        done.setOnAction(_ -> create());
-        isSaveAction = false;
+        webEngine.loadContent(getNote().getHTML());
     }
 
     /**
