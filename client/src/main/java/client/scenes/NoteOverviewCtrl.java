@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -38,6 +39,9 @@ public class NoteOverviewCtrl implements Initializable {
     private TextArea content;
 
     @FXML
+    private TextField searchBox;
+
+    @FXML
     private Button done;
 
     @FXML
@@ -46,7 +50,8 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private Button add;
 
-    private ObservableList<Note> data;
+    private List<Note> data;
+    private ObservableList<Note> visibleNotes;
 
     private final ServerUtils server;
 
@@ -75,9 +80,41 @@ public class NoteOverviewCtrl implements Initializable {
         if (isEditing) {
             return;
         }
-        var notes = server.getNotes();
-        data = FXCollections.observableList(notes);
-        listView.setItems(data);
+        data = server.getNotes();
+
+        updateList();
+
+        listView.setItems(visibleNotes);
+    }
+
+    /**
+     * Updates the list of notes based on the current filter string.
+     * This method is called when the filter string changes or the data is
+     * refreshed.
+     * It updates the ListView with the filtered notes.
+     */
+    public void updateList() {
+        visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
+
+        listView.setItems(visibleNotes);
+    }
+
+    /**
+     * Filters the list of notes based on the given filter string.
+     * If the filter is empty, all notes are returned.
+     * Otherwise, only notes with titles containing the filter string are returned.
+     * 
+     * @param filter the filter string to apply to the list of notes
+     * @return a list of notes that match the filter string
+     */
+    public List<Note> getVisibleNotes(String filter) {
+        if (filter.isBlank()) {
+            return data;
+        } else {
+            return data.stream()
+                    .filter(note -> note.getTitle().toLowerCase().contains(filter.toLowerCase()))
+                    .toList();
+        }
     }
 
     /**
@@ -90,7 +127,7 @@ public class NoteOverviewCtrl implements Initializable {
         add.disableProperty().set(true);
         delete.disableProperty().set(true);
         done.disableProperty().set(false);
-        done.setOnAction(event -> create());
+        done.setOnAction(_ -> create());
         isSaveAction = false;
         lastSelectedNote = null;
     }
@@ -155,7 +192,7 @@ public class NoteOverviewCtrl implements Initializable {
         delete.disableProperty().set(false);
         add.disableProperty().set(false);
         done.disableProperty().set(true);
-        done.setOnAction(event -> save());
+        done.setOnAction(_ -> save());
         isSaveAction = true;
     }
 
@@ -204,12 +241,13 @@ public class NoteOverviewCtrl implements Initializable {
         refresh();
         title.setText(displayTitle);
         content.setText(displayContent);
-        done.setOnAction(event -> save());
-        isSaveAction = true;
+        done.setOnAction(_ -> create());
+        isSaveAction = false;
     }
 
     /**
-     * Checks whether the current title is valid, makes a few minor tweaks to the text
+     * Checks whether the current title is valid, makes a few minor tweaks to the
+     * text
      *
      * @return True if the input is valid, false otherwise
      */
@@ -221,7 +259,8 @@ public class NoteOverviewCtrl implements Initializable {
 
         title.setText(title.getText().trim());
 
-        if (data.stream().anyMatch(note -> note.getTitle().equalsIgnoreCase(title.getText()) && !note.equals(lastSelectedNote))) {
+        if (visibleNotes.stream().anyMatch(
+                note -> note.getTitle().equalsIgnoreCase(title.getText()) && !note.equals(lastSelectedNote))) {
             AlertMethods.createWarning("A note with this title already exists.");
             return false;
         }
@@ -268,7 +307,7 @@ public class NoteOverviewCtrl implements Initializable {
         server.deleteNoteById(selectedNote.getId());
         isEditing = false;
         refresh();
-        done.setOnAction(event -> create());
+        done.setOnAction(_ -> create());
         isSaveAction = false;
         delete.disableProperty().set(true);
     }
@@ -282,14 +321,13 @@ public class NoteOverviewCtrl implements Initializable {
         add.disableProperty().set(true);
         delete.disableProperty().set(true);
 
-
         if (isSaveAction && title.getText() != null) {
             done.disableProperty().set(false);
-            done.setOnAction(event -> save());
+            done.setOnAction(_ -> save());
             isSaveAction = true;
         } else {
             done.disableProperty().set(false);
-            done.setOnAction(event -> create());
+            done.setOnAction(_ -> create());
             isSaveAction = false;
         }
     }

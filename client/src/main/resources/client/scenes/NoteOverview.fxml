@@ -23,6 +23,7 @@
                         <ChoiceBox prefHeight="42.0" prefWidth="170.0" />
                      </children>
                   </HBox>
+                  <TextField fx:id="searchBox" onKeyTyped="#updateList" promptText="Search..." />
                   <ListView fx:id="listView" prefHeight="316.0" prefWidth="164.0" />
                   <HBox prefHeight="45.0" prefWidth="164.0">
                      <children>
