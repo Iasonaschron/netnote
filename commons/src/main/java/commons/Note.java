@@ -47,7 +47,9 @@ public class Note {
      * Renders the raw Text currently in content into HTML
      */
     public void renderRawText() {
-        this.html = MarkDownMethods.renderRawTextToText(content);
+        String processedContent = ContentProcessor.processTags(content);
+
+        this.html = MarkDownMethods.renderRawTextToText(processedContent);
     }
 
     /**
