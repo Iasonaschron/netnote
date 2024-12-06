@@ -212,6 +212,7 @@ public class NoteOverviewCtrl implements Initializable {
         StringBuilder updatedHtml = new StringBuilder();
         int lastIndex = 0;
 
+        //TODO Check if is in the same collection
         String regex = "\\[\\[(.+?)]]";
         java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(regex).matcher(htmlContent);
 
