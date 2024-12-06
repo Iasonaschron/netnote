@@ -106,6 +106,14 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
+     * Updates the WebView with the currently selected note's content.
+     * This method is called when the selected note changes.
+     */
+    public void updateWebView() {
+        webEngine.loadContent(getNote().getHTML());
+    }
+
+    /**
      * Filters the list of notes based on the given filter string.
      * If the filter is empty, all notes are returned.
      * Otherwise, only notes with titles containing the filter string are returned.
@@ -197,7 +205,7 @@ public class NoteOverviewCtrl implements Initializable {
         title.setText(newValue.getTitle());
         content.setText(newValue.getContent());
 
-        webEngine.loadContent(newValue.getHTML());
+        updateWebView();
 
         lastSelectedNote = newValue;
         delete.disableProperty().set(false);
@@ -252,7 +260,7 @@ public class NoteOverviewCtrl implements Initializable {
         refresh();
         title.setText(displayTitle);
         content.setText(displayContent);
-        webEngine.loadContent(getNote().getHTML());
+        updateWebView();
     }
 
     /**
