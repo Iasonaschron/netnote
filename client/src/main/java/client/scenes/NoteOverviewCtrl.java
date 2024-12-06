@@ -193,6 +193,12 @@ public class NoteOverviewCtrl implements Initializable {
         startPolling();
     }
 
+    /**
+     * Returns a note matching the given title\
+     *
+     * @param title The title of the requested note
+     * @return The note with the given title, null if not found
+     */
     private Note findNoteByTitle(String title) {
         return data.stream()
                 .filter(note -> note.getTitle().equalsIgnoreCase(title))
