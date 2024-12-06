@@ -261,6 +261,7 @@ public class NoteOverviewCtrl implements Initializable {
         title.setText(displayTitle);
         content.setText(displayContent);
         updateWebView();
+        done.disableProperty().set(true);
     }
 
     /**
