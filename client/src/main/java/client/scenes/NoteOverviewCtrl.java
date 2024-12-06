@@ -164,6 +164,7 @@ public class NoteOverviewCtrl implements Initializable {
             System.out.println("Triggered: " + url);
             if (url.startsWith("note://")) {
                 String noteTitle = url.substring(7);
+                //TODO Add checking for collection of notes
                 Note linkedNote = findNoteByTitle(noteTitle);
                 if (linkedNote != null) {
                     selectionChanged(null, lastSelectedNote, linkedNote);
@@ -199,7 +200,7 @@ public class NoteOverviewCtrl implements Initializable {
      * @param title The title of the requested note
      * @return The note with the given title, null if not found
      */
-    private Note findNoteByTitle(String title) {
+    public Note findNoteByTitle(String title) {
         return data.stream()
                 .filter(note -> note.getTitle().equalsIgnoreCase(title))
                 .findFirst()
@@ -299,7 +300,7 @@ public class NoteOverviewCtrl implements Initializable {
         }
 
         title.setText(title.getText().trim());
-
+        //TODO Add checking of collection
         if (visibleNotes.stream().anyMatch(
                 note -> note.getTitle().equalsIgnoreCase(title.getText()) && !note.equals(lastSelectedNote))) {
             AlertMethods.createWarning("A note with this title already exists.");
