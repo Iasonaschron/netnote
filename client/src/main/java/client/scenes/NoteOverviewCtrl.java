@@ -110,8 +110,7 @@ public class NoteOverviewCtrl implements Initializable {
      * This method is called when the selected note changes.
      */
     public void updateWebView() {
-        updateNoteLinks(getNote().getHTML());
-        webEngine.loadContent(getNote().getHTML());
+        webEngine.loadContent(updateNoteLinksHTML(getNote().getHTML()));
     }
 
     /**
@@ -204,9 +203,12 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Updates the HTML content of the note by replacing raw text links with clickable HTML links.
+     * Parses the current HTML and replaces notes references with links, checking if they are valid
+     *
+     * @param htmlContent The HTML contents of the current note
+     * @return The updated HTML contents
      */
-    private void updateNoteLinks(String htmlContent) {
+    private String updateNoteLinksHTML(String htmlContent) {
         StringBuilder updatedHtml = new StringBuilder();
         int lastIndex = 0;
 
@@ -235,7 +237,7 @@ public class NoteOverviewCtrl implements Initializable {
         }
         updatedHtml.append(htmlContent.substring(lastIndex));
 
-        webEngine.loadContent(updatedHtml.toString());
+        return updatedHtml.toString();
     }
 
     /**
