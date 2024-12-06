@@ -106,6 +106,18 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
+     * Updates the WebView with the currently selected note's content.
+     * This method is called when the selected note changes.
+     */
+    public void updateWebView() {
+        Note localNote = getNote();
+        localNote.renderRawText();
+        String htmlContent = "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"notes.css\"></head><body>"
+                + localNote.getHTML() + "</body></html>";
+        webEngine.loadContent(htmlContent);
+    }
+
+    /**
      * Filters the list of notes based on the given filter string.
      * If the filter is empty, all notes are returned.
      * Otherwise, only notes with titles containing the filter string are returned.
@@ -158,6 +170,12 @@ public class NoteOverviewCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         webEngine = webview.getEngine();
+        URL stylesheet = getClass().getResource("/client/styles/notes.css");
+        if (stylesheet != null) {
+            webEngine.setUserStyleSheetLocation(stylesheet.toExternalForm());
+        } else {
+            System.err.println("Stylesheet not found: /client/styles/notes.css");
+        }
 
         webEngine.setOnAlert(event -> {
             String url = event.getData();
@@ -174,7 +192,6 @@ public class NoteOverviewCtrl implements Initializable {
                 }
             }
         });
-
 
         listView.setCellFactory(_ -> new ListCell<>() {
             @Override
