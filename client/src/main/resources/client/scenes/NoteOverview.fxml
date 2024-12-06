@@ -8,6 +8,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.web.WebView?>
+
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.NoteOverviewCtrl">
    <children>
       <HBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -56,7 +57,7 @@
                   </StackPane>
                   <StackPane prefHeight="382.0" prefWidth="230.0">
                      <children>
-                        <TextArea fx:id="content" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="322.0" prefWidth="208.0" promptText="Content" />
+                        <TextArea fx:id="content" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="322.0" prefWidth="208.0" promptText="Content" />
                      </children>
                   </StackPane>
                   <HBox prefHeight="117.0" prefWidth="230.0">
