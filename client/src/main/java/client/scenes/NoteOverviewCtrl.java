@@ -152,6 +152,7 @@ public class NoteOverviewCtrl implements Initializable {
     private void clearFields() {
         title.clear();
         content.clear();
+        webEngine.loadContent("");
     }
 
     /**
