@@ -237,7 +237,7 @@ public class NoteOverviewCtrl implements Initializable {
         title.setText(newValue.getTitle());
         content.setText(newValue.getContent());
 
-        webEngine.loadContent(newValue.getHTML());
+        updateWebView();
 
         lastSelectedNote = newValue;
         delete.disableProperty().set(false);
@@ -293,7 +293,7 @@ public class NoteOverviewCtrl implements Initializable {
         refresh();
         title.setText(displayTitle);
         content.setText(displayContent);
-        webEngine.loadContent(getNote().getHTML());
+        updateWebView();
         done.disableProperty().set(true);
     }
 
