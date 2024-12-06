@@ -48,6 +48,7 @@ public class Note {
      */
     public void renderRawText() {
         this.html = MarkDownMethods.renderRawTextToText(content);
+        this.html = this.html.replaceAll("\\[\\[(.+?)]]", "<a href=\"note://$1\" onclick=\"alert('note://$1'); return false;\">$1</a> ");
     }
 
     /**
