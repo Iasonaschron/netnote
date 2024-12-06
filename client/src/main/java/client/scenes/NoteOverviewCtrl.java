@@ -195,6 +195,41 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
+     * Updates the HTML content of the note by replacing raw text links with clickable HTML links.
+     */
+    private void updateNoteLinks(String htmlContent) {
+        StringBuilder updatedHtml = new StringBuilder();
+        int lastIndex = 0;
+
+        String regex = "\\[\\[(.+?)]]";
+        java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(regex).matcher(htmlContent);
+
+        while (matcher.find()) {
+            updatedHtml.append(htmlContent, lastIndex, matcher.start());
+
+            String noteTitle = matcher.group(1);
+            Note linkedNote = findNoteByTitle(noteTitle);
+
+            updatedHtml.append("<a href=\"note://")
+                    .append(noteTitle)
+                    .append("\" onclick=\"alert('note://")
+                    .append(noteTitle)
+                    .append("'); return false;\"");
+            if (linkedNote == null) {
+                updatedHtml.append("style=\"color:red; font-weight:bold;\"");
+            }
+            updatedHtml.append(">")
+                    .append(noteTitle)
+                    .append("</a> ");
+
+            lastIndex = matcher.end();
+        }
+        updatedHtml.append(htmlContent.substring(lastIndex));
+
+        webEngine.loadContent(updatedHtml.toString());
+    }
+
+    /**
      * Returns a note matching the given title\
      *
      * @param title The title of the requested note
@@ -227,7 +262,7 @@ public class NoteOverviewCtrl implements Initializable {
         title.setText(newValue.getTitle());
         content.setText(newValue.getContent());
 
-        webEngine.loadContent(newValue.getHTML());
+        updateNoteLinks(newValue.getHTML());
 
         lastSelectedNote = newValue;
         delete.disableProperty().set(false);
@@ -285,6 +320,7 @@ public class NoteOverviewCtrl implements Initializable {
         content.setText(displayContent);
         webEngine.loadContent(getNote().getHTML());
         done.disableProperty().set(true);
+        updateNoteLinks(getNote().getHTML());
     }
 
     /**
