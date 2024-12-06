@@ -157,8 +157,24 @@ public class NoteOverviewCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
         webEngine = webview.getEngine();
+
+        webEngine.setOnAlert(event -> {
+            String url = event.getData();
+            System.out.println("Triggered: " + url);
+            if (url.startsWith("note://")) {
+                String noteTitle = url.substring(7);
+                Note linkedNote = findNoteByTitle(noteTitle);
+                if (linkedNote != null) {
+                    selectionChanged(null, lastSelectedNote, linkedNote);
+                    listView.getSelectionModel().select(linkedNote);
+                    listView.requestFocus();
+                } else {
+                    AlertMethods.createWarning("Note not found: " + noteTitle);
+                }
+            }
+        });
+
 
         listView.setCellFactory(_ -> new ListCell<>() {
             @Override
@@ -175,6 +191,13 @@ public class NoteOverviewCtrl implements Initializable {
         listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
 
         startPolling();
+    }
+
+    private Note findNoteByTitle(String title) {
+        return data.stream()
+                .filter(note -> note.getTitle().equalsIgnoreCase(title))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -243,6 +266,7 @@ public class NoteOverviewCtrl implements Initializable {
         String displayContent = content.getText();
         try {
             server.saveNote(selectedNote.getId(), getNote());
+            lastSelectedNote = server.getNoteById(selectedNote.getId());
         } catch (NullPointerException | WebApplicationException e) {
             AlertMethods.createError(e.getMessage());
             return;
@@ -253,6 +277,7 @@ public class NoteOverviewCtrl implements Initializable {
         title.setText(displayTitle);
         content.setText(displayContent);
         webEngine.loadContent(getNote().getHTML());
+        done.disableProperty().set(true);
     }
 
     /**

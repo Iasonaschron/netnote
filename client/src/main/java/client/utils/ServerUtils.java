@@ -167,4 +167,24 @@ public class ServerUtils {
         }
         return false;
     }
+
+    /**
+     * Retrieves a note from the server by its ID.
+     *
+     * @param id the ID of the note to be retrieved
+     * @return the {@link Note} object retrieved from the server, or null if not found
+     */
+    public Note getNoteById(long id) {
+        try {
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(SERVER).path("api/notes/" + id)
+                    .request(APPLICATION_JSON)
+                    .get(Note.class);
+        } catch (ProcessingException e) {
+            if (e.getCause() instanceof ConnectException) {
+                return null;
+            }
+        }
+        return null;
+    }
 }
