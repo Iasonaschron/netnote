@@ -110,7 +110,9 @@ public class NoteOverviewCtrl implements Initializable {
      * This method is called when the selected note changes.
      */
     public void updateWebView() {
-        webEngine.loadContent(updateNoteLinksHTML(getNote().getHTML()));
+        String htmlContent = "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"notes.css\"></head><body>"
+                + getNote().getHTML() + "</body></html>";
+        webEngine.loadContent(updateNoteLinksHTML(htmlContent));
     }
 
     /**
