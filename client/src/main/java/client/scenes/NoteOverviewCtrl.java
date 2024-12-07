@@ -326,6 +326,11 @@ public class NoteOverviewCtrl implements Initializable {
         Note selectedNote = lastSelectedNote;
         String displayTitle = title.getText();
         String displayContent = content.getText();
+
+        if (!selectedNote.getTitle().equalsIgnoreCase(displayTitle)) {
+            updateNoteReferences(selectedNote.getTitle(), displayTitle);
+        }
+
         try {
             server.saveNote(selectedNote.getId(), getNote());
             lastSelectedNote = server.getNoteById(selectedNote.getId());
@@ -340,6 +345,31 @@ public class NoteOverviewCtrl implements Initializable {
         content.setText(displayContent);
         updateWebView();
         done.disableProperty().set(true);
+    }
+
+    /**
+     * Updates all note references when a title is changed
+     *
+     * @param oldTitle The old note title
+     * @param newTitle The new note title
+     */
+    private void updateNoteReferences(String oldTitle, String newTitle) {
+        for (Note note : data) {
+            if (note.getTitle().equalsIgnoreCase(oldTitle))
+                continue;
+
+            String newContent = note.getContent().replaceAll("(?i)\\[\\[" + oldTitle + "]]",
+                    "\\[\\[" + newTitle + "]]");
+
+            if (!newContent.equals(note.getContent())) {
+                note.setContent(newContent);
+                try {
+                    server.saveNote(note.getId(), note);
+                } catch (NullPointerException | WebApplicationException e) {
+                    AlertMethods.createError(e.getMessage());
+                }
+            }
+        }
     }
 
     /**
