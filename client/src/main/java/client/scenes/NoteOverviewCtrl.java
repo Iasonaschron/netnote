@@ -110,10 +110,8 @@ public class NoteOverviewCtrl implements Initializable {
      * This method is called when the selected note changes.
      */
     public void updateWebView() {
-        Note localNote = getNote();
-        localNote.renderRawText();
         String htmlContent = "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"notes.css\"></head><body>"
-                + localNote.getHTML() + "</body></html>";
+                + updateNoteLinksHTML(getNote().getHTML()) + "</body></html>";
         webEngine.loadContent(htmlContent);
     }
 
@@ -156,6 +154,7 @@ public class NoteOverviewCtrl implements Initializable {
     private void clearFields() {
         title.clear();
         content.clear();
+        webEngine.loadContent("");
     }
 
     /**
@@ -182,6 +181,7 @@ public class NoteOverviewCtrl implements Initializable {
             System.out.println("Triggered: " + url);
             if (url.startsWith("note://")) {
                 String noteTitle = url.substring(7);
+                //TODO Add checking for collection of notes
                 Note linkedNote = findNoteByTitle(noteTitle);
                 if (linkedNote != null) {
                     selectionChanged(null, lastSelectedNote, linkedNote);
@@ -210,7 +210,52 @@ public class NoteOverviewCtrl implements Initializable {
         startPolling();
     }
 
-    private Note findNoteByTitle(String title) {
+    /**
+     * Parses the current HTML and replaces notes references with links, checking if they are valid
+     *
+     * @param htmlContent The HTML contents of the current note
+     * @return The updated HTML contents
+     */
+    private String updateNoteLinksHTML(String htmlContent) {
+        StringBuilder updatedHtml = new StringBuilder();
+        int lastIndex = 0;
+
+        //TODO Check if is in the same collection
+        String regex = "\\[\\[(.+?)]]";
+        java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(regex).matcher(htmlContent);
+
+        while (matcher.find()) {
+            updatedHtml.append(htmlContent, lastIndex, matcher.start());
+
+            String noteTitle = matcher.group(1);
+            Note linkedNote = findNoteByTitle(noteTitle);
+
+            updatedHtml.append("<a href=\"note://")
+                    .append(noteTitle)
+                    .append("\" onclick=\"alert('note://")
+                    .append(noteTitle)
+                    .append("'); return false;\"");
+            if (linkedNote == null) {
+                updatedHtml.append("style=\"color:red; font-weight:bold;\"");
+            }
+            updatedHtml.append(">")
+                    .append(noteTitle)
+                    .append("</a> ");
+
+            lastIndex = matcher.end();
+        }
+        updatedHtml.append(htmlContent.substring(lastIndex));
+
+        return updatedHtml.toString();
+    }
+
+    /**
+     * Returns a note matching the given title\
+     *
+     * @param title The title of the requested note
+     * @return The note with the given title, null if not found
+     */
+    public Note findNoteByTitle(String title) {
         return data.stream()
                 .filter(note -> note.getTitle().equalsIgnoreCase(title))
                 .findFirst()
@@ -310,7 +355,7 @@ public class NoteOverviewCtrl implements Initializable {
         }
 
         title.setText(title.getText().trim());
-
+        //TODO Add checking of collection
         if (visibleNotes.stream().anyMatch(
                 note -> note.getTitle().equalsIgnoreCase(title.getText()) && !note.equals(lastSelectedNote))) {
             AlertMethods.createWarning("A note with this title already exists.");
