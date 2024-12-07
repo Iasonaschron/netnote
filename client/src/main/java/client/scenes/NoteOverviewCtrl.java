@@ -111,8 +111,8 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void updateWebView() {
         String htmlContent = "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"notes.css\"></head><body>"
-                + getNote().getHTML() + "</body></html>";
-        webEngine.loadContent(updateNoteLinksHTML(htmlContent));
+                + updateNoteLinksHTML(getNote().getHTML()) + "</body></html>";
+        webEngine.loadContent(htmlContent);
     }
 
     /**
