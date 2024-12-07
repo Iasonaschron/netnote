@@ -110,7 +110,11 @@ public class NoteOverviewCtrl implements Initializable {
      * This method is called when the selected note changes.
      */
     public void updateWebView() {
-        webEngine.loadContent(getNote().getHTML());
+        Note localNote = getNote();
+        localNote.renderRawText();
+        String htmlContent = "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"notes.css\"></head><body>"
+                + localNote.getHTML() + "</body></html>";
+        webEngine.loadContent(htmlContent);
     }
 
     /**
@@ -166,6 +170,12 @@ public class NoteOverviewCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         webEngine = webview.getEngine();
+        URL stylesheet = getClass().getResource("/client/styles/notes.css");
+        if (stylesheet != null) {
+            webEngine.setUserStyleSheetLocation(stylesheet.toExternalForm());
+        } else {
+            System.err.println("Stylesheet not found: /client/styles/notes.css");
+        }
 
         webEngine.setOnAlert(event -> {
             String url = event.getData();
@@ -182,7 +192,6 @@ public class NoteOverviewCtrl implements Initializable {
                 }
             }
         });
-
 
         listView.setCellFactory(_ -> new ListCell<>() {
             @Override
