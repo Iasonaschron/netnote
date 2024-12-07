@@ -169,6 +169,12 @@ public class NoteOverviewCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         webEngine = webview.getEngine();
+        URL stylesheet = getClass().getResource("/client/styles/notes.css");
+        if (stylesheet != null) {
+            webEngine.setUserStyleSheetLocation(stylesheet.toExternalForm());
+        } else {
+            System.err.println("Stylesheet not found: /client/styles/notes.css");
+        }
 
         webEngine.setOnAlert(event -> {
             String url = event.getData();
@@ -186,7 +192,6 @@ public class NoteOverviewCtrl implements Initializable {
                 }
             }
         });
-
 
         listView.setCellFactory(_ -> new ListCell<>() {
             @Override
