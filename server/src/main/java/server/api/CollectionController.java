@@ -3,10 +3,7 @@ package server.api;
 import commons.Collection;
 import commons.Note;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import server.database.CollectionRepository;
 
 import java.util.List;
@@ -67,12 +64,29 @@ public class CollectionController {
      */
     @PostMapping
     public ResponseEntity<Collection> addCollection(@RequestBody Collection coll) {
-        if (coll.getTitle() == null || coll.getTitle().isEmpty() || repo.existsById(coll.getId())) {
+        //checks if the collection is viable.
+        if (coll.getTitle() == null || coll.getTitle().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
+        //checks if the collection already exists and does nothing if true.
+        if(repo.existsById(coll.getId())){
+            return ResponseEntity.ok(coll);
+        }
+        //saves the collection to the repository.
         else {
             Collection saved = repo.save(coll);
             return ResponseEntity.ok(saved);
         }
+    }
+
+    /**
+     * A getter for the default collection in the Collection repository
+     * that is hardcoded with an id of 1001.
+     * @return the default collection
+     */
+
+    @GetMapping
+    public Collection getDefaultCollection() {
+        return repo.findById(1001L).get();
     }
 }

@@ -15,14 +15,25 @@
  */
 package server;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import commons.Collection;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import server.api.CollectionController;
 
 @Configuration
 public class Config {
 
+    Collection defaultCollection;
+
+
+    private final CollectionController collectionController;
     /**
      * Creates a Random bean
      *
@@ -33,7 +44,50 @@ public class Config {
         return new Random();
     }
 
+    public Config(CollectionController collectionController){
+        this.collectionController = collectionController;
+    }
 
+    /**
+     * Pre-Construct method that reads a hardcoded default collection and sends it to the
+     * server. If it already exists in the server repository then nothing happens and the
+     * file is left as is.
+     */
+    @PostConstruct
+    public void startup(){
+        try{
+            ObjectMapper mapper = new ObjectMapper();
+            File defaultConfig = new File("src/main/resources/defaultcollectionhardcoded.json");
 
+            if(defaultConfig.exists()){
+                defaultCollection = mapper.readValue(defaultConfig,Collection.class);
+                collectionController.addCollection(defaultCollection);
+            }
+            else{
+                System.out.println("Default collection hardcoded.json not found");
+            }
+        }
+        catch(IOException e){
+            throw new RuntimeException("Something went wrong here",e);
+        }
+    }
 
+    /**
+     * Pre-Destroy Method that checks gets the default collection from the server
+     * in which notes are being added to and hard saves it to a file that persists
+     * across resets.
+     */
+    @PreDestroy
+    public void shutdown(){
+        File defFile = new File("src/main/resources/defaultcollectionhardcoded.json");
+        ObjectMapper mapper = new ObjectMapper();
+        try{
+
+            Collection defColl =collectionController.getDefaultCollection();
+            mapper.writeValue(defFile,defaultCollection);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
