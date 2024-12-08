@@ -1,31 +1,28 @@
 package server.api;
 
-import commons.Collection;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import commons.Note;
-import server.database.CollectionRepository;
 import server.database.NoteRepository;
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/notes")
 public class NoteController {
 
-    private final CollectionController collectionController;
+
     private final NoteRepository repo;
-    private final CollectionRepository collectionRepository;
+
 
     /**
      * Initializes the controller with the provided NoteRepository
      *
      * @param repo The NoteRepository used for storing the notes
      */
-    public NoteController(NoteRepository repo, CollectionController collectionController, CollectionRepository collectionRepository) {
+    public NoteController(NoteRepository repo) {
         this.repo = repo;
-        this.collectionController = collectionController;
-        this.collectionRepository = collectionRepository;
     }
 
     /**
