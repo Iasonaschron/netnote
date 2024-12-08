@@ -13,6 +13,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
+
+
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -55,6 +57,8 @@ public class NoteOverviewCtrl implements Initializable {
     private boolean isEditing = false;
 
     private boolean isSaveAction = false;
+
+
 
     /**
      * Constructor for the NoteOverviewCtrl.

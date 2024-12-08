@@ -6,11 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.CollectionRepository;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
 
-@RestController("/api/collection")
+@RestController
+@RequestMapping("/api/collection")
 public class CollectionController {
 
     private final CollectionRepository repo;
@@ -35,11 +37,26 @@ public class CollectionController {
     }
 
     /**
+     * Getter for a collection via its ID
+     * @param id The id of the Collection
+     * @return A responseEntity with the collection with matching id if successful, bad request otherwise.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Collection> getCollectionById(@PathVariable Long id) {
+        if(!repo.existsById(id)) {
+            return ResponseEntity.badRequest().build();
+        }
+        else{
+            return ResponseEntity.ok(repo.findById(id).get());
+        }
+    }
+
+    /**
      * Adds a note to the default collection.
      * @param note the note to be added to the collection.
      * @return A response entity containing the collection if successful otherwise a bad request.
      */
-    @PostMapping
+    @PostMapping("/addNote")
     public ResponseEntity<Collection> addNotetoDefault(@RequestBody Note note) {
         if (note.getTitle() == null || note.getTitle().isEmpty()) {
             return ResponseEntity.badRequest().build();
@@ -60,7 +77,7 @@ public class CollectionController {
     /**
      * Adds a collection to the repository.
      * @param coll the collection to be added.
-     * @return
+     * @return ResponseEntity with the added collection if successful, bad request otherwise.
      */
     @PostMapping
     public ResponseEntity<Collection> addCollection(@RequestBody Collection coll) {
@@ -70,11 +87,13 @@ public class CollectionController {
         }
         //checks if the collection already exists and does nothing if true.
         if(repo.existsById(coll.getId())){
+            System.out.println("it already exists" + coll.getId());
             return ResponseEntity.ok(coll);
         }
         //saves the collection to the repository.
         else {
             Collection saved = repo.save(coll);
+            System.out.println("Saved" + saved.getId() + " " + saved.getTitle());
             return ResponseEntity.ok(saved);
         }
     }
@@ -85,8 +104,18 @@ public class CollectionController {
      * @return the default collection
      */
 
-    @GetMapping
+    @GetMapping("/defaultCollection")
     public Collection getDefaultCollection() {
-        return repo.findById(1001L).get();
+        try {
+            Optional<Collection> coll = repo.findById(1001L);
+            if (coll.isPresent()) {
+                return coll.get();
+            } else {
+                System.out.println("Collection not found");
+            }
+        } catch (Exception e) {
+            System.out.println("It doesnt exist?");
+        }
+    return null;
     }
 }

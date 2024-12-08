@@ -30,7 +30,7 @@ import server.api.CollectionController;
 @Configuration
 public class Config {
 
-    Collection defaultCollection;
+    private Collection defaultCollection;
 
 
     private final CollectionController collectionController;
@@ -44,6 +44,10 @@ public class Config {
         return new Random();
     }
 
+    /**
+     * Dependency Injection for collection Controller
+     * @param collectionController the collection Controller
+     */
     public Config(CollectionController collectionController){
         this.collectionController = collectionController;
     }
@@ -57,11 +61,12 @@ public class Config {
     public void startup(){
         try{
             ObjectMapper mapper = new ObjectMapper();
-            File defaultConfig = new File("src/main/resources/defaultcollectionhardcoded.json");
+            File defaultConfig = new File("server/src/main/resources/defaultcollectionhardcoded.json");
 
             if(defaultConfig.exists()){
                 defaultCollection = mapper.readValue(defaultConfig,Collection.class);
                 collectionController.addCollection(defaultCollection);
+                System.out.println("Collection added");
             }
             else{
                 System.out.println("Default collection hardcoded.json not found");
@@ -79,12 +84,13 @@ public class Config {
      */
     @PreDestroy
     public void shutdown(){
-        File defFile = new File("src/main/resources/defaultcollectionhardcoded.json");
+        File defFile = new File("server/src/main/resources/defaultcollectionhardcoded.json");
         ObjectMapper mapper = new ObjectMapper();
-        try{
 
+        try{
             Collection defColl =collectionController.getDefaultCollection();
-            mapper.writeValue(defFile,defaultCollection);
+            mapper.writeValue(defFile,defColl);
+            System.out.println("Default Collection configuration has been saved");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

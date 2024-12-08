@@ -21,9 +21,9 @@ public class Note {
     @Column(columnDefinition = "TEXT")
     private String html;
 
-    @ManyToOne
-    @JoinColumn(name = "collection_id") //Foreign key
-    private Collection collection;
+
+    @Column(name = "collection_id") //Foreign key
+    private long collectionId;
 
 
     /**
@@ -87,6 +87,15 @@ public class Note {
     }
 
     /**
+     * Retrieves the collection associated with this object.
+     *
+     * @return a Collection representing the current collection.
+     */
+    public Long getCollectionId() {
+        return collectionId;
+    }
+
+    /**
      * Sets the title of the note
      *
      * @param title The new title of the note
@@ -95,14 +104,7 @@ public class Note {
         this.title = title;
     }
 
-    /**
-     * Retrieves the collection associated with this object.
-     *
-     * @return a Collection representing the current collection.
-     */
-    public Collection getCollection() {
-        return collection;
-    }
+
 
     /**
      * Sets the content of the note and updates the HTML attribute
@@ -129,8 +131,8 @@ public class Note {
      *
      * @param collection the new collection that the note now belongs to.
      */
-    public void setCollection(Collection collection) {
-        this.collection = collection;
+    public void setCollectionId(Long collection) {
+        this.collectionId = collection;
     }
 
     /**

@@ -23,7 +23,7 @@ public class Collection {
     @Column
     private String title;
 
-    @OneToMany(mappedBy = "collection", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "collectionId", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<Note> collection;
 
     /**
