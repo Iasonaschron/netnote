@@ -44,7 +44,7 @@ public class AddQuoteCtrl {
     /**
      * Constructs a new instance and initializes dependencies
      *
-     * @param server The server utility for interacting with the back-end
+     * @param server   The server utility for interacting with the back-end
      * @param mainCtrl The main controller for managing scenes
      */
     @Inject

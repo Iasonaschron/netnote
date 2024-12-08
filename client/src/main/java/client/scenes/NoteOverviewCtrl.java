@@ -2,7 +2,7 @@ package client.scenes;
 
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
-
+import commons.AlertMethods;
 import commons.Note;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.application.Platform;
@@ -12,10 +12,14 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+
 import javafx.stage.Modality;
 
 
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -30,6 +34,11 @@ import java.util.concurrent.TimeUnit;
 public class NoteOverviewCtrl implements Initializable {
 
     @FXML
+    private WebView webview;
+
+    private WebEngine webEngine;
+
+    @FXML
     private ListView<Note> listView;
 
     @FXML
@@ -37,6 +46,9 @@ public class NoteOverviewCtrl implements Initializable {
 
     @FXML
     private TextArea content;
+
+    @FXML
+    private TextField searchBox;
 
     @FXML
     private Button done;
@@ -47,7 +59,8 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private Button add;
 
-    private ObservableList<Note> data;
+    private List<Note> data;
+    private ObservableList<Note> visibleNotes;
 
     private final ServerUtils server;
 
@@ -57,8 +70,6 @@ public class NoteOverviewCtrl implements Initializable {
     private boolean isEditing = false;
 
     private boolean isSaveAction = false;
-
-
 
     /**
      * Constructor for the NoteOverviewCtrl.
@@ -75,12 +86,54 @@ public class NoteOverviewCtrl implements Initializable {
      * Updates the ListView with the retrieved notes.
      */
     public void refresh() {
-        if(isEditing) {
+        if (isEditing) {
             return;
         }
-        var notes = server.getNotes();
-        data = FXCollections.observableList(notes);
-        listView.setItems(data);
+        data = server.getNotes();
+
+        updateList();
+
+        listView.setItems(visibleNotes);
+    }
+
+    /**
+     * Updates the list of notes based on the current filter string.
+     * This method is called when the filter string changes or the data is
+     * refreshed.
+     * It updates the ListView with the filtered notes.
+     */
+    public void updateList() {
+        visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
+
+        listView.setItems(visibleNotes);
+    }
+
+    /**
+     * Updates the WebView with the currently selected note's content.
+     * This method is called when the selected note changes.
+     */
+    public void updateWebView() {
+        String htmlContent = "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"notes.css\"></head><body>"
+                + updateNoteLinksHTML(getNote().getHTML()) + "</body></html>";
+        webEngine.loadContent(htmlContent);
+    }
+
+    /**
+     * Filters the list of notes based on the given filter string.
+     * If the filter is empty, all notes are returned.
+     * Otherwise, only notes with titles containing the filter string are returned.
+     *
+     * @param filter the filter string to apply to the list of notes
+     * @return a list of notes that match the filter string
+     */
+    public List<Note> getVisibleNotes(String filter) {
+        if (filter.isBlank()) {
+            return data;
+        } else {
+            return data.stream()
+                    .filter(note -> note.getTitle().toLowerCase().contains(filter.toLowerCase()))
+                    .toList();
+        }
     }
 
     /**
@@ -93,8 +146,9 @@ public class NoteOverviewCtrl implements Initializable {
         add.disableProperty().set(true);
         delete.disableProperty().set(true);
         done.disableProperty().set(false);
-        done.setOnAction(event -> done());
+        done.setOnAction(_ -> create());
         isSaveAction = false;
+        lastSelectedNote = null;
     }
 
     /**
@@ -103,6 +157,7 @@ public class NoteOverviewCtrl implements Initializable {
     private void clearFields() {
         title.clear();
         content.clear();
+        webEngine.loadContent("");
     }
 
     /**
@@ -116,6 +171,31 @@ public class NoteOverviewCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        webEngine = webview.getEngine();
+        URL stylesheet = getClass().getResource("/client/styles/notes.css");
+        if (stylesheet != null) {
+            webEngine.setUserStyleSheetLocation(stylesheet.toExternalForm());
+        } else {
+            System.err.println("Stylesheet not found: /client/styles/notes.css");
+        }
+
+        webEngine.setOnAlert(event -> {
+            String url = event.getData();
+            System.out.println("Triggered: " + url);
+            if (url.startsWith("note://")) {
+                String noteTitle = url.substring(7);
+                //TODO Add checking for collection of notes
+                Note linkedNote = findNoteByTitle(noteTitle);
+                if (linkedNote != null) {
+                    selectionChanged(null, lastSelectedNote, linkedNote);
+                    listView.getSelectionModel().select(linkedNote);
+                    listView.requestFocus();
+                } else {
+                    AlertMethods.createWarning("Note not found: " + noteTitle);
+                }
+            }
+        });
+
         listView.setCellFactory(_ -> new ListCell<>() {
             @Override
             protected void updateItem(Note item, boolean empty) {
@@ -131,6 +211,58 @@ public class NoteOverviewCtrl implements Initializable {
         listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
 
         startPolling();
+    }
+
+    /**
+     * Parses the current HTML and replaces notes references with links, checking if they are valid
+     *
+     * @param htmlContent The HTML contents of the current note
+     * @return The updated HTML contents
+     */
+    private String updateNoteLinksHTML(String htmlContent) {
+        StringBuilder updatedHtml = new StringBuilder();
+        int lastIndex = 0;
+
+        //TODO Check if is in the same collection
+        String regex = "\\[\\[(.+?)]]";
+        java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(regex).matcher(htmlContent);
+
+        while (matcher.find()) {
+            updatedHtml.append(htmlContent, lastIndex, matcher.start());
+
+            String noteTitle = matcher.group(1);
+            Note linkedNote = findNoteByTitle(noteTitle);
+
+            updatedHtml.append("<a href=\"note://")
+                    .append(noteTitle)
+                    .append("\" onclick=\"alert('note://")
+                    .append(noteTitle)
+                    .append("'); return false;\"");
+            if (linkedNote == null) {
+                updatedHtml.append("style=\"color:red; font-weight:bold;\"");
+            }
+            updatedHtml.append(">")
+                    .append(noteTitle)
+                    .append("</a> ");
+
+            lastIndex = matcher.end();
+        }
+        updatedHtml.append(htmlContent.substring(lastIndex));
+
+        return updatedHtml.toString();
+    }
+
+    /**
+     * Returns a note matching the given title\
+     *
+     * @param title The title of the requested note
+     * @return The note with the given title, null if not found
+     */
+    public Note findNoteByTitle(String title) {
+        return data.stream()
+                .filter(note -> note.getTitle().equalsIgnoreCase(title))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -152,12 +284,14 @@ public class NoteOverviewCtrl implements Initializable {
         }
         title.setText(newValue.getTitle());
         content.setText(newValue.getContent());
-        lastSelectedNote = newValue;
 
+        updateWebView();
+
+        lastSelectedNote = newValue;
         delete.disableProperty().set(false);
         add.disableProperty().set(false);
         done.disableProperty().set(true);
-        done.setOnAction(event -> save());
+        done.setOnAction(_ -> save());
         isSaveAction = true;
     }
 
@@ -166,15 +300,14 @@ public class NoteOverviewCtrl implements Initializable {
      * Displays an error alert if the server operation fails.
      * Refreshes the list of notes after successfully adding a note.
      */
-    public void done() {
+    public void create() {
+        if (!checkInput()) {
+            return;
+        }
         try {
             server.addNote(getNote());
-        } catch (WebApplicationException e) {
-
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+        } catch (NullPointerException | WebApplicationException e) {
+            AlertMethods.createError(e.getMessage());
             return;
         }
 
@@ -189,26 +322,53 @@ public class NoteOverviewCtrl implements Initializable {
      * Refreshes the list of notes after successfully updating the note.
      */
     public void save() {
+        if (!checkInput()) {
+            return;
+        }
+
         Note selectedNote = lastSelectedNote;
         String displayTitle = title.getText();
         String displayContent = content.getText();
         try {
             server.saveNote(selectedNote.getId(), getNote());
-        }
-        catch (WebApplicationException e) {
-
-            var alert = new Alert(Alert.AlertType.ERROR);
-            alert.initModality(Modality.APPLICATION_MODAL);
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            lastSelectedNote = server.getNoteById(selectedNote.getId());
+        } catch (NullPointerException | WebApplicationException e) {
+            AlertMethods.createError(e.getMessage());
             return;
         }
+
         isEditing = false;
         refresh();
         title.setText(displayTitle);
         content.setText(displayContent);
-        done.setOnAction(event -> done());
-        isSaveAction = false;
+        updateWebView();
+        done.disableProperty().set(true);
+    }
+
+    /**
+     * Checks whether the current title is valid, makes a few minor tweaks to the
+     * text
+     *
+     * @return True if the input is valid, false otherwise
+     */
+    private boolean checkInput() {
+        if (title.getText() == null || title.getText().isBlank()) {
+            AlertMethods.createWarning("The note title cannot be empty.");
+            return false;
+        }
+
+        title.setText(title.getText().trim());
+        //TODO Add checking of collection
+        if (visibleNotes.stream().anyMatch(
+                note -> note.getTitle().equalsIgnoreCase(title.getText()) && !note.equals(lastSelectedNote))) {
+            AlertMethods.createWarning("A note with this title already exists.");
+            return false;
+        }
+
+        if (content.getText() == null) {
+            content.setText("");
+        }
+        return true;
     }
 
     /**
@@ -218,7 +378,7 @@ public class NoteOverviewCtrl implements Initializable {
      */
     private Note getNote() {
         String t = null;
-        if(title.getText() != null && !title.getText().isBlank()) {
+        if (title.getText() != null && !title.getText().isBlank()) {
             t = title.getText();
         }
 
@@ -247,7 +407,7 @@ public class NoteOverviewCtrl implements Initializable {
         server.deleteNoteById(selectedNote.getId());
         isEditing = false;
         refresh();
-        done.setOnAction(event -> done());
+        done.setOnAction(_ -> create());
         isSaveAction = false;
         delete.disableProperty().set(true);
     }
@@ -255,21 +415,19 @@ public class NoteOverviewCtrl implements Initializable {
     /**
      * Updates the contents of a note in the database
      */
-    public void updateNote(){
+    public void updateNote() {
         isEditing = true;
 
         add.disableProperty().set(true);
         delete.disableProperty().set(true);
 
-
-        if(isSaveAction && title.getText() != null){
+        if (isSaveAction && title.getText() != null) {
             done.disableProperty().set(false);
-            done.setOnAction(event -> save());
+            done.setOnAction(_ -> save());
             isSaveAction = true;
-        }
-        else{
+        } else {
             done.disableProperty().set(false);
-            done.setOnAction(event -> done());
+            done.setOnAction(_ -> create());
             isSaveAction = false;
         }
     }

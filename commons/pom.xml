@@ -50,6 +50,24 @@
 			<version>${version.mockito}</version>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>23.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>23.0.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+			<version>23.0.1</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 

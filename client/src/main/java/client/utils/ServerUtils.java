@@ -41,7 +41,7 @@ public class ServerUtils {
     /**
      * Fetches quotes from the server using raw HTTP connections. This method prints the quotes to the console.
      *
-     * @throws IOException if an I/O error occurs during the connection or reading of data
+     * @throws IOException        if an I/O error occurs during the connection or reading of data
      * @throws URISyntaxException if the URI is invalid
      */
     public void getQuotesTheHardWay() throws IOException, URISyntaxException {
@@ -128,19 +128,18 @@ public class ServerUtils {
     /**
      * Sends a note to the server to be updated.
      *
-     * @param id id of the note to be updated
+     * @param id   id of the note to be updated
      * @param note new version of the note to be updated in the database
      * @return note updated in the database
      */
     public boolean saveNote(long id, Note note) {
-        try{
+        try {
             ClientBuilder.newClient(new ClientConfig())
                     .target(SERVER).path("api/notes/" + id)
                     .request(APPLICATION_JSON)
                     .put(Entity.entity(note, APPLICATION_JSON), Note.class);
             return true;
-        }
-        catch (ProcessingException e) {
+        } catch (ProcessingException e) {
             if (e.getCause() instanceof ConnectException) {
                 return false;
             }
@@ -167,5 +166,25 @@ public class ServerUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * Retrieves a note from the server by its ID.
+     *
+     * @param id the ID of the note to be retrieved
+     * @return the {@link Note} object retrieved from the server, or null if not found
+     */
+    public Note getNoteById(long id) {
+        try {
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(SERVER).path("api/notes/" + id)
+                    .request(APPLICATION_JSON)
+                    .get(Note.class);
+        } catch (ProcessingException e) {
+            if (e.getCause() instanceof ConnectException) {
+                return null;
+            }
+        }
+        return null;
     }
 }

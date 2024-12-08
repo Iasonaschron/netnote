@@ -39,7 +39,7 @@ public class Main extends Application {
      *
      * @param args command-line arguments
      * @throws URISyntaxException if a URI syntax error occurs
-     * @throws IOException if an IO error occurs
+     * @throws IOException        if an IO error occurs
      */
     public static void main(String[] args) throws URISyntaxException, IOException {
         launch();
