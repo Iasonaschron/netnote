@@ -123,6 +123,15 @@ public class Note {
     }
 
     /**
+     * Sets the tags of the note
+     *
+     * @param tags The new Set of tags of the note
+     */
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
+    }
+
+    /**
      * Sets the title of the note
      *
      * @param title The new title of the note
