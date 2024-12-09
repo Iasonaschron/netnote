@@ -55,10 +55,9 @@ public class Note {
 
     /**
      * Extracts all tags from the note's content and adds them to the tags set.
-     * Tags are identified by the pattern `#tagName` and stored without the `#` symbol.
      * Skips processing if the content is null.
      */
-    private void extractTagsFromContent() {
+    public void extractTagsFromContent() {
         String regex = "#(\\w+)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(content);
