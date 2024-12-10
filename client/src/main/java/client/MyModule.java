@@ -24,7 +24,8 @@ import client.scenes.QuoteOverviewCtrl;
 
 public class MyModule implements Module {
     /**
-     * Configures the bindings for the application's controllers using Guice dependency injection.
+     * Configures the bindings for the application's controllers using Guice
+     * dependency injection.
      *
      * @param binder The Guice binder used to define bindings
      */

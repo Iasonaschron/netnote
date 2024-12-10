@@ -1,4 +1,5 @@
 package commons;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,4 +30,3 @@ public class ContentProcessor {
         return processedContent.toString();
     }
 }
-

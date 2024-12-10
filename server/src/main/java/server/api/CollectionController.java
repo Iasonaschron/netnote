@@ -9,7 +9,6 @@ import server.database.CollectionRepository;
 import java.util.List;
 import java.util.Optional;
 
-
 @RestController
 @RequestMapping("/api/collection")
 public class CollectionController {
@@ -18,7 +17,9 @@ public class CollectionController {
 
     /**
      * Initializes the Controller with a Collection Repository
-     * @param repo The Collection Repository in which the collections will be stored.
+     * 
+     * @param repo The Collection Repository in which the collections will be
+     *             stored.
      */
 
     public CollectionController(CollectionRepository repo) {
@@ -27,6 +28,7 @@ public class CollectionController {
 
     /**
      * Getter for all the collections in the repository.
+     * 
      * @return Returns a list of all the collections in the repository.
      */
 
@@ -37,37 +39,38 @@ public class CollectionController {
 
     /**
      * Getter for a collection via its ID
+     * 
      * @param id The id of the Collection
-     * @return A responseEntity with the collection with matching id if successful, bad request otherwise.
+     * @return A responseEntity with the collection with matching id if successful,
+     *         bad request otherwise.
      */
     @GetMapping("/{id}")
     public ResponseEntity<Collection> getCollectionById(@PathVariable Long id) {
-        if(!repo.existsById(id)) {
+        if (!repo.existsById(id)) {
             return ResponseEntity.badRequest().build();
-        }
-        else{
+        } else {
             return ResponseEntity.ok(repo.findById(id).get());
         }
     }
 
     /**
      * Adds a note to the default collection.
+     * 
      * @param note the note to be added to the collection.
-     * @return A response entity containing the collection if successful otherwise a bad request.
+     * @return A response entity containing the collection if successful otherwise a
+     *         bad request.
      */
     @PostMapping("/addNote")
     public ResponseEntity<Collection> addNotetoDefault(@RequestBody Note note) {
         if (note.getTitle() == null || note.getTitle().isEmpty()) {
             return ResponseEntity.badRequest().build();
-        }
-        else {
+        } else {
             Optional<Collection> coll = repo.findById(1001L);
             if (coll.isPresent()) {
                 coll.get().addNote(note);
                 repo.save(coll.get());
                 return ResponseEntity.ok(coll.get());
-            }
-            else {
+            } else {
                 return ResponseEntity.badRequest().build();
             }
         }
@@ -75,21 +78,23 @@ public class CollectionController {
 
     /**
      * Adds a collection to the repository.
+     * 
      * @param coll the collection to be added.
-     * @return ResponseEntity with the added collection if successful, bad request otherwise.
+     * @return ResponseEntity with the added collection if successful, bad request
+     *         otherwise.
      */
     @PostMapping
     public ResponseEntity<Collection> addCollection(@RequestBody Collection coll) {
-        //checks if the collection is viable.
+        // checks if the collection is viable.
         if (coll.getTitle() == null || coll.getTitle().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        //checks if the collection already exists and does nothing if true.
-        if(repo.existsById(coll.getId())){
+        // checks if the collection already exists and does nothing if true.
+        if (repo.existsById(coll.getId())) {
             System.out.println("it already exists" + coll.getId());
             return ResponseEntity.ok(coll);
         }
-        //saves the collection to the repository.
+        // saves the collection to the repository.
         else {
             Collection saved = repo.save(coll);
             System.out.println("Saved" + saved.getId() + " " + saved.getTitle());
@@ -100,6 +105,7 @@ public class CollectionController {
     /**
      * A getter for the default collection in the Collection repository
      * that is hardcoded with an id of 1001.
+     * 
      * @return the default collection
      */
 

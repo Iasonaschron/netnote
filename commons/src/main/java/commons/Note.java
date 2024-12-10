@@ -30,10 +30,8 @@ public class Note {
     @Column(name = "tag")
     private Set<String> tags;
 
-
-    @Column(name = "collection_id") //Foreign key
+    @Column(name = "collection_id") // Foreign key
     private long collectionId;
-
 
     /**
      * Default constructor required for object mappers
@@ -153,8 +151,6 @@ public class Note {
         this.title = title;
     }
 
-
-
     /**
      * Sets the content of the note and updates the HTML attribute
      *
@@ -173,7 +169,6 @@ public class Note {
     public void setHtml(String html) {
         this.html = html;
     }
-
 
     /**
      * Sets the collection that the note belongs to

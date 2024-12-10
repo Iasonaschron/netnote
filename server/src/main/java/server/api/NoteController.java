@@ -1,6 +1,5 @@
 package server.api;
 
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import commons.Note;
@@ -9,14 +8,11 @@ import server.database.NoteRepository;
 import java.util.HashSet;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/notes")
 public class NoteController {
 
-
     private final NoteRepository repo;
-
 
     /**
      * Initializes the controller with the provided NoteRepository
@@ -41,7 +37,8 @@ public class NoteController {
      * Adds a new note to the database and adds it to the default collection.
      *
      * @param note The note being added
-     * @return A ResponseEntity containing the note if successful, bad request otherwise
+     * @return A ResponseEntity containing the note if successful, bad request
+     *         otherwise
      */
     @PostMapping
     public ResponseEntity<Note> addNote(@RequestBody Note note) {
@@ -57,7 +54,8 @@ public class NoteController {
      * Getter for a specific note given the ID
      *
      * @param id The ID of the note
-     * @return A ResponseEntity containing the note if successful, bad request otherwise
+     * @return A ResponseEntity containing the note if successful, bad request
+     *         otherwise
      */
     @GetMapping("/{id}")
     public ResponseEntity<Note> getNoteById(@PathVariable("id") long id) {
@@ -70,9 +68,10 @@ public class NoteController {
     /**
      * Updates an existing note
      *
-     * @param id The ID of the note
+     * @param id          The ID of the note
      * @param updatedNote The Note containing the new information
-     * @return A ResponseEntity containing the updated note if successful, bad request otherwise
+     * @return A ResponseEntity containing the updated note if successful, bad
+     *         request otherwise
      */
     @PutMapping("/{id}")
     public ResponseEntity<Note> updateNote(@PathVariable("id") long id, @RequestBody Note updatedNote) {

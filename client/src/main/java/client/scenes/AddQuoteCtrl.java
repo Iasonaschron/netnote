@@ -63,7 +63,8 @@ public class AddQuoteCtrl {
     }
 
     /**
-     * Attempts adding a quote to the server, displaying an error if something goes wrong
+     * Attempts adding a quote to the server, displaying an error if something goes
+     * wrong
      */
     public void ok() {
         try {

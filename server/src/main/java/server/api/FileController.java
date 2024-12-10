@@ -21,47 +21,47 @@ public class FileController {
     }
 
     @GetMapping("/{noteid}/{filename}")
-    public ResponseEntity<byte[]> getFile(@PathVariable("noteid") long noteid, @PathVariable("filename") String filename){
+    public ResponseEntity<byte[]> getFile(@PathVariable("noteid") long noteid,
+            @PathVariable("filename") String filename) {
         FileCompositeKey fck = new FileCompositeKey(filename, noteid);
         FileData fd = repo.findById(fck).orElse(null);
-        if(fd != null){
+        if (fd != null) {
             return ResponseEntity.ok(fd.getData());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     @PostMapping("/{noteid}/upload")
-    public ResponseEntity<String> postFile(@PathVariable("noteid") long noteid, @RequestParam("file") MultipartFile file,
-                                           @RequestParam("filename") String filename) throws IOException {
+    public ResponseEntity<String> postFile(@PathVariable("noteid") long noteid,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("filename") String filename) throws IOException {
         try {
             FileData fd = new FileData(filename, file.getBytes(), noteid);
             repo.save(fd);
             return ResponseEntity.ok("File uploaded successfully\n");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed\n");
         }
     }
 
     @DeleteMapping("/{noteid}/{filename}")
-    public ResponseEntity<String> deleteFile(@PathVariable("noteid") long noteid, @PathVariable("filename") String filename){
+    public ResponseEntity<String> deleteFile(@PathVariable("noteid") long noteid,
+            @PathVariable("filename") String filename) {
         FileCompositeKey fck = new FileCompositeKey(filename, noteid);
-        try{
+        try {
             repo.deleteById(fck);
             return ResponseEntity.ok("File deleted successfully\n");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Error deleting file: " + e.getMessage());
         }
     }
 
     @DeleteMapping("/{noteid}/all")
-    public ResponseEntity<String> deleteAllRelated(@PathVariable long noteid){
-        try{
+    public ResponseEntity<String> deleteAllRelated(@PathVariable long noteid) {
+        try {
             repo.deleteByNoteId(noteid);
             return ResponseEntity.ok("Files successfully deleted\n");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(500).body("Error deleting files: " + e.getMessage());
         }
     }
