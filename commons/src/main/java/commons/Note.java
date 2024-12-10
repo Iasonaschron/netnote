@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Entity
 public class Note {
 
@@ -21,6 +25,11 @@ public class Note {
     @Column(columnDefinition = "TEXT")
     private String html;
 
+    @ElementCollection
+    @CollectionTable(name = "note_tags", joinColumns = @JoinColumn(name = "note_id"))
+    @Column(name = "tag")
+    private Set<String> tags;
+
 
     /**
      * Default constructor required for object mappers
@@ -36,18 +45,35 @@ public class Note {
      * @param title   The title of the note
      * @param content The content of the note
      */
-    @SuppressWarnings("unused")
     public Note(String title, String content) {
         this.title = title;
         this.content = content;
         renderRawText();
+        this.tags = new HashSet<>();
+        extractTagsFromContent();
+    }
+
+    /**
+     * Extracts all tags from the note's content and adds them to the tags set.
+     * Skips processing if the content is null.
+     */
+    public void extractTagsFromContent() {
+        String regex = "#(\\w+)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(content);
+
+        while (matcher.find()) {
+            tags.add(matcher.group(1));
+        }
     }
 
     /**
      * Renders the raw Text currently in content into HTML
      */
     public void renderRawText() {
-        this.html = MarkDownMethods.renderRawTextToText(content);
+        String processedContent = ContentProcessor.processTags(content);
+
+        this.html = MarkDownMethods.renderRawTextToText(processedContent);
     }
 
     /**
@@ -85,6 +111,24 @@ public class Note {
     @SuppressWarnings("unused")
     public String getHTML() {
         return this.html;
+    }
+
+    /**
+     * Returns the tags in the content of the note
+     *
+     * @return Set containing all the tags inside the content
+     */
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    /**
+     * Sets the tags of the note
+     *
+     * @param tags The new Set of tags of the note
+     */
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
     }
 
     /**
