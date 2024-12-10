@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import commons.Note;
 import server.database.NoteRepository;
+
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -81,6 +83,12 @@ public class NoteController {
         existingNote.setTitle(updatedNote.getTitle());
         existingNote.setContent(updatedNote.getContent());
         existingNote.renderRawText();
+        if (existingNote.getTags() == null) {
+            existingNote.setTags(new HashSet<>());
+        }
+        existingNote.getTags().clear();
+        existingNote.getTags().clear();
+        existingNote.extractTagsFromContent();
         repo.save(existingNote);
         return ResponseEntity.ok(existingNote);
     }
