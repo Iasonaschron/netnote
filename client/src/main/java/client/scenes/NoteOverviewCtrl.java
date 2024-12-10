@@ -125,13 +125,21 @@ public class NoteOverviewCtrl implements Initializable {
      * @return a list of notes that match the filter string
      */
     public List<Note> getVisibleNotes(String filter) {
-        if (filter.isBlank()) {
+        if (filter.isBlank() || filter.equals("$")) {
             return data;
         } else {
-            return data.stream()
-                    .filter(note -> (note.getTitle().toLowerCase().contains(filter.toLowerCase())
-                            || note.getContent().toLowerCase().contains(filter.toLowerCase())))
-                    .toList();
+            if (filter.charAt(0) == '$') {
+                // Filter based on content
+                final String contentFilter = filter.substring(1);
+                return data.stream()
+                        .filter(note -> note.getContent().toLowerCase().contains(contentFilter.toLowerCase()))
+                        .toList();
+            } else {
+                // Filter based on title
+                return data.stream()
+                        .filter(note -> (note.getTitle().toLowerCase().contains(filter.toLowerCase())))
+                        .toList();
+            }
         }
     }
 
