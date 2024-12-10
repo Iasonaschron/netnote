@@ -15,9 +15,6 @@ import javafx.scene.control.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
-
-
-
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
@@ -121,7 +118,8 @@ public class NoteOverviewCtrl implements Initializable {
     /**
      * Filters the list of notes based on the given filter string.
      * If the filter is empty, all notes are returned.
-     * Otherwise, only notes with titles containing the filter string are returned.
+     * Otherwise, only notes with titles or content containing the filter string are
+     * returned.
      *
      * @param filter the filter string to apply to the list of notes
      * @return a list of notes that match the filter string
@@ -131,7 +129,8 @@ public class NoteOverviewCtrl implements Initializable {
             return data;
         } else {
             return data.stream()
-                    .filter(note -> note.getTitle().toLowerCase().contains(filter.toLowerCase()))
+                    .filter(note -> (note.getTitle().toLowerCase().contains(filter.toLowerCase())
+                            || note.getContent().toLowerCase().contains(filter.toLowerCase())))
                     .toList();
         }
     }
@@ -184,7 +183,7 @@ public class NoteOverviewCtrl implements Initializable {
             System.out.println("Triggered: " + url);
             if (url.startsWith("note://")) {
                 String noteTitle = url.substring(7);
-                //TODO Add checking for collection of notes
+                // TODO Add checking for collection of notes
                 Note linkedNote = findNoteByTitle(noteTitle);
                 if (linkedNote != null) {
                     selectionChanged(null, lastSelectedNote, linkedNote);
@@ -214,7 +213,8 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Parses the current HTML and replaces notes references with links, checking if they are valid
+     * Parses the current HTML and replaces notes references with links, checking if
+     * they are valid
      *
      * @param htmlContent The HTML contents of the current note
      * @return The updated HTML contents
@@ -223,7 +223,7 @@ public class NoteOverviewCtrl implements Initializable {
         StringBuilder updatedHtml = new StringBuilder();
         int lastIndex = 0;
 
-        //TODO Check if is in the same collection
+        // TODO Check if is in the same collection
         String regex = "\\[\\[(.+?)]]";
         java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(regex).matcher(htmlContent);
 
@@ -358,7 +358,7 @@ public class NoteOverviewCtrl implements Initializable {
         }
 
         title.setText(title.getText().trim());
-        //TODO Add checking of collection
+        // TODO Add checking of collection
         if (visibleNotes.stream().anyMatch(
                 note -> note.getTitle().equalsIgnoreCase(title.getText()) && !note.equals(lastSelectedNote))) {
             AlertMethods.createWarning("A note with this title already exists.");
