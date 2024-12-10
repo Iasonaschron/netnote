@@ -15,6 +15,9 @@ import javafx.scene.control.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
+
+
+
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
@@ -119,7 +122,7 @@ public class NoteOverviewCtrl implements Initializable {
      * Filters the list of notes based on the given filter string.
      * If the filter is empty, all notes are returned.
      * Otherwise, only notes with titles containing the filter string are returned.
-     * 
+     *
      * @param filter the filter string to apply to the list of notes
      * @return a list of notes that match the filter string
      */

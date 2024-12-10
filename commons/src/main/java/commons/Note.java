@@ -31,6 +31,10 @@ public class Note {
     private Set<String> tags;
 
 
+    @Column(name = "collection_id") //Foreign key
+    private long collectionId;
+
+
     /**
      * Default constructor required for object mappers
      */
@@ -114,6 +118,15 @@ public class Note {
     }
 
     /**
+     * Retrieves the collection associated with this object.
+     *
+     * @return a Collection representing the current collection.
+     */
+    public Long getCollectionId() {
+        return collectionId;
+    }
+
+    /**
      * Returns the tags in the content of the note
      *
      * @return Set containing all the tags inside the content
@@ -140,6 +153,8 @@ public class Note {
         this.title = title;
     }
 
+
+
     /**
      * Sets the content of the note and updates the HTML attribute
      *
@@ -157,6 +172,16 @@ public class Note {
      */
     public void setHtml(String html) {
         this.html = html;
+    }
+
+
+    /**
+     * Sets the collection that the note belongs to
+     *
+     * @param collection the new collection that the note now belongs to.
+     */
+    public void setCollectionId(Long collection) {
+        this.collectionId = collection;
     }
 
     /**
