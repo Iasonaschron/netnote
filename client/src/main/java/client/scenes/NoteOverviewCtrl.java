@@ -59,6 +59,7 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private Button add;
 
+    private long selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
 
@@ -79,6 +80,22 @@ public class NoteOverviewCtrl implements Initializable {
     @Inject
     public NoteOverviewCtrl(ServerUtils server) {
         this.server = server;
+    }
+
+    /**
+     * Sets the collection id and updates dataCollection
+     *
+     * @param selectedCollectionId The new selection ID
+     */
+    public void setSelectedCollectionId(long selectedCollectionId) {
+        this.selectedCollectionId = selectedCollectionId;
+    }
+
+    /**
+     * Updates the dataCollection list according to the currently selected collection
+     */
+    private List<Note> getNotesBySelectedCollection() {
+        return data.stream().filter(note -> note.getCollectionId() == selectedCollectionId).toList();
     }
 
     /**
@@ -173,6 +190,7 @@ public class NoteOverviewCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setSelectedCollectionId(1001); //TODO: There is probably a better way to initialize the id
         webEngine = webview.getEngine();
         URL stylesheet = getClass().getResource("/client/styles/notes.css");
         if (stylesheet != null) {
@@ -186,7 +204,6 @@ public class NoteOverviewCtrl implements Initializable {
             System.out.println("Triggered: " + url);
             if (url.startsWith("note://")) {
                 String noteTitle = url.substring(7);
-                //TODO Add checking for collection of notes
                 Note linkedNote = findNoteByTitle(noteTitle);
                 if (linkedNote != null) {
                     selectionChanged(null, lastSelectedNote, linkedNote);
@@ -225,7 +242,6 @@ public class NoteOverviewCtrl implements Initializable {
         StringBuilder updatedHtml = new StringBuilder();
         int lastIndex = 0;
 
-        //TODO Check if is in the same collection
         String regex = "\\[\\[(.+?)]]";
         java.util.regex.Matcher matcher = java.util.regex.Pattern.compile(regex).matcher(htmlContent);
 
@@ -261,7 +277,7 @@ public class NoteOverviewCtrl implements Initializable {
      * @return The note with the given title, null if not found
      */
     public Note findNoteByTitle(String title) {
-        return data.stream()
+        return getNotesBySelectedCollection().stream()
                 .filter(note -> note.getTitle().equalsIgnoreCase(title))
                 .findFirst()
                 .orElse(null);
@@ -359,7 +375,7 @@ public class NoteOverviewCtrl implements Initializable {
      * @param newTitle The new note title
      */
     private void updateNoteReferences(String oldTitle, String newTitle) {
-        for (Note note : data) {
+        for (Note note : getNotesBySelectedCollection()) {
             if (note.getTitle().equalsIgnoreCase(oldTitle))
                 continue;
 
@@ -390,8 +406,7 @@ public class NoteOverviewCtrl implements Initializable {
         }
 
         title.setText(title.getText().trim());
-        //TODO Add checking of collection
-        if (visibleNotes.stream().anyMatch(
+        if (getNotesBySelectedCollection().stream().anyMatch(
                 note -> note.getTitle().equalsIgnoreCase(title.getText()) && !note.equals(lastSelectedNote))) {
             AlertMethods.createWarning("A note with this title already exists.");
             return false;
