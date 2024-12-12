@@ -37,5 +37,4 @@ public class MarkDownMethods {
         return parser.parse(raw);
     }
 
-
 }

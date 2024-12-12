@@ -40,7 +40,7 @@ public class QuoteController {
      * Constructs a QuoteController instance with the given dependencies.
      *
      * @param random a Random object used to generate random quotes
-     * @param repo the QuoteRepository used for database operations
+     * @param repo   the QuoteRepository used for database operations
      */
     public QuoteController(Random random, QuoteRepository repo) {
         this.random = random;
@@ -61,7 +61,8 @@ public class QuoteController {
      * Retrieves a quote by its ID.
      *
      * @param id the ID of the quote to retrieve
-     * @return a ResponseEntity containing the quote if found, or a bad request if the ID is invalid
+     * @return a ResponseEntity containing the quote if found, or a bad request if
+     *         the ID is invalid
      */
     @GetMapping("/{id}")
     public ResponseEntity<Quote> getById(@PathVariable("id") long id) {
@@ -75,7 +76,8 @@ public class QuoteController {
      * Adds a new quote to the repository.
      *
      * @param quote the quote to add
-     * @return a ResponseEntity containing the saved quote, or a bad request if the quote is invalid
+     * @return a ResponseEntity containing the saved quote, or a bad request if the
+     *         quote is invalid
      */
     @PostMapping(path = { "", "/" })
     public ResponseEntity<Quote> add(@RequestBody Quote quote) {

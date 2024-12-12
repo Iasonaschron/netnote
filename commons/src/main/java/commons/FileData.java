@@ -21,11 +21,11 @@ public class FileData {
         id = new FileCompositeKey(filename, relatedNoteId);
     }
 
-    public long getRelatedNoteId(){
+    public long getRelatedNoteId() {
         return id.getRelatedNoteId();
     }
 
-    public String getFileName(){
+    public String getFileName() {
         return id.filename;
     }
 
