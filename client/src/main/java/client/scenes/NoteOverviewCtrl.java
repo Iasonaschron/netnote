@@ -129,7 +129,8 @@ public class NoteOverviewCtrl implements Initializable {
             return data;
         } else {
             return data.stream()
-                    .filter(note -> note.getTitle().toLowerCase().contains(filter.toLowerCase()))
+                    .filter(note -> note.getTitle().toLowerCase().contains(filter) ||
+                            note.getContent().toLowerCase().contains(filter))
                     .toList();
         }
     }
