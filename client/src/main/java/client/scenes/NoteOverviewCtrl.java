@@ -250,7 +250,7 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Returns a note matching the given title\
+     * Returns a note matching the given title
      *
      * @param title The title of the requested note
      * @return The note with the given title, null if not found
