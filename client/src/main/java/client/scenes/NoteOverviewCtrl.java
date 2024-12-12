@@ -15,9 +15,6 @@ import javafx.scene.control.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
-
-
-
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
@@ -139,19 +136,28 @@ public class NoteOverviewCtrl implements Initializable {
     /**
      * Filters the list of notes based on the given filter string.
      * If the filter is empty, all notes are returned.
-     * Otherwise, only notes with titles containing the filter string are returned.
+     * Otherwise, only notes with titles or content containing the filter string are
+     * returned.
      *
      * @param filter the filter string to apply to the list of notes
      * @return a list of notes that match the filter string
      */
     public List<Note> getVisibleNotes(String filter) {
-        if (filter.isBlank()) {
+        if (filter.isBlank() || filter.equals("$")) {
             return data;
         } else {
-            return data.stream()
-                    .filter(note -> note.getTitle().toLowerCase().contains(filter) ||
-                            note.getContent().toLowerCase().contains(filter))
-                    .toList();
+            if (filter.charAt(0) == '$') {
+                // Filter based on content
+                final String contentFilter = filter.substring(1);
+                return data.stream()
+                        .filter(note -> note.getContent().toLowerCase().contains(contentFilter.toLowerCase()))
+                        .toList();
+            } else {
+                // Filter based on title
+                return data.stream()
+                        .filter(note -> (note.getTitle().toLowerCase().contains(filter.toLowerCase())))
+                        .toList();
+            }
         }
     }
 
@@ -233,7 +239,8 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Parses the current HTML and replaces notes references with links, checking if they are valid
+     * Parses the current HTML and replaces notes references with links, checking if
+     * they are valid
      *
      * @param htmlContent The HTML contents of the current note
      * @return The updated HTML contents

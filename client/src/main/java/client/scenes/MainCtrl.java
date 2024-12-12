@@ -31,14 +31,17 @@ public class MainCtrl {
     private Scene add;
 
     /**
-     * Initializes the Main controller with the stages and scenes for the overview and adding quotes
+     * Initializes the Main controller with the stages and scenes for the overview
+     * and adding quotes
      *
      * @param primaryStage The main stage for the application
-     * @param overview     Pair containing the QuoteOverview controller and the associated parent
-     * @param add          Pair containing the AddQuote controller and the associated parent
+     * @param overview     Pair containing the QuoteOverview controller and the
+     *                     associated parent
+     * @param add          Pair containing the AddQuote controller and the
+     *                     associated parent
      */
     public void initialize(Stage primaryStage, Pair<QuoteOverviewCtrl, Parent> overview,
-                           Pair<AddQuoteCtrl, Parent> add) {
+            Pair<AddQuoteCtrl, Parent> add) {
         this.primaryStage = primaryStage;
         this.overviewCtrl = overview.getKey();
         this.overview = new Scene(overview.getValue());

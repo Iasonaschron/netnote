@@ -16,7 +16,6 @@ public class MainNotes extends Application {
     private static final Injector INJECTOR = createInjector(new NotesModule());
     private static final MyFXML FXML = new MyFXML(INJECTOR);
 
-
     /**
      * launches application
      *

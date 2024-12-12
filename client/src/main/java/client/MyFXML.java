@@ -43,7 +43,8 @@ public class MyFXML {
     }
 
     /**
-     * Loads the FXML file specified by the given parts and returns a pair of the controller and the root node.
+     * Loads the FXML file specified by the given parts and returns a pair of the
+     * controller and the root node.
      *
      * @param <T>   the type of the controller class
      * @param c     the class of the controller to load
@@ -63,7 +64,8 @@ public class MyFXML {
     }
 
     /**
-     * Constructs a URL for the location of the FXML file based on the provided parts.
+     * Constructs a URL for the location of the FXML file based on the provided
+     * parts.
      *
      * @param parts the parts of the path to the FXML file
      * @return the URL of the FXML file
@@ -74,12 +76,14 @@ public class MyFXML {
     }
 
     /**
-     * A custom factory for creating controller instances and resolving dependencies.
+     * A custom factory for creating controller instances and resolving
+     * dependencies.
      */
     private class MyFactory implements BuilderFactory, Callback<Class<?>, Object> {
 
         /**
-         * Returns a Builder for the specified type that injects dependencies using Guice.
+         * Returns a Builder for the specified type that injects dependencies using
+         * Guice.
          *
          * @param type the class type of the controller
          * @return a Builder that can create the controller

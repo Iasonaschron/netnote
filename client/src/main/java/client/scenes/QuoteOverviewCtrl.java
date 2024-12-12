@@ -59,10 +59,12 @@ public class QuoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Initializes the columns of the table to display the quote's person's first name,
+     * Initializes the columns of the table to display the quote's person's first
+     * name,
      * last name, and the quote text.
      *
-     * @param location  the location used to resolve relative paths for the root object,
+     * @param location  the location used to resolve relative paths for the root
+     *                  object,
      *                  or null if the location is not known
      * @param resources the resources used to localize the root object, or null if
      *                  no localization is required
