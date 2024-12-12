@@ -1,16 +1,22 @@
 package server.api;
 
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import commons.Note;
 import server.database.NoteRepository;
+
+import java.util.HashSet;
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/notes")
 public class NoteController {
 
+
     private final NoteRepository repo;
+
 
     /**
      * Initializes the controller with the provided NoteRepository
@@ -32,7 +38,7 @@ public class NoteController {
     }
 
     /**
-     * Adds a new note to the database
+     * Adds a new note to the database and adds it to the default collection.
      *
      * @param note The note being added
      * @return A ResponseEntity containing the note if successful, bad request otherwise
@@ -42,6 +48,7 @@ public class NoteController {
         if (note.getTitle() == null || note.getTitle().isEmpty() || note.getContent() == null) {
             return ResponseEntity.badRequest().build();
         }
+        note.setCollectionId(1001L);
         Note saved = repo.save(note);
         return ResponseEntity.ok(saved);
     }
@@ -76,6 +83,12 @@ public class NoteController {
         existingNote.setTitle(updatedNote.getTitle());
         existingNote.setContent(updatedNote.getContent());
         existingNote.renderRawText();
+        if (existingNote.getTags() == null) {
+            existingNote.setTags(new HashSet<>());
+        }
+        existingNote.getTags().clear();
+        existingNote.getTags().clear();
+        existingNote.extractTagsFromContent();
         repo.save(existingNote);
         return ResponseEntity.ok(existingNote);
     }
