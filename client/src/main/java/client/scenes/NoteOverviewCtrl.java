@@ -190,7 +190,7 @@ public class NoteOverviewCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setSelectedCollectionId(1001); //TODO: There is probably a better way to initialize the id
+        setSelectedCollectionId(1001); //TODO: There is probably a better way to initialize the default id
         webEngine = webview.getEngine();
         URL stylesheet = getClass().getResource("/client/styles/notes.css");
         if (stylesheet != null) {
