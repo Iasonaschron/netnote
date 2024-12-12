@@ -101,8 +101,9 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void updateList() {
         visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
-
         listView.setItems(visibleNotes);
+        if (lastSelectedNote == null || !visibleNotes.contains(lastSelectedNote))
+            clearFields();
     }
 
     /**
