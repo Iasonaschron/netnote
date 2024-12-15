@@ -61,22 +61,22 @@ public class Config {
      * file is left as is.
      */
     @PostConstruct
-    public void startup() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            File defaultConfig = new File("server/src/main/resources/defaultcollectionhardcoded.json");
-
-            if (defaultConfig.exists()) {
-                defaultCollection = mapper.readValue(defaultConfig, Collection.class);
-                collectionController.addCollection(defaultCollection);
-                System.out.println("Collection added");
-            } else {
-                System.out.println("Default collection hardcoded.json not found");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Something went wrong here", e);
-        }
-    }
+//    public void startup() {
+//        try {
+//            ObjectMapper mapper = new ObjectMapper();
+//            File defaultConfig = new File("server/src/main/resources/defaultcollectionhardcoded.json");
+//
+//            if (defaultConfig.exists()) {
+//                defaultCollection = mapper.readValue(defaultConfig, Collection.class);
+//                collectionController.addCollection(defaultCollection);
+//                System.out.println("Collection added");
+//            } else {
+//                System.out.println("Default collection hardcoded.json not found");
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException("Something went wrong here", e);
+//        }
+//    }
 
     /**
      * Pre-Destroy Method that checks gets the default collection from the server
