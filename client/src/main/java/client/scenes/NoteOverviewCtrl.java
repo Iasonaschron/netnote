@@ -528,9 +528,9 @@ public class NoteOverviewCtrl implements Initializable {
      * Starts a periodic polling task to refresh the notes every 5 seconds.
      */
     private void startPolling() {
-//        scheduler = Executors.newSingleThreadScheduledExecutor();
-//        scheduler.scheduleAtFixedRate(() -> {
-//            Platform.runLater(this::refresh);
-//        }, 0, 5, TimeUnit.SECONDS);
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(() -> {
+            Platform.runLater(this::refresh);
+        }, 0, 5, TimeUnit.SECONDS);
     }
 }
