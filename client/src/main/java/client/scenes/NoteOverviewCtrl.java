@@ -60,6 +60,7 @@ public class NoteOverviewCtrl implements Initializable {
     private long selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
+    private ObservableList<Note> tagNotes;
 
     private final ServerUtils server;
 
@@ -69,6 +70,7 @@ public class NoteOverviewCtrl implements Initializable {
     private boolean isEditing = false;
 
     private boolean isSaveAction = false;
+    private boolean justEdited = false;
 
     private List<String> tags = new ArrayList<>();
 
@@ -109,7 +111,6 @@ public class NoteOverviewCtrl implements Initializable {
         data = server.getNotes();
 
         updateList();
-        listView.setItems(visibleNotes);
     }
 
     /**
@@ -122,10 +123,15 @@ public class NoteOverviewCtrl implements Initializable {
         visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
         filterTagList();
 
-        if (tagsmenu.getValue() != null)  {
-            visibleNotes = FXCollections.observableList(filterNotesByTag(tagsmenu.getValue()));
+        if (tagsmenu.getValue() != null && justEdited) {
+            // Filter notes based on the selected tag
+            tagNotes = FXCollections.observableList(filterNotesByTag(tagsmenu.getValue()));
+            listView.setItems(tagNotes);
+        } else {
+            // No selection; show all visible notes
+            listView.setItems(visibleNotes);
         }
-        listView.setItems(visibleNotes);
+
 
         if (lastSelectedNote == null || !visibleNotes.contains(lastSelectedNote))
             clearFields();
@@ -193,6 +199,9 @@ public class NoteOverviewCtrl implements Initializable {
         done.setOnAction(_ -> create());
         isSaveAction = false;
         lastSelectedNote = null;
+        if (tagsmenu.getValue() != null) {
+            listView.setItems(visibleNotes);
+        }
     }
 
     /**
@@ -259,8 +268,9 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     private void tagMenuSelect(javafx.event.ActionEvent actionEvent) {
-        visibleNotes = FXCollections.observableList(filterNotesByTag(tagsmenu.getValue()));
-        listView.setItems(visibleNotes);
+        tagNotes = FXCollections.observableList(filterNotesByTag(tagsmenu.getValue()));
+        listView.setItems(tagNotes);
+        listView.getSelectionModel().select(0);
     }
 
     /**
@@ -269,7 +279,7 @@ public class NoteOverviewCtrl implements Initializable {
      * @return The filtered list of notes
      */
     public List<Note> filterNotesByTag(String tag){
-        return data.stream().
+        return visibleNotes.stream().
                 filter(note -> note.getTags().contains(tag)).
                 toList();
 
@@ -406,7 +416,9 @@ public class NoteOverviewCtrl implements Initializable {
         }
 
         isEditing = false;
+        justEdited = true;
         refresh();
+        justEdited = false;
         title.setText(displayTitle);
         content.setText(displayContent);
         updateWebView();
