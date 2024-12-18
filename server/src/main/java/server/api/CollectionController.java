@@ -86,19 +86,24 @@ public class CollectionController {
     @PostMapping
     public ResponseEntity<Collection> addCollection(@RequestBody Collection coll) {
         // checks if the collection is viable.
-        if (coll.getTitle() == null || coll.getTitle().isEmpty()) {
+        try {
+            if (coll.getTitle() == null || coll.getTitle().isEmpty()) {
+                return ResponseEntity.badRequest().build();
+            }
+            // checks if the collection already exists and does nothing if true.
+            if (repo.existsById(coll.getId())) {
+                System.out.println("it already exists" + coll.getId());
+                return ResponseEntity.ok(coll);
+            }
+            // saves the collection to the repository.
+            else {
+                Collection saved = repo.save(coll);
+                System.out.println("Saved" + saved.getId() + " " + saved.getTitle());
+                return ResponseEntity.ok(saved);
+            }
+        }
+        catch (Exception _){
             return ResponseEntity.badRequest().build();
-        }
-        // checks if the collection already exists and does nothing if true.
-        if (repo.existsById(coll.getId())) {
-            System.out.println("it already exists" + coll.getId());
-            return ResponseEntity.ok(coll);
-        }
-        // saves the collection to the repository.
-        else {
-            Collection saved = repo.save(coll);
-            System.out.println("Saved" + saved.getId() + " " + saved.getTitle());
-            return ResponseEntity.ok(saved);
         }
     }
 
