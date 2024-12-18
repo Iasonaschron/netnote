@@ -1,11 +1,11 @@
-| Key          | Value                                                                                              |
-|--------------|----------------------------------------------------------------------------------------------------|
-| Date:        | 18-12-24                                                                                           |
-| Time:        | 14:45 - 15:30                                                                                      |
-| Location:    | DW PC1 Cubicle 2                                                                                   |
-| Chair        | Vasco Roldão                                                                                       |
-| Minute Taker | Iasonas Chronis                                                                                    |
-| Attendees:   | Alexandru Grosu<br/>Hemant Anilkumar<br/>Stijn van Drimmelen<br/>Teodor Dragomir<br/>Amanda Andree |
+| Key          | Value                                                                                          |
+|--------------|------------------------------------------------------------------------------------------------|
+| Date:        | 18-12-24                                                                                       |
+| Time:        | 14:45 - 15:30                                                                                  |
+| Location:    | DW PC1 Cubicle 2                                                                               |
+| Chair        | Vasco Roldão                                                                                   |
+| Minute Taker | Stijn van Drimmelen                                                                            |
+| Attendees:   | Alexandru Grosu<br/>Hemant Anilkumar<br/>Iasonas Chronis<br/>Teodor Dragomir<br/>Amanda Andree |
 
 ## Agenda Items:
 
