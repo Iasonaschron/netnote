@@ -16,9 +16,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
 import java.net.URL;
-import java.util.List;
-import java.util.Objects;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -56,9 +54,13 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private Button add;
 
+    @FXML
+    private ChoiceBox<String> tagsmenu;
+
     private long selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
+    private ObservableList<Note> tagNotes;
 
     private final ServerUtils server;
 
@@ -68,6 +70,9 @@ public class NoteOverviewCtrl implements Initializable {
     private boolean isEditing = false;
 
     private boolean isSaveAction = false;
+    private boolean justEdited = false;
+
+    private List<String> tags = new ArrayList<>();
 
     /**
      * Constructor for the NoteOverviewCtrl.
@@ -106,8 +111,6 @@ public class NoteOverviewCtrl implements Initializable {
         data = server.getNotes();
 
         updateList();
-
-        listView.setItems(visibleNotes);
     }
 
     /**
@@ -118,9 +121,31 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void updateList() {
         visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
-        listView.setItems(visibleNotes);
+        filterTagList();
+
+        if (tagsmenu.getValue() != null && justEdited) {
+            // Filter notes based on the selected tag
+            tagNotes = FXCollections.observableList(filterNotesByTag(tagsmenu.getValue()));
+            listView.setItems(tagNotes);
+        } else {
+            // No selection; show all visible notes
+            listView.setItems(visibleNotes);
+        }
+
+
         if (lastSelectedNote == null || !visibleNotes.contains(lastSelectedNote))
             clearFields();
+    }
+
+    /**
+     * Updates the dropdown menu of available tags to filter by
+     */
+    public void filterTagList(){
+        tags = visibleNotes.stream().
+                flatMap(note -> note.getTags().stream()).distinct().
+                toList();
+
+        tagsmenu.setItems(FXCollections.observableArrayList(tags));
     }
 
     /**
@@ -174,6 +199,9 @@ public class NoteOverviewCtrl implements Initializable {
         done.setOnAction(_ -> create());
         isSaveAction = false;
         lastSelectedNote = null;
+        if (tagsmenu.getValue() != null) {
+            listView.setItems(visibleNotes);
+        }
     }
 
     /**
@@ -233,10 +261,30 @@ public class NoteOverviewCtrl implements Initializable {
             }
         });
 
+        tagsmenu.setOnAction(this::tagMenuSelect);
         listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
 
         startPolling();
     }
+
+    private void tagMenuSelect(javafx.event.ActionEvent actionEvent) {
+        tagNotes = FXCollections.observableList(filterNotesByTag(tagsmenu.getValue()));
+        listView.setItems(tagNotes);
+        listView.getSelectionModel().select(0);
+    }
+
+    /**
+     * Filters notes based on the selected tag from the dropdown menu
+     * @param tag tag selected
+     * @return The filtered list of notes
+     */
+    public List<Note> filterNotesByTag(String tag){
+        return visibleNotes.stream().
+                filter(note -> note.getTags().contains(tag)).
+                toList();
+
+    }
+
 
     /**
      * Parses the current HTML and replaces notes references with links, checking if
@@ -368,7 +416,9 @@ public class NoteOverviewCtrl implements Initializable {
         }
 
         isEditing = false;
+        justEdited = true;
         refresh();
+        justEdited = false;
         title.setText(displayTitle);
         content.setText(displayContent);
         updateWebView();
