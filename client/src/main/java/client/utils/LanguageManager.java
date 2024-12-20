@@ -23,4 +23,14 @@ public class LanguageManager {
     public static ResourceBundle getBundle() {
         return ResourceBundle.getBundle("client.localization.labels", currentLocale);
     }
+
+    /**
+     * Returns a string from the current bundle based on the given key
+     *
+     * @param key The key of the string
+     * @return The string from the resource bundle
+     */
+    public static String getString(String key) {
+        return getBundle().getString(key);
+    }
 }

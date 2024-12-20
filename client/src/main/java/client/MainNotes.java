@@ -44,7 +44,6 @@ public class MainNotes extends Application {
             return;
         }
 
-        LanguageManager.loadLocale("nl");
         var overview = FXML.load(NoteOverviewCtrl.class, LanguageManager.getBundle(), "client", "scenes", "NoteOverview.fxml");
 
         var mainNotesCtrl = INJECTOR.getInstance(MainNotesCtrl.class);
