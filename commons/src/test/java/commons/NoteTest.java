@@ -2,6 +2,9 @@ package commons;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class NoteTest {
 
@@ -153,5 +156,43 @@ public class NoteTest {
         Note note1 = new Note("Title 1", "Content");
         Note note2 = new Note("Title 2", "Different Content");
         assertNotEquals(note1.hashCode(), note2.hashCode());
+    }
+
+    @Test
+    public void extractTagsFromContent_addsTagsToSet() {
+        Note note = new Note("Test Title", "This is a #test note with #multiple #tags.");
+        note.extractTagsFromContent();
+        assertTrue(note.getTags().contains("test"));
+        assertTrue(note.getTags().contains("multiple"));
+        assertTrue(note.getTags().contains("tags"));
+    }
+
+    @Test
+    public void extractTagsFromContent_handlesNoTags() {
+        Note note = new Note("Test Title", "This note has no tags.");
+        note.extractTagsFromContent();
+        assertTrue(note.getTags().isEmpty());
+    }
+
+    @Test
+    public void extractTagsFromContent_handlesNullContent() {
+        Note note = new Note("Test title", null);
+        note.extractTagsFromContent();
+        assertTrue(note.getTags().isEmpty());
+    }
+
+    @Test
+    public void setTags_updatesTagsSet() {
+        Note note = new Note();
+        Set<String> newTags = new HashSet<>(Arrays.asList("tag1", "tag2"));
+        note.setTags(newTags);
+        assertEquals(newTags, note.getTags());
+    }
+
+    @Test
+    public void setCollectionId_updatesCollectionId() {
+        Note note = new Note();
+        note.setCollectionId(123L);
+        assertEquals(123L, note.getCollectionId());
     }
 }

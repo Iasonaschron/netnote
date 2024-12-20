@@ -21,8 +21,7 @@ public class MainNotesCtrl {
      *
      * @param primaryStage the primary stage of the application
      * @param overview     a Pair containing the note overview controller and the
-     *                     Parent
-     *                     node representing the overview scene layout
+     *                     Parent node representing the overview scene layout
      */
     public void initialize(Stage primaryStage, Pair<NoteOverviewCtrl, Parent> overview) {
         this.primaryStage = primaryStage;
