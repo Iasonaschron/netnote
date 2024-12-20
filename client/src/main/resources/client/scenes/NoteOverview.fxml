@@ -31,7 +31,7 @@
                         </AnchorPane>
                         <AnchorPane maxHeight="40.0" maxWidth="1.7976931348623157E308" minHeight="20.0" minWidth="0.0" prefHeight="31.0" prefWidth="130.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <TextField fx:id="searchBox" onKeyTyped="#updateList" promptText="Search..." AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <TextField fx:id="searchBox" onKeyTyped="#updateList" promptText="%search.prompt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="284.0" prefWidth="170.0" VBox.vgrow="ALWAYS">
@@ -75,7 +75,7 @@
                                              <children>
                                                 <AnchorPane maxWidth="150.0" StackPane.alignment="CENTER">
                                                    <children>
-                                                      <Button fx:id="add" disable="true" layoutX="7.2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#createNote" prefHeight="26.0" prefWidth="64.0" text="Add" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
+                                                      <Button fx:id="add" disable="true" layoutX="7.2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#createNote" prefHeight="26.0" prefWidth="64.0" text="%add" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
                                                    </children>
                                                 </AnchorPane>
                                              </children>
@@ -100,7 +100,7 @@
                                  <children>
                                     <AnchorPane StackPane.alignment="CENTER">
                                        <children>
-                                          <TextField fx:id="title" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="63.0" prefWidth="226.0" promptText="Title" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <TextField fx:id="title" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="63.0" prefWidth="226.0" promptText="%title.prompt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                  </children>
@@ -113,7 +113,7 @@
                                  <children>
                                     <AnchorPane StackPane.alignment="CENTER">
                                        <children>
-                                          <TextArea fx:id="content" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="282.0" prefWidth="226.0" promptText="Content" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <TextArea fx:id="content" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="282.0" prefWidth="226.0" promptText="%content.prompt" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                  </children>
@@ -143,7 +143,7 @@
                                              <children>
                                                 <AnchorPane minHeight="0.0" minWidth="0.0" StackPane.alignment="CENTER">
                                                    <children>
-                                                      <Button fx:id="delete" disable="true" layoutY="18.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#deleteNote" prefHeight="26.0" prefWidth="44.0" text="Delete" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
+                                                      <Button fx:id="delete" disable="true" layoutY="18.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#deleteNote" prefHeight="26.0" prefWidth="44.0" text="%delete" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
                                                    </children>
                                                 </AnchorPane>
                                              </children>
@@ -156,7 +156,7 @@
                                              <children>
                                                 <AnchorPane minHeight="0.0" minWidth="0.0" StackPane.alignment="CENTER">
                                                    <children>
-                                                      <Button fx:id="done" layoutY="18.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#create" prefHeight="26.0" prefWidth="36.0" text="Done" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
+                                                      <Button fx:id="done" layoutY="18.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#create" prefHeight="26.0" prefWidth="36.0" text="%done" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
                                                    </children>
                                                 </AnchorPane>
                                              </children>

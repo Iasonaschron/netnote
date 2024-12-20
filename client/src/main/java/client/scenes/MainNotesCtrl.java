@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.LanguageManager;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -39,7 +40,7 @@ public class MainNotesCtrl {
      * Sets the stage title and ensures the notes are refreshed.
      */
     public void showOverview() {
-        primaryStage.setTitle("Notes: Overview");
+        primaryStage.setTitle(LanguageManager.getString("overview.title"));
         primaryStage.setScene(overview);
         noteOverviewCtrl.refresh();
     }

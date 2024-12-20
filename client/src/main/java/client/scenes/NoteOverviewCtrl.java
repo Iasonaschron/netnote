@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.utils.LanguageManager;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.AlertMethods;
@@ -244,7 +245,7 @@ public class NoteOverviewCtrl implements Initializable {
                     listView.getSelectionModel().select(linkedNote);
                     listView.requestFocus();
                 } else {
-                    AlertMethods.createWarning("Note not found: " + noteTitle);
+                    AlertMethods.createWarning(LanguageManager.getString("note_not_found") + " " + noteTitle);
                 }
             }
         });
@@ -458,14 +459,14 @@ public class NoteOverviewCtrl implements Initializable {
      */
     private boolean checkInput() {
         if (title.getText() == null || title.getText().isBlank()) {
-            AlertMethods.createWarning("The note title cannot be empty.");
+            AlertMethods.createWarning(LanguageManager.getString("note_title_empty"));
             return false;
         }
 
         title.setText(title.getText().trim());
         if (getNotesBySelectedCollection().stream().anyMatch(
                 note -> note.getTitle().equalsIgnoreCase(title.getText()) && !note.equals(lastSelectedNote))) {
-            AlertMethods.createWarning("A note with this title already exists.");
+            AlertMethods.createWarning(LanguageManager.getString("note_title_duplicate"));
             return false;
         }
 
