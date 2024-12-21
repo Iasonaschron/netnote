@@ -61,6 +61,9 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private ChoiceBox<String> languageMenu;
 
+    @FXML
+    private CheckBox searchByContentCheckBox;
+
     private long selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
@@ -172,10 +175,10 @@ public class NoteOverviewCtrl implements Initializable {
      * @return a list of notes that match the filter string
      */
     public List<Note> getVisibleNotes(String filter) {
-        if (filter.isBlank() || filter.equals("$")) {
+        if (filter.isBlank()) {
             return data;
         } else {
-            if (filter.charAt(0) == '$') {
+            if (searchByContentCheckBox.isSelected()) {
                 // Filter based on content
                 final String contentFilter = filter.substring(1);
                 return data.stream()
@@ -264,6 +267,8 @@ public class NoteOverviewCtrl implements Initializable {
                 }
             }
         });
+
+        searchByContentCheckBox.selectedProperty().addListener(_ -> updateList());
 
         languageMenu.setItems(FXCollections.observableArrayList("EN", "NL", "RO"));
         languageMenu.getSelectionModel().select(LanguageManager.getCurrentLanguageCode().toUpperCase());
