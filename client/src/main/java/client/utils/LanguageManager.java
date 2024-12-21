@@ -2,17 +2,29 @@ package client.utils;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 public class LanguageManager {
-    private static Locale currentLocale = Locale.ENGLISH;
+    private static final String LANGUAGE_KEY = "user_language";
+    private static final String DEFAULT_LANGUAGE = "en";
+    private static final Preferences preferences = Preferences.userNodeForPackage(LanguageManager.class);
+    private static Locale currentLocale;
+
+    // This code is executed when the class is first loaded into memory
+    static {
+        String savedLanguage = preferences.get(LANGUAGE_KEY, DEFAULT_LANGUAGE);
+        currentLocale = Locale.of(savedLanguage);
+    }
 
     /**
      * Changes the locale of the language manager with the given language code
+     * and updates the currently stored config
      *
      * @param languageCode The language code of the language (e.g. "ro", "en", "nl")
      */
     public static void loadLocale(String languageCode) {
         currentLocale = Locale.of(languageCode);
+        preferences.put(LANGUAGE_KEY, languageCode);
     }
 
     /**
