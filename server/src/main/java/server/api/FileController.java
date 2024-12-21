@@ -16,10 +16,20 @@ public class FileController {
 
     private final FileRepository repo;
 
+    /**
+     * Initializes the FileController with a file repo
+     * @param repo the repository that holds the files
+     */
     public FileController(FileRepository repo) {
         this.repo = repo;
     }
 
+    /**
+     * This is intended to be used in raw html to access the binary data of the files
+     * @param noteid The files primary key is a composite key consisting of both noteid and filename, this represents the noteid
+     * @param filename This represents the filename
+     * @return returns the binary data of a file related to a key
+     */
     @GetMapping("/{noteid}/{filename}")
     public ResponseEntity<byte[]> getFile(@PathVariable("noteid") long noteid,
             @PathVariable("filename") String filename) {
@@ -31,6 +41,14 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
+    /**
+     * Uploads a file to the repo
+     * @param noteid the id of the related note
+     * @param file the file to be uploaded
+     * @param filename the name of the file
+     * @return A success/error message
+     * @throws IOException
+     */
     @PostMapping("/{noteid}/upload")
     public ResponseEntity<String> postFile(@PathVariable("noteid") long noteid,
             @RequestParam("file") MultipartFile file,
@@ -44,6 +62,12 @@ public class FileController {
         }
     }
 
+    /**
+     * Deletes a file from the repo given a key
+     * @param noteid the noteid part of the key
+     * @param filename the filename part of the key
+     * @return a success/error message
+     */
     @DeleteMapping("/{noteid}/{filename}")
     public ResponseEntity<String> deleteFile(@PathVariable("noteid") long noteid,
             @PathVariable("filename") String filename) {
@@ -56,6 +80,11 @@ public class FileController {
         }
     }
 
+    /**
+     * Deletes all files related to a specific noteid
+     * @param noteid the noteid we want to delete for
+     * @return a success/error message
+     */
     @DeleteMapping("/{noteid}/all")
     public ResponseEntity<String> deleteAllRelated(@PathVariable long noteid) {
         try {
