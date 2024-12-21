@@ -271,7 +271,7 @@ public class NoteOverviewCtrl implements Initializable {
         languageMenu.setOnAction(_ -> {
             String selectedLanguage = languageMenu.getValue().toUpperCase();
             LanguageManager.loadLocale(selectedLanguage);
-            refresh();
+            refresh(); //TODO: make the fxml refresh when changing the language
         });
 
         tagsmenu.setOnAction(this::tagMenuSelect);
