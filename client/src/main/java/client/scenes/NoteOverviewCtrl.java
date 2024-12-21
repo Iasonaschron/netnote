@@ -201,7 +201,7 @@ public class NoteOverviewCtrl implements Initializable {
         clearFields();
         listView.getSelectionModel().clearSelection();
         add.disableProperty().set(true);
-        delete.disableProperty().set(true);
+        delete.disableProperty().set(false);
         done.disableProperty().set(false);
         done.setOnAction(_ -> create());
         isSaveAction = false;
@@ -267,6 +267,15 @@ public class NoteOverviewCtrl implements Initializable {
                 }
             }
         });
+
+        delete.setOnAction(_ -> {
+            if (isSaveAction) {
+                deleteNote();
+            } else {
+                clearFields();
+            }
+        });
+
 
         searchByContentCheckBox.selectedProperty().addListener(_ -> updateList());
 
@@ -541,7 +550,7 @@ public class NoteOverviewCtrl implements Initializable {
         isEditing = true;
 
         add.disableProperty().set(true);
-        delete.disableProperty().set(true);
+        delete.disableProperty().set(false);
 
         if (isSaveAction && title.getText() != null) {
             done.disableProperty().set(false);
