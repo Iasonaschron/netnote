@@ -49,7 +49,12 @@ public class Note {
      */
     public Note(String title, String content) {
         this.title = title;
-        this.content = content;
+        if(content != null){
+            this.content = content;
+        }
+        else{
+            this.content = "";
+        }
         renderRawText();
         this.tags = new HashSet<>();
         extractTagsFromContent();
