@@ -58,6 +58,9 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private ChoiceBox<String> tagsmenu;
 
+    @FXML
+    private ChoiceBox<String> languageMenu;
+
     private long selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
@@ -260,6 +263,15 @@ public class NoteOverviewCtrl implements Initializable {
                     setText(item.getTitle());
                 }
             }
+        });
+
+        languageMenu.setItems(FXCollections.observableArrayList("EN", "NL", "RO"));
+        languageMenu.getSelectionModel().select(LanguageManager.getCurrentLanguageCode().toUpperCase());
+
+        languageMenu.setOnAction(_ -> {
+            String selectedLanguage = languageMenu.getValue().toUpperCase();
+            LanguageManager.loadLocale(selectedLanguage);
+            refresh();
         });
 
         tagsmenu.setOnAction(this::tagMenuSelect);

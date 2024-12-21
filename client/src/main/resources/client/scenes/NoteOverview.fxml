@@ -27,6 +27,7 @@
                         <AnchorPane maxHeight="60.0" maxWidth="1.7976931348623157E308" minHeight="20.0" minWidth="0.0" prefHeight="50.0" prefWidth="130.0" VBox.vgrow="ALWAYS">
                            <children>
                               <ChoiceBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <ChoiceBox fx:id="languageMenu" layoutX="24.0" layoutY="18.0" prefWidth="150.0" />
                            </children>
                         </AnchorPane>
                         <AnchorPane maxHeight="40.0" maxWidth="1.7976931348623157E308" minHeight="20.0" minWidth="0.0" prefHeight="31.0" prefWidth="130.0" VBox.vgrow="ALWAYS">

@@ -45,4 +45,13 @@ public class LanguageManager {
     public static String getString(String key) {
         return getBundle().getString(key);
     }
+
+    /**
+     * Returns the current language code (e.g. "en", "fr", "ro")
+     *
+     * @return The current language code
+     */
+    public static String getCurrentLanguageCode() {
+        return currentLocale.getLanguage();
+    }
 }
