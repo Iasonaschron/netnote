@@ -13,26 +13,51 @@ public class FileData {
     @Lob
     private byte[] data;
 
+    /**
+     * Constructor for object mappers
+     */
     public FileData() {
     }
 
+    /**
+     * Constructor for a FileData object
+     * @param filename The name of the file
+     * @param data the binary data of the file
+     * @param relatedNoteId the id of the related note
+     */
     public FileData(String filename, byte[] data, long relatedNoteId) {
         this.data = data;
         id = new FileCompositeKey(filename, relatedNoteId);
     }
 
+    /**
+     *
+     * @return The id of the related note
+     */
     public long getRelatedNoteId() {
         return id.getRelatedNoteId();
     }
 
+    /**
+     *
+     * @return The name of the file
+     */
     public String getFileName() {
         return id.filename;
     }
 
+    /**
+     *
+     * @return The primary key of this object
+     */
     public FileCompositeKey getId() {
         return id;
     }
 
+    /**
+     *
+     * @return The binary data of the file
+     */
     public byte[] getData() {
         return data;
     }
