@@ -58,6 +58,12 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private ChoiceBox<String> tagsmenu;
 
+    @FXML
+    private ChoiceBox<String> languageMenu;
+
+    @FXML
+    private CheckBox searchByContentCheckBox;
+
     private long selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
@@ -169,10 +175,10 @@ public class NoteOverviewCtrl implements Initializable {
      * @return a list of notes that match the filter string
      */
     public List<Note> getVisibleNotes(String filter) {
-        if (filter.isBlank() || filter.equals("$")) {
+        if (filter.isBlank()) {
             return data;
         } else {
-            if (filter.charAt(0) == '$') {
+            if (searchByContentCheckBox.isSelected()) {
                 // Filter based on content
                 final String contentFilter = filter.substring(1);
                 return data.stream()
@@ -195,7 +201,7 @@ public class NoteOverviewCtrl implements Initializable {
         clearFields();
         listView.getSelectionModel().clearSelection();
         add.disableProperty().set(true);
-        delete.disableProperty().set(true);
+        delete.disableProperty().set(false);
         done.disableProperty().set(false);
         done.setOnAction(_ -> create());
         isSaveAction = false;
@@ -260,6 +266,26 @@ public class NoteOverviewCtrl implements Initializable {
                     setText(item.getTitle());
                 }
             }
+        });
+
+        delete.setOnAction(_ -> {
+            if (isSaveAction) {
+                deleteNote();
+            } else {
+                clearFields();
+            }
+        });
+
+
+        searchByContentCheckBox.selectedProperty().addListener(_ -> updateList());
+
+        languageMenu.setItems(FXCollections.observableArrayList("EN", "NL", "RO"));
+        languageMenu.getSelectionModel().select(LanguageManager.getCurrentLanguageCode().toUpperCase());
+
+        languageMenu.setOnAction(_ -> {
+            String selectedLanguage = languageMenu.getValue().toUpperCase();
+            LanguageManager.loadLocale(selectedLanguage);
+            refresh(); //TODO: make the fxml refresh when changing the language
         });
 
         tagsmenu.setOnAction(this::tagMenuSelect);
@@ -524,7 +550,7 @@ public class NoteOverviewCtrl implements Initializable {
         isEditing = true;
 
         add.disableProperty().set(true);
-        delete.disableProperty().set(true);
+        delete.disableProperty().set(false);
 
         if (isSaveAction && title.getText() != null) {
             done.disableProperty().set(false);
