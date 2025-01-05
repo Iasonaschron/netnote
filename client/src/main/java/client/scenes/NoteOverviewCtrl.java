@@ -1,5 +1,6 @@
 package client.scenes;
 
+import client.MainNotes;
 import client.utils.LanguageManager;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
@@ -15,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.*;
@@ -22,12 +24,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.checkerframework.checker.units.qual.m;
+
 /**
  * Controller for the Note Overview scene.
  * Manages a list of notes and provides functionality for creating, viewing, and
  * editing notes.
  */
 public class NoteOverviewCtrl implements Initializable {
+
+    private MainNotesCtrl mainNotes;
 
     @FXML
     private WebView webview;
@@ -101,7 +107,8 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Updates the dataCollection list according to the currently selected collection
+     * Updates the dataCollection list according to the currently selected
+     * collection
      */
     private List<Note> getNotesBySelectedCollection() {
         return data.stream().filter(note -> note.getCollectionId() == selectedCollectionId).toList();
@@ -139,7 +146,6 @@ public class NoteOverviewCtrl implements Initializable {
             listView.setItems(visibleNotes);
         }
 
-
         if (lastSelectedNote == null || !visibleNotes.contains(lastSelectedNote))
             clearFields();
     }
@@ -147,10 +153,8 @@ public class NoteOverviewCtrl implements Initializable {
     /**
      * Updates the dropdown menu of available tags to filter by
      */
-    public void filterTagList(){
-        tags = visibleNotes.stream().
-                flatMap(note -> note.getTags().stream()).distinct().
-                toList();
+    public void filterTagList() {
+        tags = visibleNotes.stream().flatMap(note -> note.getTags().stream()).distinct().toList();
 
         tagsmenu.setItems(FXCollections.observableArrayList(tags));
     }
@@ -231,7 +235,7 @@ public class NoteOverviewCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setSelectedCollectionId(1001); //TODO: There is probably a better way to initialize the default id
+        setSelectedCollectionId(1001); // TODO: There is probably a better way to initialize the default id
         webEngine = webview.getEngine();
         URL stylesheet = getClass().getResource("/client/styles/notes.css");
         if (stylesheet != null) {
@@ -276,7 +280,6 @@ public class NoteOverviewCtrl implements Initializable {
             }
         });
 
-
         searchByContentCheckBox.selectedProperty().addListener(_ -> updateList());
 
         languageMenu.setItems(FXCollections.observableArrayList("EN", "NL", "RO"));
@@ -285,7 +288,7 @@ public class NoteOverviewCtrl implements Initializable {
         languageMenu.setOnAction(_ -> {
             String selectedLanguage = languageMenu.getValue().toUpperCase();
             LanguageManager.loadLocale(selectedLanguage);
-            refresh(); //TODO: make the fxml refresh when changing the language
+            updateLanguage();
         });
 
         tagsmenu.setOnAction(this::tagMenuSelect);
@@ -302,16 +305,14 @@ public class NoteOverviewCtrl implements Initializable {
 
     /**
      * Filters notes based on the selected tag from the dropdown menu
+     * 
      * @param tag tag selected
      * @return The filtered list of notes
      */
-    public List<Note> filterNotesByTag(String tag){
-        return visibleNotes.stream().
-                filter(note -> note.getTags().contains(tag)).
-                toList();
+    public List<Note> filterNotesByTag(String tag) {
+        return visibleNotes.stream().filter(note -> note.getTags().contains(tag)).toList();
 
     }
-
 
     /**
      * Parses the current HTML and replaces notes references with links, checking if
@@ -572,4 +573,23 @@ public class NoteOverviewCtrl implements Initializable {
             Platform.runLater(this::refresh);
         }, 0, 5, TimeUnit.SECONDS);
     }
+
+    /**
+     * refreshes the language of the scene to the current language selected in the
+     * language menu.
+     */
+    private void updateLanguage() {
+        done.setText(LanguageManager.getString("done"));
+        delete.setText(LanguageManager.getString("delete"));
+        add.setText(LanguageManager.getString("add"));
+        searchBox.setPromptText(LanguageManager.getString("search_prompt"));
+        ((Stage) mainNotes.getPrimaryStage()).setTitle(LanguageManager.getString("overview_title"));
+
+        refresh();
+    }
+
+    public void setMainNotesCtrl(MainNotesCtrl mainNotesCtrl) {
+        mainNotes = mainNotesCtrl;
+    }
+
 }

@@ -30,6 +30,8 @@ public class MainNotesCtrl {
         this.noteOverviewCtrl = overview.getKey();
         this.overview = new Scene(overview.getValue());
 
+        noteOverviewCtrl.setMainNotesCtrl(this);
+
         showOverview();
         primaryStage.show();
     }
@@ -39,7 +41,7 @@ public class MainNotesCtrl {
      * Sets the stage title and ensures the notes are refreshed.
      */
     public void showOverview() {
-        primaryStage.setTitle(LanguageManager.getString("overview.title"));
+        primaryStage.setTitle(LanguageManager.getString("overview_title"));
         primaryStage.setScene(overview);
         noteOverviewCtrl.refresh();
     }

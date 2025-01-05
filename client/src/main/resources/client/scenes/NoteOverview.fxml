@@ -33,8 +33,8 @@
                         </AnchorPane>
                         <AnchorPane maxHeight="83.0" maxWidth="1.7976931348623157E308" minHeight="20.0" minWidth="0.0" prefHeight="83.0" prefWidth="197.0" VBox.vgrow="ALWAYS">
                            <children>
-                              <TextField fx:id="searchBox" onKeyTyped="#updateList" prefHeight="46.0" prefWidth="197.0" promptText="%search.prompt" AnchorPane.bottomAnchor="33.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                              <CheckBox fx:id="searchByContentCheckBox" alignment="BOTTOM_CENTER" layoutY="57.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%content.search" />
+                              <TextField fx:id="searchBox" onKeyTyped="#updateList" prefHeight="46.0" prefWidth="197.0" promptText="%search_prompt" AnchorPane.bottomAnchor="33.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <CheckBox fx:id="searchByContentCheckBox" alignment="BOTTOM_CENTER" layoutY="57.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%content_search" />
                            </children>
                         </AnchorPane>
                         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="284.0" prefWidth="170.0" VBox.vgrow="ALWAYS">
@@ -103,7 +103,7 @@
                                  <children>
                                     <AnchorPane StackPane.alignment="CENTER">
                                        <children>
-                                          <TextField fx:id="title" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="63.0" prefWidth="226.0" promptText="%title.prompt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <TextField fx:id="title" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="63.0" prefWidth="226.0" promptText="%title_prompt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                  </children>
@@ -116,7 +116,7 @@
                                  <children>
                                     <AnchorPane StackPane.alignment="CENTER">
                                        <children>
-                                          <TextArea fx:id="content" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="282.0" prefWidth="226.0" promptText="%content.prompt" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <TextArea fx:id="content" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="282.0" prefWidth="226.0" promptText="%content_prompt" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                                  </children>
