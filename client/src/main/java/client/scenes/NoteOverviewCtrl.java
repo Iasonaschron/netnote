@@ -1,6 +1,5 @@
 package client.scenes;
 
-import client.MainNotes;
 import client.utils.LanguageManager;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
@@ -23,8 +22,6 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import org.checkerframework.checker.units.qual.m;
 
 /**
  * Controller for the Note Overview scene.
@@ -81,6 +78,7 @@ public class NoteOverviewCtrl implements Initializable {
 
     private ScheduledExecutorService scheduler;
     private boolean isEditing = false;
+    private boolean hasSelectedTag = false;
 
     private boolean isSaveAction = false;
     private boolean justEdited = false;
@@ -122,7 +120,13 @@ public class NoteOverviewCtrl implements Initializable {
         if (isEditing) {
             return;
         }
+
         data = server.getNotes();
+
+        if (hasSelectedTag) {
+            tagUpdateList();
+            return;
+        }
 
         updateList();
     }
@@ -135,28 +139,54 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void updateList() {
         visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
-        filterTagList();
-
-        if (tagsmenu.getValue() != null && justEdited) {
-            // Filter notes based on the selected tag
-            tagNotes = FXCollections.observableList(filterNotesByTag(tagsmenu.getValue()));
-            listView.setItems(tagNotes);
-        } else {
-            // No selection; show all visible notes
-            listView.setItems(visibleNotes);
+        tagsmenu.getSelectionModel().clearSelection();
+        hasSelectedTag = false;
+        if (!tagsmenu.isShowing()) {
+            filterTagList();
         }
+        listView.setItems(visibleNotes);
 
         if (lastSelectedNote == null || !visibleNotes.contains(lastSelectedNote))
             clearFields();
     }
 
     /**
+     * Updates the list of notes based on the current tag selected and the current filter string.
+     * This method is called instead of updateList() only when the user has selected a tag.
+     * It updates the ListView with the filtered notes.
+     *
+     */
+    public void tagUpdateList(){
+        visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
+        tagNotes = FXCollections.observableList(filterNotesByTag(tagsmenu.getValue()));
+        if (!tagsmenu.isShowing()) {
+            filterTagList();
+        }
+        listView.setItems(tagNotes);
+
+        if (lastSelectedNote == null || !tagNotes.contains(lastSelectedNote))
+            clearFields();
+
+        if (tagNotes.isEmpty()) {
+            createNote();
+        }
+
+    }
+
+    /**
      * Updates the dropdown menu of available tags to filter by
      */
     public void filterTagList() {
-        tags = visibleNotes.stream().flatMap(note -> note.getTags().stream()).distinct().toList();
+        int lastTagIndex = tagsmenu.getSelectionModel().getSelectedIndex();
 
+        visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
+
+        tags = visibleNotes.stream().flatMap(note -> note.getTags().stream()).distinct().toList();
         tagsmenu.setItems(FXCollections.observableArrayList(tags));
+
+        tagsmenu.getSelectionModel().select(lastTagIndex);
+
+
     }
 
     /**
@@ -203,6 +233,9 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void createNote() {
         clearFields();
+        tagsmenu.getSelectionModel().clearSelection();
+        hasSelectedTag = false;
+
         listView.getSelectionModel().clearSelection();
         add.disableProperty().set(true);
         delete.disableProperty().set(false);
@@ -210,9 +243,7 @@ public class NoteOverviewCtrl implements Initializable {
         done.setOnAction(_ -> create());
         isSaveAction = false;
         lastSelectedNote = null;
-        if (tagsmenu.getValue() != null) {
-            listView.setItems(visibleNotes);
-        }
+        listView.setItems(visibleNotes);
     }
 
     /**
@@ -280,6 +311,7 @@ public class NoteOverviewCtrl implements Initializable {
             }
         });
 
+
         searchByContentCheckBox.selectedProperty().addListener(_ -> updateList());
 
         languageMenu.setItems(FXCollections.observableArrayList("EN", "NL", "RO"));
@@ -297,10 +329,17 @@ public class NoteOverviewCtrl implements Initializable {
         startPolling();
     }
 
+    /**
+     * Is called when the user selects a tag from the dropdown menu
+     *
+     * @param actionEvent selection from tags menu
+     */
     private void tagMenuSelect(javafx.event.ActionEvent actionEvent) {
         tagNotes = FXCollections.observableList(filterNotesByTag(tagsmenu.getValue()));
         listView.setItems(tagNotes);
         listView.getSelectionModel().select(0);
+        isSaveAction = true;
+        hasSelectedTag = true;
     }
 
     /**
@@ -413,8 +452,9 @@ public class NoteOverviewCtrl implements Initializable {
         }
 
         isEditing = false;
-        refresh();
+        filterTagList();
         clearFields();
+        refresh();
     }
 
     /**
@@ -445,6 +485,7 @@ public class NoteOverviewCtrl implements Initializable {
 
         isEditing = false;
         justEdited = true;
+        filterTagList();
         refresh();
         justEdited = false;
         title.setText(displayTitle);
@@ -541,6 +582,10 @@ public class NoteOverviewCtrl implements Initializable {
         refresh();
         done.setOnAction(_ -> create());
         isSaveAction = false;
+        if (hasSelectedTag) {
+            isSaveAction = true;
+            listView.getSelectionModel().select(0);
+        }
         delete.disableProperty().set(true);
     }
 
