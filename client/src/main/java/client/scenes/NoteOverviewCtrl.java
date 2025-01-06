@@ -67,6 +67,9 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private CheckBox searchByContentCheckBox;
 
+    @FXML
+    private Button clear;
+
     private long selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
@@ -235,6 +238,7 @@ public class NoteOverviewCtrl implements Initializable {
         clearFields();
         tagsmenu.getSelectionModel().clearSelection();
         hasSelectedTag = false;
+        clear.disableProperty().set(true);
 
         listView.getSelectionModel().clearSelection();
         add.disableProperty().set(true);
@@ -253,6 +257,18 @@ public class NoteOverviewCtrl implements Initializable {
         title.clear();
         content.clear();
         webEngine.loadContent("");
+    }
+
+    /**
+     * Clears the selected tag from the menu
+     */
+    public void clearTags() {
+        tagsmenu.getSelectionModel().clearSelection();
+        clearFields();
+        hasSelectedTag = false;
+        clear.disableProperty().set(true);
+        isEditing = false;
+        refresh();
     }
 
     /**
@@ -340,6 +356,7 @@ public class NoteOverviewCtrl implements Initializable {
         listView.getSelectionModel().select(0);
         isSaveAction = true;
         hasSelectedTag = true;
+        clear.disableProperty().set(false);
     }
 
     /**
