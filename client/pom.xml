@@ -52,6 +52,11 @@
 			<artifactId>guice</artifactId>
 			<version>7.0.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>${version.jersey}</version>
+		</dependency>
 
 		<!-- JavaFX -->
 		<dependency>

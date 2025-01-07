@@ -17,16 +17,22 @@ package client.utils;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
+import java.io.File;
 import java.net.ConnectException;
 import java.util.List;
 
 import commons.Note;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 
 import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.GenericType;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
 public class ServerUtils {
 
@@ -76,6 +82,42 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .post(Entity.entity(note, APPLICATION_JSON), Note.class);
     }
+
+    public List<String> fetchFileNames(long noteid){
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/files/" + noteid)
+                .request(APPLICATION_JSON)
+                .get(new GenericType<List<String>>(){});
+    }
+
+    public boolean uploadFile(File file, long noteid){
+        try{
+            Client client = ClientBuilder.newClient(new ClientConfig());
+
+            FormDataMultiPart form = new FormDataMultiPart();
+            form.field("filename", file.getName());
+            form.bodyPart(new FileDataBodyPart("file", file, MediaType.APPLICATION_OCTET_STREAM_TYPE));
+
+            Response response = client
+                    .target(SERVER).path("api/files/" + noteid + "/upload")
+                    .request(MediaType.APPLICATION_JSON)
+                    .post(Entity.entity(form, MediaType.MULTIPART_FORM_DATA_TYPE));
+
+            form.close();
+            client.close();
+
+            if (response.getStatus() == 200) {
+                System.out.println("File uploaded successfully: " + response.readEntity(String.class));
+                return true;
+            } else {
+                System.err.println("Failed to upload file: " + response.getStatus());
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
     /**
      * Sends a note to the server to be updated.

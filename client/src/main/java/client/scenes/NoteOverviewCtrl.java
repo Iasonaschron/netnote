@@ -16,8 +16,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -70,6 +72,9 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private CheckBox searchByContentCheckBox;
 
+    @FXML
+    private Button fileSelectButton;
+
     private long selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
@@ -104,6 +109,32 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void setSelectedCollectionId(long selectedCollectionId) {
         this.selectedCollectionId = selectedCollectionId;
+    }
+
+
+    public void SelectAndUploadFile(){
+        System.out.println("AAAAAAAAAAAAAAA");
+        try{
+            FileChooser fc = new FileChooser();
+            Stage stage = new Stage();
+            fc.setTitle("Select a file");
+            fc.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("All Files", "*.*"),
+                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+            );
+            File selectedFile = fc.showOpenDialog(stage);
+            if(selectedFile != null){
+                server.uploadFile(selectedFile, getNote().getId());
+                System.out.println("File uploaded");
+            }
+            else {
+                System.out.println("no file selected");
+            }
+        }
+        catch (Exception e){
+            System.out.println("Error uploading file");
+            e.printStackTrace();
+        }
     }
 
     /**

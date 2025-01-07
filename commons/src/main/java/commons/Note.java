@@ -80,7 +80,7 @@ public class Note {
     public void renderRawText() {
         String processedContent = ContentProcessor.processTags(content);
 
-        this.html = MarkDownMethods.renderRawTextToText(processedContent);
+        this.html = MarkDownMethods.renderRawTextToText(processedContent, id);
     }
 
     /**

@@ -176,11 +176,22 @@
             </AnchorPane>
             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="0.0" prefHeight="400.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                <children>
-                  <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <AnchorPane layoutY="253.0" prefHeight="210.0" prefWidth="246.0">
+                     <children>
+                        <Button fx:id="fileSelectButton" layoutX="173.0" layoutY="14.0" mnemonicParsing="false" onAction="#SelectAndUploadFile" text="Add Files" />
+                        <ListView prefHeight="210.0" prefWidth="162.0" />
+                        <Button layoutX="173.0" layoutY="48.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" text="Delete All">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </AnchorPane>
+                  <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="253.0" prefWidth="246.0" AnchorPane.bottomAnchor="210.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <AnchorPane StackPane.alignment="CENTER">
                            <children>
-                              <WebView fx:id="webview" cache="true" cacheHint="SPEED" depthTest="ENABLE" layoutX="-56.0" maxHeight="-1.0" maxWidth="-1.0" prefHeight="299.0" prefWidth="278.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <WebView fx:id="webview" cache="true" cacheHint="SPEED" depthTest="ENABLE" layoutX="-56.0" maxHeight="-1.0" maxWidth="-1.0" prefHeight="463.0" prefWidth="246.0" zoom="0.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <effect>
                                     <Blend />
                                  </effect>
