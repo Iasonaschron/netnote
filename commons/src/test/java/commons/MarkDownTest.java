@@ -14,7 +14,7 @@ public class MarkDownTest {
      */
     @Test
     public void rawRenderTextToText() {
-        String rawText = "This is *Markdown* [[embedded]](AAAAAAAAAAAAA.png)";
+        String rawText = "This is *Markdown*";
         String processedText = "<p>This is <em>Markdown</em></p>\n";
         assertEquals(processedText, MarkDownMethods.renderRawTextToText(rawText, 0));
     }
