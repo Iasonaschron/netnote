@@ -191,7 +191,7 @@
                      <children>
                         <AnchorPane StackPane.alignment="CENTER">
                            <children>
-                              <WebView fx:id="webview" cache="true" cacheHint="SPEED" depthTest="ENABLE" layoutX="-56.0" maxHeight="-1.0" maxWidth="-1.0" prefHeight="463.0" prefWidth="246.0" zoom="0.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <WebView fx:id="webview" cache="true" cacheHint="SPEED" depthTest="ENABLE" layoutX="-56.0" maxHeight="-1.0" maxWidth="-1.0" prefHeight="463.0" prefWidth="246.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <effect>
                                     <Blend />
                                  </effect>
