@@ -8,7 +8,7 @@ Feedback: The agenda itself is fine, but the formatting is a bit off (random hug
 #### Performance of the *Previous* Minute Taker
 Quick Summary: Good
 
-The minutes were comprehensive and effectively documented key agreements along with assigned tasks. They were seamlessly incorporated into the agenda and reflected the meeting's discussions in a detailed manner. 
+The minutes captured the most important things that were discussed in the meeting
 
 
 
