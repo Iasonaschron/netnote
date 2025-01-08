@@ -18,6 +18,7 @@ public class MarkDownMethods {
 
     /**
      * @param raw The String to parse into HTML
+     * @param noteid the id of the note request a string to be parsed
      * @return Returns the parsed HTML
      */
     public static String renderRawTextToText(String raw, long noteid) {
