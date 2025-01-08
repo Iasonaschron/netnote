@@ -7,7 +7,7 @@ public class ContentProcessor {
     private static final Pattern TAG_PATTERN = Pattern.compile("#\\w+");
 
     /**
-     * Processes the content to replace tags with <span class="tag">...</span>
+     * Processes the content to replace tags with **tag** for Markdown rendering.
      *
      * @param content The raw note content containing tags
      * @return Processed content with tags replaced
@@ -21,7 +21,7 @@ public class ContentProcessor {
         while (matcher.find()) {
             processedContent.append(content, lastIndex, matcher.start());
             String tag = matcher.group();
-            processedContent.append("<span class=\"tag\">").append(tag).append("</span>");
+            processedContent.append("**").append(tag).append("**");
             lastIndex = matcher.end();
         }
 
