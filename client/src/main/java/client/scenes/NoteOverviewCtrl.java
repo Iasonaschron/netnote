@@ -645,6 +645,10 @@ public class NoteOverviewCtrl implements Initializable {
         delete.setText(LanguageManager.getString("delete"));
         add.setText(LanguageManager.getString("add"));
         searchBox.setPromptText(LanguageManager.getString("search_prompt"));
+        searchByContentCheckBox.setText(LanguageManager.getString("content_search"));
+        content.setPromptText(LanguageManager.getString("content_prompt"));
+        title.setPromptText(LanguageManager.getString("title_prompt"));
+
         ((Stage) mainNotes.getPrimaryStage()).setTitle(LanguageManager.getString("overview_title"));
 
         refresh();
