@@ -15,17 +15,10 @@
  */
 package server;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Random;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import commons.Collection;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import server.api.CollectionController;
 
 @Configuration
 public class Config {

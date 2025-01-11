@@ -8,6 +8,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 import server.database.NoteRepository;
 import commons.Note;
+import server.service.NoteService;  // Assuming this is where NoteService is located
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,9 @@ public class NoteControllerTest {
 
     @Mock
     private NoteRepository repo;
+
+    @Mock
+    private NoteService noteService;
 
     @InjectMocks
     private NoteController controller;
@@ -49,13 +53,14 @@ public class NoteControllerTest {
         note2.setTitle("Note 2");
         note2.setContent("Content 2");
 
-        when(repo.findAll()).thenReturn(Arrays.asList(note1, note2));
+        when(noteService.getAllNotes()).thenReturn(Arrays.asList(note1, note2));
 
         List<Note> notes = controller.getAllNotes();
         assertEquals(2, notes.size());
         assertEquals("Note 1", notes.get(0).getTitle());
         assertEquals("Note 2", notes.get(1).getTitle());
     }
+
 
     /**
      * Tests the addNote method of the NoteController.
@@ -68,13 +73,12 @@ public class NoteControllerTest {
         note.setTitle("New Note");
         note.setContent("New Content");
 
-        when(repo.save(note)).thenReturn(note);
+        when(noteService.saveNote(any(Note.class))).thenReturn(note);
 
         ResponseEntity<Note> response = controller.addNote(note);
         assertEquals(200, response.getStatusCode().value());
-        Note responseBody = response.getBody();
-        assertNotNull(responseBody);
-        assertEquals("New Note", responseBody.getTitle());
+        assertNotNull(response.getBody());
+        assertEquals("New Note", response.getBody().getTitle());
     }
 
     /**
@@ -102,14 +106,12 @@ public class NoteControllerTest {
         note.setTitle("Note");
         note.setContent("Content");
 
-        when(repo.existsById(1L)).thenReturn(true);
-        when(repo.findById(1L)).thenReturn(Optional.of(note));
+        when(noteService.getNoteById(1L)).thenReturn(note);
 
         ResponseEntity<Note> response = controller.getNoteById(1L);
         assertEquals(200, response.getStatusCode().value());
-        Note responseBody = response.getBody();
-        assertNotNull(responseBody);
-        assertEquals("Note", responseBody.getTitle());
+        assertNotNull(response.getBody());
+        assertEquals("Note", response.getBody().getTitle());
     }
 
     /**
@@ -140,16 +142,14 @@ public class NoteControllerTest {
         updatedNote.setTitle("Updated Note");
         updatedNote.setContent("Updated Content");
 
-        when(repo.existsById(1L)).thenReturn(true);
-        when(repo.findById(1L)).thenReturn(Optional.of(existingNote));
-        when(repo.save(existingNote)).thenReturn(existingNote);
+        when(noteService.updateNote(1L, updatedNote)).thenReturn(updatedNote);
 
         ResponseEntity<Note> response = controller.updateNote(1L, updatedNote);
         assertEquals(200, response.getStatusCode().value());
-        Note responseBody = response.getBody();
-        assertNotNull(responseBody);
-        assertEquals("Updated Note", responseBody.getTitle());
+        assertNotNull(response.getBody());
+        assertEquals("Updated Note", response.getBody().getTitle());
     }
+
 
     /**
      * Tests the updateNote method of the NoteController when the note does not
@@ -175,11 +175,11 @@ public class NoteControllerTest {
      */
     @Test
     public void testDeleteNoteById() {
-        when(repo.existsById(1L)).thenReturn(true);
-
+        when(noteService.deleteNoteById(1L)).thenReturn(ResponseEntity.ok().build());
         ResponseEntity<Void> response = controller.deleteNoteById(1L);
+
         assertEquals(200, response.getStatusCode().value());
-        verify(repo, times(1)).deleteById(1L);
+        verify(noteService, times(1)).deleteNoteById(1L);
     }
 
     /**
@@ -189,9 +189,11 @@ public class NoteControllerTest {
      */
     @Test
     public void testDeleteNoteByIdNotFound() {
-        when(repo.existsById(1L)).thenReturn(false);
+        when(noteService.deleteNoteById(1L)).thenReturn(ResponseEntity.badRequest().build());
 
         ResponseEntity<Void> response = controller.deleteNoteById(1L);
         assertEquals(400, response.getStatusCode().value());
+        verify(noteService, times(1)).deleteNoteById(1L);
     }
+
 }

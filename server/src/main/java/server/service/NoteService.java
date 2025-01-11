@@ -3,6 +3,7 @@ package server.service;
 import commons.Collection;
 import commons.Note;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import server.database.CollectionRepository;
 import server.database.NoteRepository;
@@ -101,12 +102,17 @@ public class NoteService {
     }
 
     /**
-     * Deletes a note by its ID.
+     * Deletes a Note by id
      *
-     * @param id The ID of the note to delete
+     * @param id The id of the note
+     * @return A response entity
      */
-    public void deleteNoteById(long id) {
+    public ResponseEntity<Void> deleteNoteById(long id) {
+        if (!noteRepository.existsById(id)) {
+            return ResponseEntity.badRequest().build();
+        }
         noteRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }
 
