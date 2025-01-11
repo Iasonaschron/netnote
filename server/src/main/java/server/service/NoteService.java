@@ -5,11 +5,9 @@ import commons.Note;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import server.api.CollectionController;
-import server.database.CollectionRepository;
 import server.database.NoteRepository;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 
@@ -17,25 +15,12 @@ import java.util.List;
 public class NoteService {
 
     private final NoteRepository noteRepository;
-    private final CollectionRepository collectionRepository;
-    private final CollectionController collectionController;
+    private final CollectionConfigService collectionConfigService;
 
-    private static final String DEFAULT_COLLECTION_TITLE = "Default Collection";
-
-    /**
-     * Initialize the NoteService class
-     *
-     * @param noteRepository The repository containing all the notes
-     * @param collectionRepository The repository containing all the collections
-     * @param collectionController The controller for collection API interactions
-     */
     @Autowired
-    public NoteService(NoteRepository noteRepository,
-                       CollectionRepository collectionRepository,
-                       CollectionController collectionController) {
+    public NoteService(NoteRepository noteRepository, CollectionConfigService collectionConfigService) {
         this.noteRepository = noteRepository;
-        this.collectionRepository = collectionRepository;
-        this.collectionController = collectionController;
+        this.collectionConfigService = collectionConfigService;
     }
 
     /**
@@ -47,30 +32,15 @@ public class NoteService {
      */
     public Note saveNote(Note note) {
         if (note.getCollectionId() == null) {
-            // Fetch the default collection or create it if it doesn't exist
-            Collection defaultCollection = collectionRepository
-                    .findByTitle(DEFAULT_COLLECTION_TITLE)
-                    .orElseGet(this::createDefaultCollection);
-            note.setCollectionId(defaultCollection.getId());
+            try {
+                Collection defaultCollection = collectionConfigService.getOrCreateDefaultCollection();
+                note.setCollectionId(defaultCollection.getId());
+            } catch (IOException e) {
+                e.printStackTrace(); // Handle or log error
+                throw new RuntimeException("Error accessing the collection configuration");
+            }
         }
         return noteRepository.save(note);
-    }
-
-    /**
-     * Creates and saves the default collection if it doesn't exist.
-     *
-     * @return The saved default collection
-     */
-    private Collection createDefaultCollection() {
-        Collection defaultCollection = new Collection(DEFAULT_COLLECTION_TITLE, new ArrayList<>());
-        ResponseEntity<Collection> response = collectionController.addCollection(defaultCollection);
-
-        // Check the response from the CollectionController
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();
-        } else {
-            throw new RuntimeException("Failed to create default collection via API");
-        }
     }
 
     /**
@@ -129,4 +99,3 @@ public class NoteService {
         return ResponseEntity.ok().build();
     }
 }
-

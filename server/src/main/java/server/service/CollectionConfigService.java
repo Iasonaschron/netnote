@@ -2,18 +2,21 @@ package server.service;
 
 import commons.Collection;
 import commons.CollectionConfig;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 @Service
 public class CollectionConfigService {
 
     private static final String CONFIG_FILE_PATH = "server/src/main/resources/collections_config.json";
+    private static final String DEFAULT_COLLECTION_TITLE = "Default Collection";
     private final ObjectMapper objectMapper;
     private CollectionConfig collectionConfig;
 
@@ -27,7 +30,7 @@ public class CollectionConfigService {
             String jsonString = FileUtils.readFileToString(configFile, "UTF-8");
             return objectMapper.readValue(jsonString, CollectionConfig.class);
         }
-        return new CollectionConfig();
+        return new CollectionConfig(); // Return empty config if no file exists
     }
 
     public void writeConfig(CollectionConfig config) throws IOException {
@@ -57,6 +60,28 @@ public class CollectionConfigService {
         }
         collectionConfig.removeCollection(collectionId);
         writeConfig(collectionConfig);
+    }
+
+    public Collection getOrCreateDefaultCollection() throws IOException {
+        if (collectionConfig == null) {
+            collectionConfig = readConfig();
+        }
+
+        // Try to find the default collection
+        return collectionConfig.getCollections().stream()
+                .filter(collection -> DEFAULT_COLLECTION_TITLE.equals(collection.getTitle()))
+                .findFirst()
+                .orElseGet(this::createDefaultCollection); // Create it if not found
+    }
+
+    private Collection createDefaultCollection() {
+        Collection defaultCollection = new Collection(DEFAULT_COLLECTION_TITLE, new ArrayList<>());
+        try {
+            addCollectionToConfig(defaultCollection);  // Add to the config
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle or log error
+        }
+        return defaultCollection;
     }
 
     @PostConstruct
