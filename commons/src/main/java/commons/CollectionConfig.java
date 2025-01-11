@@ -2,6 +2,7 @@ package commons;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CollectionConfig {
     private List<Collection> collections;
@@ -37,6 +38,9 @@ public class CollectionConfig {
      * @param collection The collection to add.
      */
     public void addCollection(Collection collection) {
+        if (collections.stream().anyMatch(c -> Objects.equals(c.getTitle(), collection.getTitle()))) {
+            throw new IllegalArgumentException("A collection with this title already exists.");
+        }
         collections.add(collection);
     }
 
