@@ -1,209 +1,246 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.Blend?>
-<?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="150.0" minWidth="400.0" prefHeight="463.0" prefWidth="695.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.NoteOverviewCtrl">
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.NoteOverviewCtrl">
    <children>
-      <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="300.0" minWidth="150.0" prefHeight="528.0" prefWidth="150.0" HBox.hgrow="ALWAYS">
+            <AnchorPane maxHeight="32.0" maxWidth="1.7976931348623157E308" minHeight="32.0" minWidth="600.0" style="-fx-background-color: #dedcff; -fx-border-color: #000;">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
                <children>
-                  <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <HBox prefHeight="32.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <AnchorPane maxHeight="60.0" maxWidth="1.7976931348623157E308" minHeight="20.0" minWidth="0.0" prefHeight="50.0" prefWidth="130.0" VBox.vgrow="ALWAYS">
+                        <AnchorPane minHeight="32.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <ChoiceBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                              <ChoiceBox fx:id="languageMenu" layoutX="24.0" layoutY="18.0" prefWidth="150.0" />
+                              <TextField fx:id="title" alignment="CENTER" layoutX="117.0" layoutY="1.0" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" prefHeight="25.0" prefWidth="249.0" promptText="\%title_prompt" style="-fx-background-color: #dedcff;" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="18.0" AnchorPane.topAnchor="4.0">
+                                 <font>
+                                    <Font name="Arial Black" size="12.0" />
+                                 </font>
+                              </TextField>
                            </children>
                         </AnchorPane>
-                        <AnchorPane maxHeight="83.0" maxWidth="1.7976931348623157E308" minHeight="20.0" minWidth="0.0" prefHeight="83.0" prefWidth="197.0" VBox.vgrow="ALWAYS">
+                        <AnchorPane minHeight="32.0" minWidth="32.0" prefHeight="32.0" prefWidth="32.0" HBox.hgrow="NEVER">
                            <children>
-                              <TextField fx:id="searchBox" onKeyTyped="#updateList" prefHeight="46.0" prefWidth="197.0" promptText="%search_prompt" AnchorPane.bottomAnchor="33.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                              <CheckBox fx:id="searchByContentCheckBox" alignment="BOTTOM_CENTER" layoutY="57.0" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" text="%content_search" />
+                              <ChoiceBox fx:id="languageSelector" layoutX="-61.0" layoutY="3.0" prefWidth="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="3.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="284.0" prefWidth="170.0" VBox.vgrow="ALWAYS">
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="368.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <children>
+                  <HBox prefHeight="341.0" prefWidth="527.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <AnchorPane maxWidth="250.0" minWidth="150.0" prefHeight="329.0" prefWidth="150.0">
                            <children>
-                              <ListView fx:id="listView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane maxHeight="60.0" maxWidth="1.7976931348623157E308" minHeight="45.0" minWidth="0.0" prefHeight="60.0" prefWidth="170.0" VBox.vgrow="ALWAYS">
-                           <children>
-                              <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <VBox prefHeight="368.0" prefWidth="150.0" style="-fx-background-color: #FFF; -fx-border-color: #000;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="100.0" minHeight="0.0" minWidth="0.0" prefHeight="46.0" prefWidth="41.0" HBox.hgrow="ALWAYS">
+                                    <AnchorPane maxHeight="300.0" minHeight="100.0" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #dedcff; -fx-border-color: #000;">
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </VBox.margin>
                                        <children>
-                                          <StackPane prefHeight="74.0" prefWidth="58.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
-                                                <AnchorPane maxWidth="45.0" StackPane.alignment="CENTER">
+                                                <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                                    <children>
-                                                      <Button fx:id="refreshButton" layoutY="11.2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#refresh" prefHeight="39.0" prefWidth="44.0" textAlignment="CENTER" textOverrun="CLIP" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0">
-                                                         <font>
-                                                            <Font size="20.0" />
-                                                         </font>
-                                                      </Button>
+                                                      <ChoiceBox prefWidth="150.0" style="-fx-background-color: #fff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                                                   </VBox.margin>
+                                                </AnchorPane>
+                                                <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                                   <VBox.margin>
+                                                      <Insets bottom="3.0" left="3.0" right="3.0" />
+                                                   </VBox.margin>
+                                                   <children>
+                                                      <ChoiceBox fx:id="tagsMenu" prefWidth="150.0" style="-fx-background-color: #fff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                                    </children>
                                                 </AnchorPane>
-                                                <AnchorPane maxWidth="45.0" StackPane.alignment="CENTER">
+                                                <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                                   <VBox.margin>
+                                                      <Insets bottom="3.0" left="3.0" right="3.0" />
+                                                   </VBox.margin>
                                                    <children>
-                                                      <Text layoutX="8.0" layoutY="38.0" mouseTransparent="true" strokeType="OUTSIDE" strokeWidth="0.0" text="⟳" textAlignment="CENTER" wrappingWidth="36.7999292373657" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0">
+                                                      <TextField fx:id="searchBox" onKeyTyped="#updateList" promptText="\%search_prompt" style="-fx-background-color: #fff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <font>
-                                                            <Font size="20.0" />
+                                                            <Font name="Arial" size="11.0" />
+                                                         </font>
+                                                      </TextField>
+                                                   </children>
+                                                </AnchorPane>
+                                                <AnchorPane maxHeight="16.0" minHeight="16.0" prefHeight="200.0" prefWidth="200.0">
+                                                   <VBox.margin>
+                                                      <Insets bottom="3.0" left="3.0" right="3.0" />
+                                                   </VBox.margin>
+                                                   <children>
+                                                      <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <children>
+                                                            <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                                               <children>
+                                                                  <CheckBox fx:id="searchByContentCheckBox" mnemonicParsing="false" text="\%content_search" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                     <font>
+                                                                        <Font name="Arial" size="8.0" />
+                                                                     </font>
+                                                                  </CheckBox>
+                                                               </children>
+                                                            </AnchorPane>
+                                                            <AnchorPane maxHeight="16.0" maxWidth="16.0" minHeight="16.0" minWidth="16.0" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="NEVER">
+                                                               <children>
+                                                                  <Button fx:id="clear" alignment="CENTER" cancelButton="true" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false" onAction="#clearTags" style="-fx-background-color: #dedcff;" text="×" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                     <font>
+                                                                        <Font name="Arial Black" size="7.0" />
+                                                                     </font>
+                                                                  </Button>
+                                                               </children>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </AnchorPane>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </AnchorPane>
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <ListView fx:id="listView" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #fff;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets left="5.0" right="5.0" />
+                                       </VBox.margin>
+                                    </AnchorPane>
+                                    <AnchorPane maxHeight="32.0" minHeight="32.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dedcff; -fx-border-color: #000;">
+                                       <VBox.margin>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </VBox.margin>
+                                       <children>
+                                          <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <AnchorPane maxHeight="23.0" maxWidth="23.0" minHeight="23.0" minWidth="23.0" prefHeight="200.0" prefWidth="200.0">
+                                                   <children>
+                                                      <Button fx:id="refreshButton" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="4.0" layoutY="6.0" maxHeight="32.0" maxWidth="32.0" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#refresh" style="-fx-background-color: #dedcff;" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <font>
+                                                            <Font name="Arial" size="15.0" />
+                                                         </font>
+                                                      </Button>
+                                                      <Text layoutY="20.0" strokeType="OUTSIDE" strokeWidth="0.0" text="⟳" textAlignment="CENTER" wrappingWidth="24.0">
+                                                         <font>
+                                                            <Font size="32.0" />
                                                          </font>
                                                       </Text>
                                                    </children>
+                                                   <HBox.margin>
+                                                      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                   </HBox.margin>
                                                 </AnchorPane>
-                                             </children>
-                                          </StackPane>
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="46.0" prefWidth="74.0" HBox.hgrow="ALWAYS">
-                                       <children>
-                                          <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <children>
-                                                <AnchorPane maxWidth="150.0" StackPane.alignment="CENTER">
+                                                <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+                                                <AnchorPane layoutX="119.0" layoutY="14.0" maxHeight="23.0" maxWidth="23.0" minHeight="23.0" minWidth="23.0" prefHeight="200.0" prefWidth="200.0">
                                                    <children>
-                                                      <Button fx:id="add" disable="true" layoutX="7.2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#createNote" prefHeight="26.0" prefWidth="64.0" text="%add" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
+                                                      <Button fx:id="delete" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="4.0" layoutY="6.0" maxHeight="32.0" maxWidth="32.0" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#deleteNote" style="-fx-background-color: #dedcff;" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <font>
+                                                            <Font name="Arial" size="15.0" />
+                                                         </font>
+                                                         <padding>
+                                                            <Insets bottom="4.0" left="4.0" top="4.0" />
+                                                         </padding>
+                                                      </Button>
+                                                      <Text layoutY="20.0" strokeType="OUTSIDE" strokeWidth="0.0" text="-" textAlignment="CENTER" wrappingWidth="24.0">
+                                                         <font>
+                                                            <Font size="32.0" />
+                                                         </font>
+                                                      </Text>
                                                    </children>
+                                                   <HBox.margin>
+                                                      <Insets bottom="44.0" left="4.0" top="4.0" />
+                                                   </HBox.margin>
+                                                </AnchorPane>
+                                                <AnchorPane layoutX="14.0" layoutY="14.0" maxHeight="23.0" maxWidth="23.0" minHeight="23.0" minWidth="23.0" prefHeight="200.0" prefWidth="200.0">
+                                                   <children>
+                                                      <Button fx:id="add" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="4.0" layoutY="6.0" maxHeight="32.0" maxWidth="32.0" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#createNote" style="-fx-background-color: #dedcff;" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <font>
+                                                            <Font name="Arial" size="15.0" />
+                                                         </font>
+                                                      </Button>
+                                                      <Text layoutY="20.0" strokeType="OUTSIDE" strokeWidth="0.0" text="+" textAlignment="CENTER" wrappingWidth="24.0">
+                                                         <font>
+                                                            <Font size="32.0" />
+                                                         </font>
+                                                      </Text>
+                                                   </children>
+                                                   <HBox.margin>
+                                                      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                   </HBox.margin>
                                                 </AnchorPane>
                                              </children>
-                                          </StackPane>
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane prefHeight="57.0" prefWidth="51.0">
-                                       <children>
-                                          <Button fx:id="clear" alignment="CENTER" disable="true" layoutX="4.0" layoutY="8.0" mnemonicParsing="false" onAction="#clearTags" prefHeight="39.0" prefWidth="44.0" text="Clear" />
+                                          </HBox>
                                        </children>
                                     </AnchorPane>
                                  </children>
-                              </HBox>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #fff; -fx-border-color: #000;" HBox.hgrow="ALWAYS">
+                           <children>
+                              <TextArea fx:id="content" layoutX="50.0" layoutY="61.0" minWidth="220.0" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" promptText="\%content_prompt" style="-fx-background-color: #fff;" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <font>
+                                    <Font name="Arial" size="11.0" />
+                                 </font>
+                                 <cursor>
+                                    <Cursor fx:constant="TEXT" />
+                                 </cursor>
+                              </TextArea>
+                              <AnchorPane layoutX="197.0" layoutY="339.0" maxHeight="23.0" maxWidth="23.0" minHeight="23.0" minWidth="23.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="7.0">
+                                 <children>
+                                    <Button fx:id="done" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="4.0" layoutY="6.0" maxHeight="32.0" maxWidth="32.0" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#create" style="-fx-background-color: #dedcff; -fx-border-color: #000;" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <font>
+                                          <Font name="Arial" size="15.0" />
+                                       </font>
+                                    </Button>
+                                    <Text layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="✓" textAlignment="CENTER" wrappingWidth="24.0">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Text>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #fff; -fx-border-color: #000;" HBox.hgrow="ALWAYS">
+                           <children>
+                              <WebView fx:id="webview" layoutX="-20.0" layoutY="27.0" minWidth="220.0" prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                      </children>
-                  </VBox>
-               </children>
-            </AnchorPane>
-            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="205.0" prefHeight="314.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <VBox minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <AnchorPane maxHeight="60.0" maxWidth="1.7976931348623157E308" minHeight="20.0" minWidth="0.0" prefHeight="16.0" prefWidth="226.0" VBox.vgrow="ALWAYS">
-                           <children>
-                              <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <children>
-                                    <AnchorPane StackPane.alignment="CENTER">
-                                       <children>
-                                          <TextField fx:id="title" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="63.0" prefWidth="226.0" promptText="%title_prompt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
-                                 </children>
-                              </StackPane>
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="234.0" prefWidth="246.0" VBox.vgrow="ALWAYS">
-                           <children>
-                              <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <children>
-                                    <AnchorPane StackPane.alignment="CENTER">
-                                       <children>
-                                          <TextArea fx:id="content" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="282.0" prefWidth="226.0" promptText="%content_prompt" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                       </children>
-                                    </AnchorPane>
-                                 </children>
-                              </StackPane>
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane maxHeight="60.0" maxWidth="1.7976931348623157E308" minHeight="45.0" minWidth="0.0" prefHeight="0.0" prefWidth="226.0" VBox.vgrow="ALWAYS">
-                           <children>
-                              <HBox layoutY="8.8" minHeight="0.0" minWidth="0.0" prefHeight="46.0" prefWidth="226.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <children>
-                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="55.0" prefWidth="86.0" HBox.hgrow="ALWAYS">
-                                       <children>
-                                          <StackPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <children>
-                                                <AnchorPane minHeight="0.0" minWidth="0.0" StackPane.alignment="CENTER">
-                                                   <children>
-                                                      <ChoiceBox fx:id="tagsmenu" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
-                                                   </children>
-                                                </AnchorPane>
-                                             </children>
-                                          </StackPane>
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="100.0" minHeight="0.0" minWidth="0.0" prefHeight="55.0" prefWidth="45.0" HBox.hgrow="ALWAYS">
-                                       <children>
-                                          <StackPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <children>
-                                                <AnchorPane minHeight="0.0" minWidth="0.0" StackPane.alignment="CENTER">
-                                                   <children>
-                                                      <Button fx:id="delete" disable="true" layoutY="18.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#deleteNote" prefHeight="26.0" prefWidth="44.0" text="%delete" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
-                                                   </children>
-                                                </AnchorPane>
-                                             </children>
-                                          </StackPane>
-                                       </children>
-                                    </AnchorPane>
-                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="100.0" minHeight="0.0" minWidth="0.0" prefHeight="55.0" prefWidth="37.0" HBox.hgrow="ALWAYS">
-                                       <children>
-                                          <StackPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <children>
-                                                <AnchorPane minHeight="0.0" minWidth="0.0" StackPane.alignment="CENTER">
-                                                   <children>
-                                                      <Button fx:id="done" layoutY="18.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#create" prefHeight="26.0" prefWidth="36.0" text="%done" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
-                                                   </children>
-                                                </AnchorPane>
-                                             </children>
-                                          </StackPane>
-                                       </children>
-                                    </AnchorPane>
-                                 </children>
-                              </HBox>
-                           </children>
-                        </AnchorPane>
-                     </children>
-                  </VBox>
-               </children>
-            </AnchorPane>
-            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="0.0" prefHeight="400.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-               <children>
-                  <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <AnchorPane StackPane.alignment="CENTER">
-                           <children>
-                              <WebView fx:id="webview" cache="true" cacheHint="SPEED" depthTest="ENABLE" layoutX="-56.0" maxHeight="-1.0" maxWidth="-1.0" prefHeight="299.0" prefWidth="278.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <effect>
-                                    <Blend />
-                                 </effect>
-                              </WebView>
-                           </children>
-                        </AnchorPane>
-                     </children>
-                     <effect>
-                        <InnerShadow>
-                           <color>
-                              <Color red="0.4736842215061188" green="0.4736842215061188" blue="0.4736842215061188" />
-                           </color>
-                        </InnerShadow>
-                     </effect>
-                  </StackPane>
+                  </HBox>
                </children>
             </AnchorPane>
          </children>
-      </HBox>
+      </VBox>
    </children>
 </AnchorPane>
