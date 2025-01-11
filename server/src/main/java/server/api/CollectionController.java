@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.CollectionRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -126,6 +127,7 @@ public class CollectionController {
         } catch (Exception e) {
             System.out.println("It doesnt exist?");
         }
-        return null;
+        List<Note> emptyCol = new ArrayList<>();
+        return new Collection("Default Collection", emptyCol);
     }
 }

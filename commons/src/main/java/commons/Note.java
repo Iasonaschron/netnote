@@ -176,6 +176,15 @@ public class Note {
     }
 
     /**
+     * Sets the id of the note, primarily used for testing
+     *
+     * @param id long representing the id
+     */
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    /**
      * Sets the collection that the note belongs to
      *
      * @param collection the new collection that the note now belongs to.
