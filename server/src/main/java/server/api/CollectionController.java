@@ -55,29 +55,6 @@ public class CollectionController {
     }
 
     /**
-     * Adds a note to the default collection.
-     * 
-     * @param note the note to be added to the collection.
-     * @return A response entity containing the collection if successful otherwise a
-     *         bad request.
-     */
-    @PostMapping("/addNote")
-    public ResponseEntity<Collection> addNoteToDefault(@RequestBody Note note) {
-        if (note.getTitle() == null || note.getTitle().isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        } else {
-            Optional<Collection> coll = repo.findById(1001L);
-            if (coll.isPresent()) {
-                coll.get().addNote(note);
-                repo.save(coll.get());
-                return ResponseEntity.ok(coll.get());
-            } else {
-                return ResponseEntity.badRequest().build();
-            }
-        }
-    }
-
-    /**
      * Adds a collection to the repository.
      * 
      * @param coll the collection to be added.
@@ -106,28 +83,5 @@ public class CollectionController {
         catch (Exception _){
             return ResponseEntity.badRequest().build();
         }
-    }
-
-    /**
-     * A getter for the default collection in the Collection repository
-     * that is hardcoded with an id of 1001.
-     * 
-     * @return the default collection
-     */
-
-    @GetMapping("/defaultCollection")
-    public Collection getDefaultCollection() {
-        try {
-            Optional<Collection> coll = repo.findById(1001L);
-            if (coll.isPresent()) {
-                return coll.get();
-            } else {
-                System.out.println("Collection not found");
-            }
-        } catch (Exception e) {
-            System.out.println("It doesnt exist?");
-        }
-        List<Note> emptyCol = new ArrayList<>();
-        return new Collection("Default Collection", emptyCol);
     }
 }
