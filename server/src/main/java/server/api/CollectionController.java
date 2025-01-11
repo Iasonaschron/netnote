@@ -68,10 +68,17 @@ public class CollectionController {
             if (coll.getTitle() == null || coll.getTitle().isEmpty()) {
                 return ResponseEntity.badRequest().build();
             }
+
+            // Check if a collection with the same title already exists.
+            if (repo.existsByTitle(coll.getTitle())) {
+                System.out.println("A collection with the title already exists: " + coll.getTitle());
+                return ResponseEntity.badRequest().build();
+            }
+
             // checks if the collection already exists and does nothing if true.
             if (repo.existsById(coll.getId())) {
                 System.out.println("it already exists" + coll.getId());
-                return ResponseEntity.ok(coll);
+                return ResponseEntity.badRequest().build();
             }
             // saves the collection to the repository.
             else {
