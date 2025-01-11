@@ -42,6 +42,12 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
+
+    /**
+     *
+     * @param noteid
+     * @return All the names of the files related with the note id provided
+     */
     @GetMapping("/{noteid}")
     public ResponseEntity<List<String>> fetchFileName(@PathVariable("noteid") long noteid){
         return ResponseEntity.ok(repo.fetchAllFileNamesById(noteid));

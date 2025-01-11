@@ -83,6 +83,11 @@ public class ServerUtils {
                 .post(Entity.entity(note, APPLICATION_JSON), Note.class);
     }
 
+    /**
+     * Performs a request to the server
+     * @param noteid
+     * @return the names of the files related with noteid
+     */
     public List<String> fetchFileNames(long noteid){
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/files/" + noteid)
@@ -90,6 +95,12 @@ public class ServerUtils {
                 .get(new GenericType<List<String>>(){});
     }
 
+    /**
+     *
+     * @param file the file to be uploaded
+     * @param noteid the id of the note
+     * @return either if the operation was successful or not
+     */
     public boolean uploadFile(File file, long noteid){
         try{
             Client client = ClientBuilder.newClient(new ClientConfig());

@@ -1,6 +1,5 @@
 package client.scenes;
 
-import client.MainNotes;
 import client.utils.LanguageManager;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
@@ -26,7 +25,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.checkerframework.checker.units.qual.m;
 
 /**
  * Controller for the Note Overview scene.
@@ -112,6 +110,9 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
 
+    /**
+     * Opens a file explorer window for the user to select a file, and then uploads that file to  the server
+     */
     public void SelectAndUploadFile(){
         System.out.println("AAAAAAAAAAAAAAA");
         try{

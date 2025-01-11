@@ -19,6 +19,11 @@ public interface FileRepository extends JpaRepository<FileData, FileCompositeKey
     @Query("DELETE FROM FileData f WHERE f.id.relatedNoteId = :noteid")
     void deleteByNoteId(long noteid);
 
+    /**
+     * Performs a query to the server
+     * @param noteid
+     * @return The names of the files with a given noteid
+     */
     @Transactional
     @Query("SELECT id.filename FROM FileData f WHERE f.id.relatedNoteId = :noteid")
     List<String> fetchAllFileNamesById(long noteid);

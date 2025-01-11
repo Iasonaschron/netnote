@@ -5,11 +5,6 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.renderer.markdown.MarkdownRenderer;
 
-import javax.swing.text.html.HTML;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class MarkDownMethods {
     private final static Parser parser = Parser.builder().build();
     private final static HtmlRenderer Htmlrenderer = HtmlRenderer.builder().build();
