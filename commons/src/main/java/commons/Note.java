@@ -31,7 +31,7 @@ public class Note {
     private Set<String> tags;
 
     @Column(name = "collection_id") // Foreign key
-    private long collectionId;
+    private Long collectionId;
 
     /**
      * Default constructor required for object mappers
@@ -49,15 +49,28 @@ public class Note {
      */
     public Note(String title, String content) {
         this.title = title;
-        if(content != null){
+        if (content != null){
             this.content = content;
         }
         else{
             this.content = "";
         }
+        collectionId = null;
         renderRawText();
         this.tags = new HashSet<>();
         extractTagsFromContent();
+    }
+
+    /**
+     * Additional constructor for mentioning the collection id of the note
+     *
+     * @param title   The title of the note
+     * @param content The content of the note
+     * @param collectionId The id of the collection
+     */
+    public Note(String title, String content, Long collectionId) {
+        this(title, content);
+        this.collectionId = collectionId;
     }
 
     /**

@@ -62,7 +62,7 @@ public class CollectionController {
      *         bad request.
      */
     @PostMapping("/addNote")
-    public ResponseEntity<Collection> addNotetoDefault(@RequestBody Note note) {
+    public ResponseEntity<Collection> addNoteToDefault(@RequestBody Note note) {
         if (note.getTitle() == null || note.getTitle().isEmpty()) {
             return ResponseEntity.badRequest().build();
         } else {
