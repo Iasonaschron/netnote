@@ -25,10 +25,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-<<<<<<< client/src/main/java/client/scenes/NoteOverviewCtrl.java
-
-=======
->>>>>>> client/src/main/java/client/scenes/NoteOverviewCtrl.java
 /**
  * Controller for the Note Overview scene.
  * Manages a list of notes and provides functionality for creating, viewing, and
