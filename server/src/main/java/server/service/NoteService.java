@@ -5,6 +5,7 @@ import commons.Note;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import server.api.CollectionController;
 import server.database.CollectionRepository;
 import server.database.NoteRepository;
 
@@ -17,6 +18,7 @@ public class NoteService {
 
     private final NoteRepository noteRepository;
     private final CollectionRepository collectionRepository;
+    private final CollectionController collectionController;
 
     private static final String DEFAULT_COLLECTION_TITLE = "Default Collection";
 
@@ -25,10 +27,15 @@ public class NoteService {
      *
      * @param noteRepository The repository containing all the notes
      * @param collectionRepository The repository containing all the collections
+     * @param collectionController The controller for collection API interactions
      */
-    public NoteService(NoteRepository noteRepository, CollectionRepository collectionRepository) {
+    @Autowired
+    public NoteService(NoteRepository noteRepository,
+                       CollectionRepository collectionRepository,
+                       CollectionController collectionController) {
         this.noteRepository = noteRepository;
         this.collectionRepository = collectionRepository;
+        this.collectionController = collectionController;
     }
 
     /**
@@ -56,7 +63,14 @@ public class NoteService {
      */
     private Collection createDefaultCollection() {
         Collection defaultCollection = new Collection(DEFAULT_COLLECTION_TITLE, new ArrayList<>());
-        return collectionRepository.save(defaultCollection);
+        ResponseEntity<Collection> response = collectionController.addCollection(defaultCollection);
+
+        // Check the response from the CollectionController
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Failed to create default collection via API");
+        }
     }
 
     /**

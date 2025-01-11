@@ -4,7 +4,9 @@ import commons.Collection;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import server.database.CollectionRepository;
+import server.service.CollectionConfigService;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -12,16 +14,18 @@ import java.util.List;
 public class CollectionController {
 
     private final CollectionRepository repo;
+    private final CollectionConfigService collectionConfigService;
 
     /**
-     * Initializes the Controller with a Collection Repository
-     * 
+     * Initializes the Controller with a Collection Repository and Collection Config Service
+     *
      * @param repo The Collection Repository in which the collections will be
      *             stored.
+     * @param collectionConfigService The service for managing the collection config file.
      */
-
-    public CollectionController(CollectionRepository repo) {
+    public CollectionController(CollectionRepository repo, CollectionConfigService collectionConfigService) {
         this.repo = repo;
+        this.collectionConfigService = collectionConfigService;
     }
 
     /**
@@ -53,7 +57,7 @@ public class CollectionController {
 
     /**
      * Adds a collection to the repository.
-     * 
+     *
      * @param coll the collection to be added.
      * @return ResponseEntity with the added collection if successful, bad request
      *         otherwise.
@@ -68,24 +72,70 @@ public class CollectionController {
 
             // Check if a collection with the same title already exists.
             if (repo.existsByTitle(coll.getTitle())) {
-                System.out.println("A collection with the title already exists: " + coll.getTitle());
                 return ResponseEntity.badRequest().build();
             }
 
-            // checks if the collection already exists and does nothing if true.
-            if (repo.existsById(coll.getId())) {
-                System.out.println("it already exists" + coll.getId());
-                return ResponseEntity.badRequest().build();
-            }
-            // saves the collection to the repository.
-            else {
-                Collection saved = repo.save(coll);
-                System.out.println("Saved" + saved.getId() + " " + saved.getTitle());
-                return ResponseEntity.ok(saved);
-            }
-        }
-        catch (Exception _){
+            // Save the collection to the repository.
+            Collection saved = repo.save(coll);
+            collectionConfigService.addCollectionToConfig(saved); // Update the config
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    /**
+     * Updates an existing collection in the repository.
+     *
+     * @param id The id of the collection to update.
+     * @param updatedCollection The updated collection data.
+     * @return ResponseEntity with the updated collection if successful, bad request
+     *         otherwise.
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Collection> updateCollection(@PathVariable Long id, @RequestBody Collection updatedCollection) {
+        if (!repo.existsById(id)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Collection existingCollection = repo.findById(id).get();
+
+        existingCollection.setTitle(updatedCollection.getTitle());
+        existingCollection.setNotes(updatedCollection.getNotes());
+        Collection updated = repo.save(existingCollection);
+
+        try {
+            collectionConfigService.updateCollectionInConfig(updated); // Update the config
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+
+        return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * Deletes a collection from the repository and the config file.
+     *
+     * @param id The id of the collection to delete.
+     * @return ResponseEntity with no content if successful, bad request otherwise.
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCollection(@PathVariable Long id) {
+        if (!repo.existsById(id)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // Delete the collection from the repository
+        Collection collectionToDelete = repo.findById(id).get();
+        repo.delete(collectionToDelete);
+
+        try {
+            collectionConfigService.removeCollectionFromConfig(id); // Update the config
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.noContent().build();
     }
 }
