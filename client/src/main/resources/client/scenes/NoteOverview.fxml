@@ -237,7 +237,123 @@
                            </children>
                         </AnchorPane>
                      </children>
-                  </HBox>
+                  </VBox>
+               </children>
+            </AnchorPane>
+            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="205.0" prefHeight="314.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <VBox minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <AnchorPane maxHeight="60.0" maxWidth="1.7976931348623157E308" minHeight="20.0" minWidth="0.0" prefHeight="16.0" prefWidth="226.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <AnchorPane StackPane.alignment="CENTER">
+                                       <children>
+                                          <TextField fx:id="title" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="63.0" prefWidth="226.0" promptText="%title_prompt" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="234.0" prefWidth="246.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <StackPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <AnchorPane StackPane.alignment="CENTER">
+                                       <children>
+                                          <TextArea fx:id="content" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" onTouchPressed="#updateNote" prefHeight="282.0" prefWidth="226.0" promptText="%content_prompt" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane maxHeight="60.0" maxWidth="1.7976931348623157E308" minHeight="45.0" minWidth="0.0" prefHeight="0.0" prefWidth="226.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <HBox layoutY="8.8" minHeight="0.0" minWidth="0.0" prefHeight="46.0" prefWidth="226.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="55.0" prefWidth="86.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <StackPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <AnchorPane minHeight="0.0" minWidth="0.0" StackPane.alignment="CENTER">
+                                                   <children>
+                                                      <ChoiceBox fx:id="tagsmenu" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
+                                                   </children>
+                                                </AnchorPane>
+                                             </children>
+                                          </StackPane>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="100.0" minHeight="0.0" minWidth="0.0" prefHeight="55.0" prefWidth="45.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <StackPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <AnchorPane minHeight="0.0" minWidth="0.0" StackPane.alignment="CENTER">
+                                                   <children>
+                                                      <Button fx:id="delete" disable="true" layoutY="18.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#deleteNote" prefHeight="26.0" prefWidth="44.0" text="%delete" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
+                                                   </children>
+                                                </AnchorPane>
+                                             </children>
+                                          </StackPane>
+                                       </children>
+                                    </AnchorPane>
+                                    <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="100.0" minHeight="0.0" minWidth="0.0" prefHeight="55.0" prefWidth="37.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <StackPane minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <AnchorPane minHeight="0.0" minWidth="0.0" StackPane.alignment="CENTER">
+                                                   <children>
+                                                      <Button fx:id="done" layoutY="18.4" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" onAction="#create" prefHeight="26.0" prefWidth="36.0" text="%done" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="10.0" />
+                                                   </children>
+                                                </AnchorPane>
+                                             </children>
+                                          </StackPane>
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="0.0" prefHeight="400.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <AnchorPane layoutY="253.0" prefHeight="210.0" prefWidth="246.0">
+                     <children>
+                        <Button fx:id="fileSelectButton" layoutX="173.0" layoutY="14.0" mnemonicParsing="false" onAction="#SelectAndUploadFile" text="Add Files" />
+                        <ListView prefHeight="210.0" prefWidth="162.0" />
+                        <Button layoutX="173.0" layoutY="48.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="65.0" text="Delete All">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </AnchorPane>
+                  <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="253.0" prefWidth="246.0" AnchorPane.bottomAnchor="210.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <AnchorPane StackPane.alignment="CENTER">
+                           <children>
+                              <WebView fx:id="webview" cache="true" cacheHint="SPEED" depthTest="ENABLE" layoutX="-56.0" maxHeight="-1.0" maxWidth="-1.0" prefHeight="463.0" prefWidth="246.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <effect>
+                                    <Blend />
+                                 </effect>
+                              </WebView>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                     <effect>
+                        <InnerShadow>
+                           <color>
+                              <Color red="0.4736842215061188" green="0.4736842215061188" blue="0.4736842215061188" />
+                           </color>
+                        </InnerShadow>
+                     </effect>
+                  </StackPane>
                </children>
             </AnchorPane>
          </children>

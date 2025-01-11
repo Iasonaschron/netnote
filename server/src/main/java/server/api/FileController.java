@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import server.database.FileRepository;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/files")
@@ -39,6 +40,17 @@ public class FileController {
             return ResponseEntity.ok(fd.getData());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+
+
+    /**
+     *
+     * @param noteid
+     * @return All the names of the files related with the note id provided
+     */
+    @GetMapping("/{noteid}")
+    public ResponseEntity<List<String>> fetchFileName(@PathVariable("noteid") long noteid){
+        return ResponseEntity.ok(repo.fetchAllFileNamesById(noteid));
     }
 
     /**

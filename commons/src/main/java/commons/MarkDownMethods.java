@@ -9,14 +9,25 @@ public class MarkDownMethods {
     private final static Parser parser = Parser.builder().build();
     private final static HtmlRenderer Htmlrenderer = HtmlRenderer.builder().build();
     private final static MarkdownRenderer MarkRenderer = MarkdownRenderer.builder().build();
+    private static final String SERVER = "http://localhost:8080/";
 
     /**
      * @param raw The String to parse into HTML
+     * @param noteid the id of the note request a string to be parsed
      * @return Returns the parsed HTML
      */
-    public static String renderRawTextToText(String raw) {
-        Node document = parser.parse(raw);
-        return Htmlrenderer.render(document);
+    public static String renderRawTextToText(String raw, long noteid) {
+        String[] a1 = raw.split("(\\[\\[embedded]]\\()|(\\))");
+        String convertedString = "";
+        for(int i = 0; i < a1.length; i += 2){
+            convertedString += a1[i];
+            if(i < a1.length-1){
+                convertedString += "![" + a1[i+1] + "](http://localhost:8080/api/files/" + noteid + "/" + a1[i+1] + ")";
+            }
+        }
+        Node document = parser.parse(convertedString);
+        String s1 = Htmlrenderer.render(document);
+        return s1;
     }
 
     /**
