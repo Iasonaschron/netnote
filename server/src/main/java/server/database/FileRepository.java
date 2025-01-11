@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface FileRepository extends JpaRepository<FileData, FileCompositeKey> {
     /**
      * Perform a query that deletes all files in a certain note
@@ -16,4 +18,13 @@ public interface FileRepository extends JpaRepository<FileData, FileCompositeKey
     @Modifying
     @Query("DELETE FROM FileData f WHERE f.id.relatedNoteId = :noteid")
     void deleteByNoteId(long noteid);
+
+    /**
+     * Performs a query to the server
+     * @param noteid
+     * @return The names of the files with a given noteid
+     */
+    @Transactional
+    @Query("SELECT id.filename FROM FileData f WHERE f.id.relatedNoteId = :noteid")
+    List<String> fetchAllFileNamesById(long noteid);
 }
