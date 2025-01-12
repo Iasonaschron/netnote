@@ -690,4 +690,17 @@ public class NoteOverviewCtrl implements Initializable {
         mainNotes = mainNotesCtrl;
     }
 
+    public void setSelectedNote(Note newNote) {
+        lastSelectedNote.setTitle(newNote.getTitle());
+        lastSelectedNote.setContent(newNote.getContent());
+        lastSelectedNote.renderRawText();
+        lastSelectedNote.extractTagsFromContent();
+        updateWebView();
+        if (hasSelectedTag) {
+            tagUpdateList();
+            return;
+        }
+        updateList();
+    }
+
 }
