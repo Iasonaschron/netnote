@@ -75,7 +75,7 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private Button clear;
 
-    private Long selectedCollectionId;
+    private String selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
     private ObservableList<Note> tagNotes;
@@ -108,7 +108,7 @@ public class NoteOverviewCtrl implements Initializable {
      *
      * @param selectedCollectionId The new selection ID
      */
-    public void setSelectedCollectionId(long selectedCollectionId) {
+    public void setSelectedCollectionId(String selectedCollectionId) {
         this.selectedCollectionId = selectedCollectionId;
     }
 
@@ -145,6 +145,9 @@ public class NoteOverviewCtrl implements Initializable {
      * collection
      */
     private List<Note> getNotesBySelectedCollection() {
+        if (selectedCollectionId == null) {
+            return data;
+        }
         return data.stream().filter(note -> note.getCollectionId() == selectedCollectionId).toList();
     }
 

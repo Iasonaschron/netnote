@@ -54,7 +54,7 @@ public class CollectionConfigService {
         writeConfig(collectionConfig);
     }
 
-    public void removeCollectionFromConfig(Long collectionId) throws IOException {
+    public void removeCollectionFromConfig(String collectionId) throws IOException {
         if (collectionConfig == null) {
             collectionConfig = readConfig();
         }
@@ -75,7 +75,7 @@ public class CollectionConfigService {
     }
 
     private Collection createDefaultCollection() {
-        Collection defaultCollection = new Collection(DEFAULT_COLLECTION_TITLE, new ArrayList<>());
+        Collection defaultCollection = new Collection(DEFAULT_COLLECTION_TITLE);
         try {
             addCollectionToConfig(defaultCollection);  // Add to the config
         } catch (IOException e) {

@@ -34,7 +34,7 @@ public class NoteService {
         if (note.getCollectionId() == null) {
             try {
                 Collection defaultCollection = collectionConfigService.getOrCreateDefaultCollection();
-                note.setCollectionId(defaultCollection.getId());
+                note.setCollectionId(defaultCollection.getTitle());
             } catch (IOException e) {
                 e.printStackTrace(); // Handle or log error
                 throw new RuntimeException("Error accessing the collection configuration");

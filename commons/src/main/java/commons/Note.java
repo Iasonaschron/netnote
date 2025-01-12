@@ -30,8 +30,8 @@ public class Note {
     @Column(name = "tag")
     private Set<String> tags;
 
-    @Column(name = "collection_id") // Foreign key
-    private Long collectionId;
+    @Column(name = "collection_id")
+    private String collectionId;
 
     /**
      * Default constructor required for object mappers
@@ -68,7 +68,7 @@ public class Note {
      * @param content The content of the note
      * @param collectionId The id of the collection
      */
-    public Note(String title, String content, Long collectionId) {
+    public Note(String title, String content, String collectionId) {
         this(title, content);
         this.collectionId = collectionId;
     }
@@ -138,7 +138,7 @@ public class Note {
      *
      * @return a Collection representing the current collection.
      */
-    public Long getCollectionId() {
+    public String getCollectionId() {
         return collectionId;
     }
 
@@ -202,7 +202,7 @@ public class Note {
      *
      * @param collection the new collection that the note now belongs to.
      */
-    public void setCollectionId(Long collection) {
+    public void setCollectionId(String collection) {
         this.collectionId = collection;
     }
 

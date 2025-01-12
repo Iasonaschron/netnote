@@ -49,8 +49,8 @@ public class CollectionConfig {
      *
      * @param collectionId The ID of the collection to remove.
      */
-    public void removeCollection(Long collectionId) {
-        collections.removeIf(c -> c.getId().equals(collectionId));
+    public void removeCollection(String collectionId) {
+        collections.removeIf(c -> c.getTitle().equals(collectionId));
     }
 
     /**
@@ -59,8 +59,11 @@ public class CollectionConfig {
      * @param updatedCollection The collection with updated data.
      */
     public void updateCollection(Collection updatedCollection) {
+        if (collections.stream().anyMatch(c -> Objects.equals(c.getTitle(), updatedCollection.getTitle()))) {
+            throw new IllegalArgumentException("A collection with this title already exists.");
+        }
         for (int i = 0; i < collections.size(); i++) {
-            if (collections.get(i).getId().equals(updatedCollection.getId())) {
+            if (collections.get(i).getTitle().equals(updatedCollection.getTitle())) {
                 collections.set(i, updatedCollection);
                 break;
             }
