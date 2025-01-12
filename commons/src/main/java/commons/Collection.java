@@ -89,6 +89,14 @@ public class Collection {
     }
 
     /**
+     * Sets the id of the collection to the provided id.
+     * @param id the new id of the collection.
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    /**
      * Adds a note to the collection.
      * 
      * @param note the new note to be added.
