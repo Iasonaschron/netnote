@@ -141,7 +141,7 @@ public class ServerUtils {
     /**
      * Performs a request to the server
      * 
-     * @param noteid
+     * @param noteid the id of the note
      * @return the names of the files related with noteid
      */
     public List<String> fetchFileNames(long noteid) {
