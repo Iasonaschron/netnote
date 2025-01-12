@@ -192,8 +192,8 @@ public class NoteTest {
     @Test
     public void setCollectionId_updatesCollectionId() {
         Note note = new Note();
-        note.setCollectionId(123L);
-        assertEquals(123L, note.getCollectionId());
+        note.setCollectionId("a");
+        assertEquals("a", note.getCollectionId());
     }
 
     @Test

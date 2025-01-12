@@ -17,8 +17,11 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import server.api.FileController;
+import commons.Collection;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -75,7 +78,6 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private Button clear;
 
-    private String selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
     private ObservableList<Note> tagNotes;
@@ -93,23 +95,28 @@ public class NoteOverviewCtrl implements Initializable {
 
     private List<String> tags = new ArrayList<>();
 
+    private CollectionConfigService collectionConfigService;
+    private Collection selectedCollection;
+
     /**
      * Constructor for the NoteOverviewCtrl.
      *
      * @param server the server utility to interact with backend services
+     * @param collectionConfigService The service that keeps track of collections
      */
     @Inject
-    public NoteOverviewCtrl(ServerUtils server) {
+    public NoteOverviewCtrl(ServerUtils server, CollectionConfigService collectionConfigService) {
         this.server = server;
+        this.collectionConfigService = collectionConfigService;
     }
 
     /**
-     * Sets the collection id and updates dataCollection
+     * Sets the collection
      *
-     * @param selectedCollectionId The new selection ID
+     * @param selectedCollection The new collection
      */
-    public void setSelectedCollectionId(String selectedCollectionId) {
-        this.selectedCollectionId = selectedCollectionId;
+    public void setSelectedCollection(Collection selectedCollection) {
+        this.selectedCollection = selectedCollection;
     }
 
 
@@ -127,7 +134,7 @@ public class NoteOverviewCtrl implements Initializable {
             );
             File selectedFile = fc.showOpenDialog(stage);
             if(selectedFile != null){
-                server.uploadFile(selectedFile, getNote().getId());
+                server.uploadFile(selectedFile, getNote().getId(), selectedCollection.getServer());
                 System.out.println("File uploaded");
             }
             else {
@@ -145,10 +152,7 @@ public class NoteOverviewCtrl implements Initializable {
      * collection
      */
     private List<Note> getNotesBySelectedCollection() {
-        if (selectedCollectionId == null) {
-            return data;
-        }
-        return data.stream().filter(note -> note.getCollectionId() == selectedCollectionId).toList();
+        return data.stream().filter(note -> Objects.equals(note.getCollectionId(), selectedCollection.getName())).toList();
     }
 
     /**
@@ -160,7 +164,7 @@ public class NoteOverviewCtrl implements Initializable {
             return;
         }
 
-        data = server.getNotes();
+        data = server.getNotes(selectedCollection.getServer());
 
         if (hasSelectedTag) {
             tagUpdateList();
@@ -319,6 +323,11 @@ public class NoteOverviewCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        try {
+            selectedCollection = collectionConfigService.getOrCreateDefaultCollection();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         webEngine = webview.getEngine();
         URL stylesheet = getClass().getResource("/client/styles/notes.css");
         if (stylesheet != null) {
@@ -497,7 +506,7 @@ public class NoteOverviewCtrl implements Initializable {
             return;
         }
         try {
-            server.addNote(getNote());
+            server.addNote(getNote(), selectedCollection.getServer());
         } catch (NullPointerException | WebApplicationException e) {
             AlertMethods.createError(e.getMessage());
             return;
@@ -528,8 +537,8 @@ public class NoteOverviewCtrl implements Initializable {
         }
 
         try {
-            server.saveNote(selectedNote.getId(), getNote());
-            lastSelectedNote = server.getNoteById(selectedNote.getId());
+            server.saveNote(selectedNote.getId(), getNote(), selectedCollection.getServer());
+            lastSelectedNote = server.getNoteById(selectedNote.getId(), selectedCollection.getServer());
         } catch (NullPointerException | WebApplicationException e) {
             AlertMethods.createError(e.getMessage());
             return;
@@ -563,7 +572,7 @@ public class NoteOverviewCtrl implements Initializable {
             if (!newContent.equals(note.getContent())) {
                 note.setContent(newContent);
                 try {
-                    server.saveNote(note.getId(), note);
+                    server.saveNote(note.getId(), note, selectedCollection.getServer());
                 } catch (NullPointerException | WebApplicationException e) {
                     AlertMethods.createError(e.getMessage());
                 }
@@ -609,7 +618,7 @@ public class NoteOverviewCtrl implements Initializable {
 
         var c = content.getText();
 
-        Note temporary = new Note(t, c, selectedCollectionId);
+        Note temporary = new Note(t, c, selectedCollection.getName());
         temporary.renderRawText();
         return temporary;
     }
@@ -629,7 +638,7 @@ public class NoteOverviewCtrl implements Initializable {
     public void deleteNote() {
         Note selectedNote = getSelectedNote();
         clearFields();
-        server.deleteNoteById(selectedNote.getId());
+        server.deleteNoteById(selectedNote.getId(), selectedCollection.getServer());
         isEditing = false;
         refresh();
         done.setOnAction(_ -> create());

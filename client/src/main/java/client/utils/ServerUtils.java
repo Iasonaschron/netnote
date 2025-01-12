@@ -36,17 +36,18 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
 public class ServerUtils {
 
-    private static final String SERVER = "http://localhost:8080/";
+    private static final String DEFAULT_SERVER = "http://localhost:8080/";
 
     /**
      * Checks if the server is running by attempting to make a request to it.
      *
+     * @param server The server targeted
      * @return true if the server is up, false if the server is unavailable
      */
-    public boolean isServerAvailable() {
+    public boolean isServerAvailable(String server) {
         try {
             ClientBuilder.newClient(new ClientConfig()) //
-                    .target(SERVER) //
+                    .target(server) //
                     .request(APPLICATION_JSON) //
                     .get();
         } catch (ProcessingException e) {
@@ -60,11 +61,12 @@ public class ServerUtils {
     /**
      * Retrieves a list of notes from the server.
      *
+     * @param server The server targeted
      * @return a list of {@link Note} objects retrieved from the server
      */
-    public List<Note> getNotes() {
+    public List<Note> getNotes(String server) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/notes")
+                .target(server).path("api/notes")
                 .request(APPLICATION_JSON)
                 .get(new GenericType<List<Note>>() {
                 });
@@ -73,24 +75,27 @@ public class ServerUtils {
     /**
      * Adds a new note to the server.
      *
+     * @param server The server targeted
      * @param note the {@link Note} object to be added
      * @return the added {@link Note} object with any updates from the server
      */
-    public Note addNote(Note note) {
+    public Note addNote(Note note, String server) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/notes")
+                .target(server).path("api/notes")
                 .request(APPLICATION_JSON)
                 .post(Entity.entity(note, APPLICATION_JSON), Note.class);
     }
 
     /**
      * Performs a request to the server
-     * @param noteid
+     *
+     * @param noteid The id of the note
+     * @param server The server targeted
      * @return the names of the files related with noteid
      */
-    public List<String> fetchFileNames(long noteid){
+    public List<String> fetchFileNames(long noteid, String server) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/files/" + noteid)
+                .target(server).path("api/files/" + noteid)
                 .request(APPLICATION_JSON)
                 .get(new GenericType<List<String>>(){});
     }
@@ -99,9 +104,10 @@ public class ServerUtils {
      *
      * @param file the file to be uploaded
      * @param noteid the id of the note
+     * @param server The server targeted
      * @return either if the operation was successful or not
      */
-    public boolean uploadFile(File file, long noteid){
+    public boolean uploadFile(File file, long noteid, String server) {
         try{
             Client client = ClientBuilder.newClient(new ClientConfig());
 
@@ -110,7 +116,7 @@ public class ServerUtils {
             form.bodyPart(new FileDataBodyPart("file", file, MediaType.APPLICATION_OCTET_STREAM_TYPE));
 
             Response response = client
-                    .target(SERVER).path("api/files/" + noteid + "/upload")
+                    .target(server).path("api/files/" + noteid + "/upload")
                     .request(MediaType.APPLICATION_JSON)
                     .post(Entity.entity(form, MediaType.MULTIPART_FORM_DATA_TYPE));
 
@@ -135,12 +141,13 @@ public class ServerUtils {
      *
      * @param id   id of the note to be updated
      * @param note new version of the note to be updated in the database
+     * @param server The server targeted
      * @return note updated in the database
      */
-    public boolean saveNote(long id, Note note) {
+    public boolean saveNote(long id, Note note, String server) {
         try {
             ClientBuilder.newClient(new ClientConfig())
-                    .target(SERVER).path("api/notes/" + id)
+                    .target(server).path("api/notes/" + id)
                     .request(APPLICATION_JSON)
                     .put(Entity.entity(note, APPLICATION_JSON), Note.class);
             return true;
@@ -156,12 +163,13 @@ public class ServerUtils {
      * Deletes a note from the server based on its ID.
      *
      * @param noteId the ID of the note to be deleted
+     * @param server The server targeted
      * @return true if the note was successfully deleted, false if there was an error
      */
-    public boolean deleteNoteById(long noteId) {
+    public boolean deleteNoteById(long noteId, String server) {
         try {
             ClientBuilder.newClient(new ClientConfig())
-                    .target(SERVER).path("api/notes/" + noteId)
+                    .target(server).path("api/notes/" + noteId)
                     .request(APPLICATION_JSON)
                     .delete();
             return true;
@@ -177,12 +185,13 @@ public class ServerUtils {
      * Retrieves a note from the server by its ID.
      *
      * @param id the ID of the note to be retrieved
+     * @param server The server targeted
      * @return the {@link Note} object retrieved from the server, or null if not found
      */
-    public Note getNoteById(long id) {
+    public Note getNoteById(long id, String server) {
         try {
             return ClientBuilder.newClient(new ClientConfig())
-                    .target(SERVER).path("api/notes/" + id)
+                    .target(server).path("api/notes/" + id)
                     .request(APPLICATION_JSON)
                     .get(Note.class);
         } catch (ProcessingException e) {

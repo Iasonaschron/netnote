@@ -5,11 +5,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Represents a collection of notes.
- * It is related to Notes in that every note has exactly 1 collection it belongs
- * to.
+ * It is related to Notes in that every note has exactly 1 collection it belongs to.
  */
 public class Collection {
     private String title;
+    private String name;
+    private String server;
 
     /**
      * Default constructor required for the object mapper.
@@ -17,18 +18,30 @@ public class Collection {
     public Collection() {
     }
 
-    /**
-     * Constructs a new collection provided a title and List of notes
-     * 
-     * @param title      The title of the collection
-     */
     public Collection(String title) {
+        this(title, title, "http://localhost:8080/");
+    }
+
+    public Collection(String title, String name) {
+        this(title, name, "http://localhost:8080/");
+    }
+
+    /**
+     * Constructs a new collection provided a title, name, and server URL.
+     *
+     * @param title  The title of the collection.
+     * @param name   The name of the collection.
+     * @param server The server URL of the collection.
+     */
+    public Collection(String title, String name, String server) {
         this.title = title;
+        this.name = name;
+        this.server = server;
     }
 
     /**
      * Getter for the title of the collection.
-     * 
+     *
      * @return The title of the collection.
      */
     public String getTitle() {
@@ -36,8 +49,8 @@ public class Collection {
     }
 
     /**
-     * Sets the title of the collection.
-     * 
+     * Setter for the title of the collection.
+     *
      * @param title the new title of the collection.
      */
     public void setTitle(String title) {
@@ -45,8 +58,44 @@ public class Collection {
     }
 
     /**
+     * Getter for the name of the collection.
+     *
+     * @return The name of the collection.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Setter for the name of the collection.
+     *
+     * @param name the new name of the collection.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Getter for the server URL of the collection.
+     *
+     * @return The server URL of the collection.
+     */
+    public String getServer() {
+        return server;
+    }
+
+    /**
+     * Setter for the server URL of the collection.
+     *
+     * @param server the new server URL of the collection.
+     */
+    public void setServer(String server) {
+        this.server = server;
+    }
+
+    /**
      * Checks if the provided object is equal to the collection.
-     * 
+     *
      * @param o the object to be compared.
      * @return true if the objects are equal, otherwise returns false.
      */
@@ -57,7 +106,7 @@ public class Collection {
 
     /**
      * Generates a hashcode for this collection.
-     * 
+     *
      * @return the hashcode for this collection.
      */
     @Override
@@ -66,10 +115,9 @@ public class Collection {
     }
 
     /**
-     * Returns a string representation of the collection
-     * 
-     * @return the titles of the collection and the titles of the notes in the
-     *         collection.
+     * Returns a string representation of the collection.
+     *
+     * @return the title of the collection.
      */
     @Override
     public String toString() {
