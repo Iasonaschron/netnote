@@ -77,7 +77,7 @@ public class CollectionConfig {
         }
 
         for (int i = 0; i< collections.size(); i++) {
-            for(int j = 0; j< collections.size(); j++) {
+            for(int j = i+1; j< collections.size(); j++) {
                 if(collections.get(i).getTitle().equals(updatedCollection.getTitle())) {
                     throw new IllegalArgumentException("Duplicate Collection titles are not allowed");
                 }

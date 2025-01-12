@@ -104,7 +104,17 @@ class CollectionConfigTest {
     }
 
     
-    
+    @Test
+    void updateCollection() {
+        Collection collTest = new Collection("Test5",new ArrayList<>());
+        collectionConfig.addCollection(collTest);
+
+        Collection updatedCollection = new Collection("UpdatedCollection",new ArrayList<>());
+        collectionConfig.updateCollection("Test5",updatedCollection);
+        assertNotNull(collectionConfig.getCollections());
+        assertEquals("UpdatedCollection",collectionConfig.getCollections().get(0).getTitle() );
+        assertEquals(1,collectionConfig.getCollections().size());
+    }
 
 
     //Only important if we allow Collections with duplicate titles.
