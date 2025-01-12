@@ -202,4 +202,13 @@ public class NoteTest {
         note.setId(123);
         assertEquals(123, note.getId());
     }
+
+    @Test
+    public void idTest(){
+        Note note = new Note("Test1", "");
+        Note note2 = new Note("Test2", "");
+        System.out.println(note.getId() + "and also" + note2.getId());
+        assertNotEquals(note.getId(), note2.getId());
+
+    }
 }

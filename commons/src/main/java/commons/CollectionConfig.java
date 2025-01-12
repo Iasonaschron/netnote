@@ -58,12 +58,30 @@ public class CollectionConfig {
      *
      * @param updatedCollection The collection with updated data.
      */
-    public void updateCollection(Collection updatedCollection) {
-        for (int i = 0; i < collections.size(); i++) {
-            if (collections.get(i).getId().equals(updatedCollection.getId())) {
-                collections.set(i, updatedCollection);
-                break;
+    public void updateCollection(String oldTitle ,Collection updatedCollection) {
+
+        boolean found = false;
+        for(int i = 0; i < collections.size(); i++) {
+            for (Collection collection : collections) {
+                //Check for every collection in collections if there are any duplicate titles
+                if (collection.getTitle().equals(oldTitle)) {
+                    collections.set(i, updatedCollection);
+                    found = true;
+                    break;
+                }
             }
+        }
+        if(!found){
+            throw new IllegalArgumentException("A collection with this title does not exist.");
+        }
+
+        for (int i = 0; i< collections.size(); i++) {
+            for(int j = 0; j< collections.size(); j++) {
+                if(collections.get(i).getTitle().equals(updatedCollection.getTitle())) {
+                    throw new IllegalArgumentException("Duplicate Collection titles are not allowed");
+                }
+            }
+
         }
     }
 }
