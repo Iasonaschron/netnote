@@ -61,10 +61,10 @@ public class NoteOverviewCtrl implements Initializable {
     private Button add;
 
     @FXML
-    private ChoiceBox<String> tagsmenu;
+    private ChoiceBox<String> tagsMenu;
 
     @FXML
-    private ChoiceBox<String> languageMenu;
+    private ChoiceBox<String> languageSelector;
 
     @FXML
     private CheckBox searchByContentCheckBox;
@@ -176,9 +176,9 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void updateList() {
         visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
-        tagsmenu.getSelectionModel().clearSelection();
+        tagsMenu.getSelectionModel().clearSelection();
         hasSelectedTag = false;
-        if (!tagsmenu.isShowing()) {
+        if (!tagsMenu.isShowing()) {
             filterTagList();
         }
         listView.setItems(visibleNotes);
@@ -188,15 +188,17 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Updates the list of notes based on the current tag selected and the current filter string.
-     * This method is called instead of updateList() only when the user has selected a tag.
+     * Updates the list of notes based on the current tag selected and the current
+     * filter string.
+     * This method is called instead of updateList() only when the user has selected
+     * a tag.
      * It updates the ListView with the filtered notes.
      *
      */
-    public void tagUpdateList(){
+    public void tagUpdateList() {
         visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
-        tagNotes = FXCollections.observableList(filterNotesByTag(tagsmenu.getValue()));
-        if (!tagsmenu.isShowing()) {
+        tagNotes = FXCollections.observableList(filterNotesByTag(tagsMenu.getValue()));
+        if (!tagsMenu.isShowing()) {
             filterTagList();
         }
         listView.setItems(tagNotes);
@@ -214,15 +216,14 @@ public class NoteOverviewCtrl implements Initializable {
      * Updates the dropdown menu of available tags to filter by
      */
     public void filterTagList() {
-        int lastTagIndex = tagsmenu.getSelectionModel().getSelectedIndex();
+        int lastTagIndex = tagsMenu.getSelectionModel().getSelectedIndex();
 
         visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
 
         tags = visibleNotes.stream().flatMap(note -> note.getTags().stream()).distinct().toList();
-        tagsmenu.setItems(FXCollections.observableArrayList(tags));
+        tagsMenu.setItems(FXCollections.observableArrayList(tags));
 
-        tagsmenu.getSelectionModel().select(lastTagIndex);
-
+        tagsMenu.getSelectionModel().select(lastTagIndex);
 
     }
 
@@ -270,7 +271,7 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void createNote() {
         clearFields();
-        tagsmenu.getSelectionModel().clearSelection();
+        tagsMenu.getSelectionModel().clearSelection();
         hasSelectedTag = false;
         clear.disableProperty().set(true);
 
@@ -297,7 +298,7 @@ public class NoteOverviewCtrl implements Initializable {
      * Clears the selected tag from the menu
      */
     public void clearTags() {
-        tagsmenu.getSelectionModel().clearSelection();
+        tagsMenu.getSelectionModel().clearSelection();
         clearFields();
         hasSelectedTag = false;
         clear.disableProperty().set(true);
@@ -361,19 +362,18 @@ public class NoteOverviewCtrl implements Initializable {
             }
         });
 
-
         searchByContentCheckBox.selectedProperty().addListener(_ -> updateList());
 
-        languageMenu.setItems(FXCollections.observableArrayList("EN", "NL", "RO"));
-        languageMenu.getSelectionModel().select(LanguageManager.getCurrentLanguageCode().toUpperCase());
+        languageSelector.setItems(FXCollections.observableArrayList("EN", "NL", "RO"));
+        languageSelector.getSelectionModel().select(LanguageManager.getCurrentLanguageCode().toUpperCase());
 
-        languageMenu.setOnAction(_ -> {
-            String selectedLanguage = languageMenu.getValue().toUpperCase();
+        languageSelector.setOnAction(_ -> {
+            String selectedLanguage = languageSelector.getValue().toUpperCase();
             LanguageManager.loadLocale(selectedLanguage);
             updateLanguage();
         });
 
-        tagsmenu.setOnAction(this::tagMenuSelect);
+        tagsMenu.setOnAction(this::tagMenuSelect);
         listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
 
         startPolling();
@@ -385,7 +385,7 @@ public class NoteOverviewCtrl implements Initializable {
      * @param actionEvent selection from tags menu
      */
     private void tagMenuSelect(javafx.event.ActionEvent actionEvent) {
-        tagNotes = FXCollections.observableList(filterNotesByTag(tagsmenu.getValue()));
+        tagNotes = FXCollections.observableList(filterNotesByTag(tagsMenu.getValue()));
         listView.setItems(tagNotes);
         listView.getSelectionModel().select(0);
         isSaveAction = true;
