@@ -22,6 +22,7 @@ import java.net.ConnectException;
 import java.util.List;
 
 import commons.Note;
+import commons.Collection;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -71,6 +72,19 @@ public class ServerUtils {
     }
 
     /**
+     * Retrieves a list of collections of notes from the server.
+     *
+     * @return a list of collections, where each collection contains notes.
+     */
+    public List<Collection> getCollections() {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/collections")
+                .request(APPLICATION_JSON)
+                .get(new GenericType<List<Collection>>() {
+                });
+    }
+
+    /**
      * Adds a new note to the server.
      *
      * @param note the {@link Note} object to be added
@@ -84,25 +98,68 @@ public class ServerUtils {
     }
 
     /**
+     * Adds a new collection to the server.
+     * 
+     * @param collection the {@link Collection} object to be added
+     * @return the added {@link Collection} object with any updates from the server
+     */
+    public Collection addCollection(Collection collection) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/collections")
+                .request(APPLICATION_JSON)
+                .post(Entity.entity(collection, APPLICATION_JSON), Collection.class);
+    }
+
+    /**
+     * Adds a note to a collection.
+     * 
+     * @param collectionTitle the title of the collection
+     * @param note            the {@link Note} to be added to the collection
+     * @return the added {@link Note} to the collection
+     */
+    public Note addNoteToCollection(String collectionTitle, Note note) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/collections/" + collectionTitle + "/notes")
+                .request(APPLICATION_JSON)
+                .post(Entity.entity(note, APPLICATION_JSON), Note.class);
+    }
+
+    /**
+     * Deletes a note from a collection.
+     * 
+     * @param collectionTitle the title of the collection
+     * @param noteId          the id of the note to be deleted
+     * @return the deleted note
+     */
+    public Note deleteNoteFromCollection(String collectionTitle, long noteId) {
+        return ClientBuilder.newClient(new ClientConfig())
+                .target(SERVER).path("api/collections/" + collectionTitle + "/notes/" + noteId)
+                .request(APPLICATION_JSON)
+                .delete(Note.class);
+    }
+
+    /**
      * Performs a request to the server
+     * 
      * @param noteid
      * @return the names of the files related with noteid
      */
-    public List<String> fetchFileNames(long noteid){
+    public List<String> fetchFileNames(long noteid) {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(SERVER).path("api/files/" + noteid)
                 .request(APPLICATION_JSON)
-                .get(new GenericType<List<String>>(){});
+                .get(new GenericType<List<String>>() {
+                });
     }
 
     /**
      *
-     * @param file the file to be uploaded
+     * @param file   the file to be uploaded
      * @param noteid the id of the note
      * @return either if the operation was successful or not
      */
-    public boolean uploadFile(File file, long noteid){
-        try{
+    public boolean uploadFile(File file, long noteid) {
+        try {
             Client client = ClientBuilder.newClient(new ClientConfig());
 
             FormDataMultiPart form = new FormDataMultiPart();
@@ -128,7 +185,6 @@ public class ServerUtils {
             return false;
         }
     }
-
 
     /**
      * Sends a note to the server to be updated.
@@ -156,7 +212,8 @@ public class ServerUtils {
      * Deletes a note from the server based on its ID.
      *
      * @param noteId the ID of the note to be deleted
-     * @return true if the note was successfully deleted, false if there was an error
+     * @return true if the note was successfully deleted, false if there was an
+     *         error
      */
     public boolean deleteNoteById(long noteId) {
         try {
@@ -177,7 +234,8 @@ public class ServerUtils {
      * Retrieves a note from the server by its ID.
      *
      * @param id the ID of the note to be retrieved
-     * @return the {@link Note} object retrieved from the server, or null if not found
+     * @return the {@link Note} object retrieved from the server, or null if not
+     *         found
      */
     public Note getNoteById(long id) {
         try {

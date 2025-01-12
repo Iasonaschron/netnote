@@ -75,6 +75,9 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private Button clear;
 
+    @FXML
+    private Button collectionMenuButton;
+
     private Long selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
@@ -112,29 +115,26 @@ public class NoteOverviewCtrl implements Initializable {
         this.selectedCollectionId = selectedCollectionId;
     }
 
-
     /**
-     * Opens a file explorer window for the user to select a file, and then uploads that file to  the server
+     * Opens a file explorer window for the user to select a file, and then uploads
+     * that file to the server
      */
-    public void SelectAndUploadFile(){
-        try{
+    public void SelectAndUploadFile() {
+        try {
             FileChooser fc = new FileChooser();
             Stage stage = new Stage();
             fc.setTitle("Select a file");
             fc.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("All Files", "*.*"),
-                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-            );
+                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
             File selectedFile = fc.showOpenDialog(stage);
-            if(selectedFile != null){
+            if (selectedFile != null) {
                 server.uploadFile(selectedFile, getNote().getId());
                 System.out.println("File uploaded");
-            }
-            else {
+            } else {
                 System.out.println("no file selected");
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Error uploading file");
             e.printStackTrace();
         }
@@ -688,6 +688,10 @@ public class NoteOverviewCtrl implements Initializable {
 
     public void setMainNotesCtrl(MainNotesCtrl mainNotesCtrl) {
         mainNotes = mainNotesCtrl;
+    }
+
+    public void openCollectionMenu() {
+        mainNotes.showCollectionOverview();
     }
 
 }
