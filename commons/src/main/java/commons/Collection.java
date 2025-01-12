@@ -24,7 +24,7 @@ public class Collection {
     private String title;
 
     @OneToMany(mappedBy = "collectionId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Note> collection;
+    private List<Note> notes;
 
     /**
      * Default constructor required for the object mapper.
@@ -36,11 +36,11 @@ public class Collection {
      * Constructs a new collection provided a title and List of notes
      * 
      * @param title      The title of the collection
-     * @param collection The list of notes that belong to this collection.
+     * @param notes The list of notes that belong to this collection.
      */
-    public Collection(String title, List<Note> collection) {
+    public Collection(String title, List<Note> notes) {
         this.title = title;
-        this.collection = collection;
+        this.notes = notes;
     }
 
     /**
@@ -57,8 +57,8 @@ public class Collection {
      * 
      * @return The collection of notes.
      */
-    public List<Note> getCollection() {
-        return collection;
+    public List<Note> getNotes() {
+        return notes;
     }
 
     /**
@@ -66,7 +66,7 @@ public class Collection {
      * 
      * @return The id of the collection.
      */
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -84,8 +84,8 @@ public class Collection {
      * 
      * @param collection the new list of notes.
      */
-    public void setCollection(List<Note> collection) {
-        this.collection = collection;
+    public void setNotes(List<Note> collection) {
+        this.notes = collection;
     }
 
     /**
@@ -94,7 +94,7 @@ public class Collection {
      * @param note the new note to be added.
      */
     public void addNote(Note note) {
-        collection.add(note);
+        notes.add(note);
     }
 
     /**
@@ -126,6 +126,6 @@ public class Collection {
      */
     @Override
     public String toString() {
-        return title + ":" + collection.stream().map(Note::toString).collect(Collectors.joining(", "));
+        return title + ":" + notes.stream().map(Note::toString).collect(Collectors.joining(", "));
     }
 }

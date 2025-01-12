@@ -1,26 +1,25 @@
 package server.api;
 
+import commons.Note;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import commons.Note;
-import server.database.NoteRepository;
+import server.service.NoteService;
 
-import java.util.HashSet;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/notes")
 public class NoteController {
 
-    private final NoteRepository repo;
+    private final NoteService noteService;
 
     /**
-     * Initializes the controller with the provided NoteRepository
+     * Initializes the controller with the provided NoteService
      *
-     * @param repo The NoteRepository used for storing the notes
+     * @param noteService The NoteService used for handling note-related operations
      */
-    public NoteController(NoteRepository repo) {
-        this.repo = repo;
+    public NoteController(NoteService noteService) {
+        this.noteService = noteService;
     }
 
     /**
@@ -30,39 +29,37 @@ public class NoteController {
      */
     @GetMapping
     public List<Note> getAllNotes() {
-        return repo.findAll();
+        return noteService.getAllNotes();
     }
 
     /**
      * Adds a new note to the database and adds it to the default collection.
      *
      * @param note The note being added
-     * @return A ResponseEntity containing the note if successful, bad request
-     *         otherwise
+     * @return A ResponseEntity containing the note if successful, bad request otherwise
      */
     @PostMapping
     public ResponseEntity<Note> addNote(@RequestBody Note note) {
         if (note.getTitle() == null || note.getTitle().isEmpty() || note.getContent() == null) {
             return ResponseEntity.badRequest().build();
         }
-        note.setCollectionId(1001L);
-        Note saved = repo.save(note);
-        return ResponseEntity.ok(saved);
+        Note savedNote = noteService.saveNote(note);
+        return ResponseEntity.ok(savedNote);
     }
 
     /**
      * Getter for a specific note given the ID
      *
      * @param id The ID of the note
-     * @return A ResponseEntity containing the note if successful, bad request
-     *         otherwise
+     * @return A ResponseEntity containing the note if successful, bad request otherwise
      */
     @GetMapping("/{id}")
     public ResponseEntity<Note> getNoteById(@PathVariable("id") long id) {
-        if (!repo.existsById(id)) {
+        Note note = noteService.getNoteById(id);
+        if (note == null) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(repo.findById(id).get());
+        return ResponseEntity.ok(note);
     }
 
     /**
@@ -70,26 +67,15 @@ public class NoteController {
      *
      * @param id          The ID of the note
      * @param updatedNote The Note containing the new information
-     * @return A ResponseEntity containing the updated note if successful, bad
-     *         request otherwise
+     * @return A ResponseEntity containing the updated note if successful, bad request otherwise
      */
     @PutMapping("/{id}")
     public ResponseEntity<Note> updateNote(@PathVariable("id") long id, @RequestBody Note updatedNote) {
-        if (!repo.existsById(id)) {
+        Note updated = noteService.updateNote(id, updatedNote);
+        if (updated == null) {
             return ResponseEntity.badRequest().build();
         }
-        Note existingNote = repo.findById(id).get();
-        existingNote.setTitle(updatedNote.getTitle());
-        existingNote.setContent(updatedNote.getContent());
-        existingNote.renderRawText();
-        if (existingNote.getTags() == null) {
-            existingNote.setTags(new HashSet<>());
-        }
-        existingNote.getTags().clear();
-        existingNote.getTags().clear();
-        existingNote.extractTagsFromContent();
-        repo.save(existingNote);
-        return ResponseEntity.ok(existingNote);
+        return ResponseEntity.ok(updated);
     }
 
     /**
@@ -100,10 +86,6 @@ public class NoteController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNoteById(@PathVariable("id") long id) {
-        if (!repo.existsById(id)) {
-            return ResponseEntity.badRequest().build();
-        }
-        repo.deleteById(id);
-        return ResponseEntity.ok().build();
+        return noteService.deleteNoteById(id);
     }
 }

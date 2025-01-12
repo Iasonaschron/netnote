@@ -75,7 +75,7 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private Button clear;
 
-    private long selectedCollectionId;
+    private Long selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
     private ObservableList<Note> tagNotes;
@@ -117,7 +117,6 @@ public class NoteOverviewCtrl implements Initializable {
      * Opens a file explorer window for the user to select a file, and then uploads that file to  the server
      */
     public void SelectAndUploadFile(){
-        System.out.println("AAAAAAAAAAAAAAA");
         try{
             FileChooser fc = new FileChooser();
             Stage stage = new Stage();
@@ -317,7 +316,6 @@ public class NoteOverviewCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setSelectedCollectionId(1001); // TODO: There is probably a better way to initialize the default id
         webEngine = webview.getEngine();
         URL stylesheet = getClass().getResource("/client/styles/notes.css");
         if (stylesheet != null) {
@@ -608,7 +606,7 @@ public class NoteOverviewCtrl implements Initializable {
 
         var c = content.getText();
 
-        Note temporary = new Note(t, c);
+        Note temporary = new Note(t, c, selectedCollectionId);
         temporary.renderRawText();
         return temporary;
     }

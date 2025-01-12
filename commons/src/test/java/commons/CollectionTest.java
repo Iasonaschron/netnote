@@ -31,7 +31,7 @@ public class CollectionTest {
 
     @Test
     public void testGetCollection() {
-        List<Note> notes = collection.getCollection();
+        List<Note> notes = collection.getNotes();
         assertEquals(2, notes.size());
         assertTrue(notes.contains(note1));
         assertTrue(notes.contains(note2));
@@ -53,17 +53,17 @@ public class CollectionTest {
         Note note3 = new Note();
         List<Note> newNotes = new ArrayList<>();
         newNotes.add(note3);
-        collection.setCollection(newNotes);
-        assertEquals(1, collection.getCollection().size());
-        assertTrue(collection.getCollection().contains(note3));
+        collection.setNotes(newNotes);
+        assertEquals(1, collection.getNotes().size());
+        assertTrue(collection.getNotes().contains(note3));
     }
 
     @Test
     public void testAddNote() {
         Note note3 = new Note();
         collection.addNote(note3);
-        assertEquals(3, collection.getCollection().size());
-        assertTrue(collection.getCollection().contains(note3));
+        assertEquals(3, collection.getNotes().size());
+        assertTrue(collection.getNotes().contains(note3));
     }
 
     @Test
