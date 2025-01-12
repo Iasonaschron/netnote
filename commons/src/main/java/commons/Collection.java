@@ -1,11 +1,7 @@
 package commons;
 
-import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Represents a collection of notes.

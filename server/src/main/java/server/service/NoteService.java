@@ -17,6 +17,12 @@ public class NoteService {
     private final NoteRepository noteRepository;
     private final CollectionConfigService collectionConfigService;
 
+    /**
+     * Autowired constructor for NoteService
+     *
+     * @param noteRepository The repository for notes
+     * @param collectionConfigService The service for collections
+     */
     @Autowired
     public NoteService(NoteRepository noteRepository, CollectionConfigService collectionConfigService) {
         this.noteRepository = noteRepository;

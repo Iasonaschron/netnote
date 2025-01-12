@@ -116,7 +116,7 @@ public class NoteOverviewCtrl implements Initializable {
     /**
      * Opens a file explorer window for the user to select a file, and then uploads that file to  the server
      */
-    public void SelectAndUploadFile(){
+    public void selectAndUploadFile(){
         try{
             FileChooser fc = new FileChooser();
             Stage stage = new Stage();
@@ -689,6 +689,11 @@ public class NoteOverviewCtrl implements Initializable {
         refresh();
     }
 
+    /**
+     * Setter for mainNotesCtrl
+     *
+     * @param mainNotesCtrl The object being set
+     */
     public void setMainNotesCtrl(MainNotesCtrl mainNotesCtrl) {
         mainNotes = mainNotesCtrl;
     }
