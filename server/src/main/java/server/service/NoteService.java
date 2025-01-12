@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import server.database.NoteRepository;
+import service.CollectionConfigService;
 
 import java.io.IOException;
 import java.util.HashSet;

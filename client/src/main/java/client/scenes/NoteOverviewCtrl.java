@@ -17,8 +17,8 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import server.api.FileController;
 import commons.Collection;
+import service.CollectionConfigService;
 
 import java.io.File;
 import java.io.IOException;

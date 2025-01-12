@@ -1,4 +1,4 @@
-package server.service;
+package service;
 
 import commons.Collection;
 import commons.CollectionConfig;

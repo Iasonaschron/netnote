@@ -19,6 +19,7 @@ import java.util.Random;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import service.CollectionConfigService;
 
 @Configuration
 public class Config {
@@ -30,5 +31,15 @@ public class Config {
     @Bean
     public Random getRandom() {
         return new Random();
+    }
+
+    /**
+     * Creates a CollectionConfigService bean
+     *
+     * @return A new instance of CollectionConfigService
+     */
+    @Bean
+    public CollectionConfigService collectionConfigService() {
+        return new CollectionConfigService();
     }
 }
