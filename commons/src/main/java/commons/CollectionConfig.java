@@ -55,7 +55,8 @@ public class CollectionConfig {
 
     /**
      * Updates an existing collection in the list.
-     *
+     * 
+     * @param oldTitle the title of the collection to be updated.
      * @param updatedCollection The collection with updated data.
      */
     public void updateCollection(String oldTitle ,Collection updatedCollection) {
