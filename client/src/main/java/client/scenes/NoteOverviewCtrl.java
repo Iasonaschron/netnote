@@ -145,7 +145,7 @@ public class NoteOverviewCtrl implements Initializable {
      * collection
      */
     private List<Note> getNotesBySelectedCollection() {
-        return data.stream().filter(note -> note.getCollectionId() == selectedCollectionId).toList();
+        return data.stream().filter(note -> Objects.equals(note.getCollectionId(), selectedCollectionId)).toList();
     }
 
     /**
@@ -316,6 +316,7 @@ public class NoteOverviewCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setSelectedCollectionId(0);
         webEngine = webview.getEngine();
         URL stylesheet = getClass().getResource("/client/styles/notes.css");
         if (stylesheet != null) {
