@@ -1,4 +1,4 @@
-package service;
+package client.service;
 
 import commons.Collection;
 import commons.CollectionConfig;
@@ -18,7 +18,7 @@ import jakarta.annotation.PreDestroy;
 @Service
 public class CollectionConfigService {
 
-    private static final String CONFIG_FILE_PATH = "server/src/main/resources/collections_config.json";
+    private static final String CONFIG_FILE_PATH = "client/src/main/resources/client/collections/collections_config.json";
     private static final String DEFAULT_COLLECTION_TITLE = "Default Collection";
     private final ObjectMapper objectMapper;
     private CollectionConfig collectionConfig;
@@ -114,6 +114,15 @@ public class CollectionConfigService {
                 .filter(collection -> DEFAULT_COLLECTION_TITLE.equals(collection.getTitle()))
                 .findFirst()
                 .orElseGet(this::createDefaultCollection); // Create it if not found
+    }
+
+    public Collection getCollectionByTitle(String title) {
+        if (collectionConfig == null) {
+            return null;
+        }
+        return collectionConfig.getCollections().stream()
+                .filter(collection -> collection.getTitle().equals(title))
+                .findFirst().orElse(null);
     }
 
     /**

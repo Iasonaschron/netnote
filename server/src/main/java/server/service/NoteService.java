@@ -1,14 +1,11 @@
 package server.service;
 
-import commons.Collection;
 import commons.Note;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import server.database.NoteRepository;
-import service.CollectionConfigService;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 
@@ -16,18 +13,15 @@ import java.util.List;
 public class NoteService {
 
     private final NoteRepository noteRepository;
-    private final CollectionConfigService collectionConfigService;
 
     /**
      * Autowired constructor for NoteService
      *
      * @param noteRepository The repository for notes
-     * @param collectionConfigService The service for collections
      */
     @Autowired
-    public NoteService(NoteRepository noteRepository, CollectionConfigService collectionConfigService) {
+    public NoteService(NoteRepository noteRepository) {
         this.noteRepository = noteRepository;
-        this.collectionConfigService = collectionConfigService;
     }
 
     /**
@@ -38,15 +32,6 @@ public class NoteService {
      * @return The saved note
      */
     public Note saveNote(Note note) {
-        if (note.getCollectionId() == null) {
-            try {
-                Collection defaultCollection = collectionConfigService.getOrCreateDefaultCollection();
-                note.setCollectionId(defaultCollection.getTitle());
-            } catch (IOException e) {
-                e.printStackTrace(); // Handle or log error
-                throw new RuntimeException("Error accessing the collection configuration");
-            }
-        }
         return noteRepository.save(note);
     }
 

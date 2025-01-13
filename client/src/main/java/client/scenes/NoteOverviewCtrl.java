@@ -18,7 +18,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import commons.Collection;
-import service.CollectionConfigService;
+import client.service.CollectionConfigService;
 
 import java.io.File;
 import java.io.IOException;
@@ -96,7 +96,7 @@ public class NoteOverviewCtrl implements Initializable {
     private List<String> tags = new ArrayList<>();
 
     private CollectionConfigService collectionConfigService;
-    private Collection selectedCollection;
+    private Collection selectedCollection; //collection used for filtering
 
     /**
      * Constructor for the NoteOverviewCtrl.
@@ -110,13 +110,15 @@ public class NoteOverviewCtrl implements Initializable {
         this.collectionConfigService = collectionConfigService;
     }
 
-    /**
-     * Sets the collection
-     *
-     * @param selectedCollection The new collection
-     */
-    public void setSelectedCollection(Collection selectedCollection) {
-        this.selectedCollection = selectedCollection;
+    public Collection getCurrentCollection() {
+        if (getSelectedNote() == null){
+            try {
+                return collectionConfigService.getOrCreateDefaultCollection();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return collectionConfigService.getCollectionByTitle(getSelectedNote().getCollectionId());
     }
 
 
@@ -134,7 +136,7 @@ public class NoteOverviewCtrl implements Initializable {
             );
             File selectedFile = fc.showOpenDialog(stage);
             if(selectedFile != null){
-                server.uploadFile(selectedFile, getNote().getId(), selectedCollection.getServer());
+                server.uploadFile(selectedFile, getNote().getId(), getCurrentCollection().getServer());
                 System.out.println("File uploaded");
             }
             else {
@@ -152,7 +154,7 @@ public class NoteOverviewCtrl implements Initializable {
      * collection
      */
     private List<Note> getNotesBySelectedCollection() {
-        return data.stream().filter(note -> Objects.equals(note.getCollectionId(), selectedCollection.getName())).toList();
+        return data.stream().filter(note -> Objects.equals(note.getCollectionId(), getCurrentCollection().getTitle())).toList();
     }
 
     /**
@@ -506,7 +508,7 @@ public class NoteOverviewCtrl implements Initializable {
             return;
         }
         try {
-            server.addNote(getNote(), selectedCollection.getServer());
+            server.addNote(getNote(), getCurrentCollection().getServer());
         } catch (NullPointerException | WebApplicationException e) {
             AlertMethods.createError(e.getMessage());
             return;
@@ -537,8 +539,8 @@ public class NoteOverviewCtrl implements Initializable {
         }
 
         try {
-            server.saveNote(selectedNote.getId(), getNote(), selectedCollection.getServer());
-            lastSelectedNote = server.getNoteById(selectedNote.getId(), selectedCollection.getServer());
+            server.saveNote(selectedNote.getId(), getNote(), getCurrentCollection().getServer());
+            lastSelectedNote = server.getNoteById(selectedNote.getId(), getCurrentCollection().getServer());
         } catch (NullPointerException | WebApplicationException e) {
             AlertMethods.createError(e.getMessage());
             return;
@@ -572,7 +574,7 @@ public class NoteOverviewCtrl implements Initializable {
             if (!newContent.equals(note.getContent())) {
                 note.setContent(newContent);
                 try {
-                    server.saveNote(note.getId(), note, selectedCollection.getServer());
+                    server.saveNote(note.getId(), note, getCurrentCollection().getServer());
                 } catch (NullPointerException | WebApplicationException e) {
                     AlertMethods.createError(e.getMessage());
                 }
@@ -618,7 +620,7 @@ public class NoteOverviewCtrl implements Initializable {
 
         var c = content.getText();
 
-        Note temporary = new Note(t, c, selectedCollection.getName());
+        Note temporary = new Note(t, c, selectedCollection.getTitle());
         temporary.renderRawText();
         return temporary;
     }
@@ -629,7 +631,9 @@ public class NoteOverviewCtrl implements Initializable {
      * @return Currently selected note object
      */
     public Note getSelectedNote() {
-        return listView.getSelectionModel().getSelectedItems().getFirst();
+        return listView.getSelectionModel().getSelectedItems().isEmpty()
+                ? null
+                : listView.getSelectionModel().getSelectedItems().getFirst();
     }
 
     /**
@@ -638,7 +642,7 @@ public class NoteOverviewCtrl implements Initializable {
     public void deleteNote() {
         Note selectedNote = getSelectedNote();
         clearFields();
-        server.deleteNoteById(selectedNote.getId(), selectedCollection.getServer());
+        server.deleteNoteById(selectedNote.getId(), getCurrentCollection().getServer());
         isEditing = false;
         refresh();
         done.setOnAction(_ -> create());
