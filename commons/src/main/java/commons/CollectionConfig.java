@@ -56,17 +56,28 @@ public class CollectionConfig {
     /**
      * Updates an existing collection in the list.
      *
+     * @param oldTitle The title of the collection to be replaced.
      * @param updatedCollection The collection with updated data.
+     * @throws IllegalArgumentException if no collection with the given title exists or if a collection with the new title already exists.
      */
-    public void updateCollection(Collection updatedCollection) {
+    public void updateCollection(String oldTitle, Collection updatedCollection) {
         if (collections.stream().anyMatch(c -> Objects.equals(c.getTitle(), updatedCollection.getTitle()))) {
             throw new IllegalArgumentException("A collection with this title already exists.");
         }
+
+        boolean collectionUpdated = false;
+
         for (int i = 0; i < collections.size(); i++) {
-            if (collections.get(i).getTitle().equals(updatedCollection.getTitle())) {
+            if (collections.get(i).getTitle().equals(oldTitle)) {
                 collections.set(i, updatedCollection);
+                collectionUpdated = true;
                 break;
             }
         }
+
+        if (!collectionUpdated) {
+            throw new IllegalArgumentException("No collection with the given title exists.");
+        }
     }
+
 }

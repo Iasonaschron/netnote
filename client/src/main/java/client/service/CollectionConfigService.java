@@ -73,16 +73,19 @@ public class CollectionConfigService {
     /**
      * Updates an existing collection in the configuration and saves it to the JSON file.
      *
+     * @param oldTitle The title of the collection to be replaced.
      * @param updatedCollection The Collection object with updated data.
      * @throws IOException if an error occurs during file operations.
      */
-    public void updateCollectionInConfig(Collection updatedCollection) throws IOException {
+    public void updateCollectionInConfig(String oldTitle, Collection updatedCollection) throws IOException {
         if (collectionConfig == null) {
             collectionConfig = readConfig();
         }
-        collectionConfig.updateCollection(updatedCollection.getTitle(),updatedCollection);
+
+        collectionConfig.updateCollection(oldTitle, updatedCollection);
         writeConfig(collectionConfig);
     }
+
 
     /**
      * Removes a collection from the configuration by its ID and saves the updated configuration.

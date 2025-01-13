@@ -106,12 +106,10 @@ public class NoteOverviewCtrl implements Initializable {
      * Constructor for the NoteOverviewCtrl.
      *
      * @param server the server utility to interact with backend services
-     * @param collectionConfigService The service that keeps track of collections
      */
     @Inject
-    public NoteOverviewCtrl(ServerUtils server, CollectionConfigService collectionConfigService) {
+    public NoteOverviewCtrl(ServerUtils server) {
         this.server = server;
-        this.collectionConfigService = collectionConfigService;
     }
 
     public Collection getCurrentCollection() {
@@ -328,6 +326,7 @@ public class NoteOverviewCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        collectionConfigService = new CollectionConfigService();
         try {
             selectedCollection = collectionConfigService.getOrCreateDefaultCollection();
         } catch (IOException e) {
