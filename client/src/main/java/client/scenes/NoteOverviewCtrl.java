@@ -112,8 +112,14 @@ public class NoteOverviewCtrl implements Initializable {
         this.server = server;
     }
 
+    /**
+     * Retrieves the current collection based on the selected note's collection ID, or the default collection if no note is selected.
+     *
+     * @return The current or default collection.
+     * @throws RuntimeException if an error occurs while getting or creating the default collection.
+     */
     public Collection getCurrentCollection() {
-        if (getSelectedNote() == null){
+        if (getSelectedNote() == null) {
             try {
                 return collectionConfigService.getOrCreateDefaultCollection();
             } catch (IOException e) {
@@ -122,6 +128,7 @@ public class NoteOverviewCtrl implements Initializable {
         }
         return collectionConfigService.getCollectionByTitle(getSelectedNote().getCollectionId());
     }
+
 
 
     /**
@@ -732,6 +739,12 @@ public class NoteOverviewCtrl implements Initializable {
         mainNotes = mainNotesCtrl;
     }
 
+    /**
+     * Sets the selected note, updating its title, content, and rendering the raw text.
+     * If a tag is selected, the tag update list is refreshed; otherwise, the regular list is updated.
+     *
+     * @param newNote The new note to set as selected.
+     */
     public void setSelectedNote(Note newNote) {
         lastSelectedNote.setTitle(newNote.getTitle());
         lastSelectedNote.setContent(newNote.getContent());
@@ -744,5 +757,6 @@ public class NoteOverviewCtrl implements Initializable {
         }
         updateList();
     }
+
 
 }

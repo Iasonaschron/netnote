@@ -119,6 +119,15 @@ public class CollectionConfigService {
                 .orElseGet(this::createDefaultCollection); // Create it if not found
     }
 
+    /**
+     * Retrieves a collection by its title from the configuration.
+     *
+     * If the collection with the specified title does not exist, this method returns null.
+     * If the configuration is not loaded, it also returns null.
+     *
+     * @param title The title of the collection to retrieve.
+     * @return The collection with the specified title, or null if no such collection is found or the configuration is not loaded.
+     */
     public Collection getCollectionByTitle(String title) {
         if (collectionConfig == null) {
             return null;
@@ -127,6 +136,7 @@ public class CollectionConfigService {
                 .filter(collection -> collection.getTitle().equals(title))
                 .findFirst().orElse(null);
     }
+
 
     /**
      * Creates a new default collection, adds it to the configuration, and saves it.

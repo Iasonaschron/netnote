@@ -18,13 +18,25 @@ public class Collection {
     public Collection() {
     }
 
+    /**
+     * Constructs a new Collection with the specified title, using the title for both the name and the URL.
+     *
+     * @param title The title of the collection.
+     */
     public Collection(String title) {
         this(title, title, "http://localhost:8080/");
     }
 
+    /**
+     * Constructs a new Collection with the specified title and name, using a default URL.
+     *
+     * @param title The title of the collection.
+     * @param name The name of the collection.
+     */
     public Collection(String title, String name) {
         this(title, name, "http://localhost:8080/");
     }
+
 
     /**
      * Constructs a new collection provided a title, name, and server URL.
