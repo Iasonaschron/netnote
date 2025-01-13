@@ -6,7 +6,6 @@ import commons.Note;
 import org.java_websocket.handshake.ServerHandshake;
 import org.java_websocket.client.WebSocketClient;
 
-
 import java.net.URI;
 
 public class WsClientManager {
@@ -32,11 +31,10 @@ public class WsClientManager {
                 try {
                     // Parse incoming message as Note
                     Note updatedNote = objectMapper.readValue(message, Note.class);
-                    if(updatedNote.getId() == useful.getSelectedNote().getId()) {
+                    if (updatedNote.getId() == useful.getSelectedNote().getId()) {
                         useful.setSelectedNote(updatedNote);
-                    }
-                    else {
-                        //todo: update titles in listview
+                    } else {
+                        // todo: update titles in listview
                     }
                 } catch (Exception e) {
                     System.err.println("Error processing WebSocket message: " + e.getMessage());
