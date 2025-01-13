@@ -44,6 +44,8 @@ public class MainNotesCtrl {
         primaryStage.setTitle(LanguageManager.getString("overview_title"));
         primaryStage.setScene(overview);
         noteOverviewCtrl.refresh();
+        overview.setOnKeyPressed(e -> noteOverviewCtrl.keyPressed(e));
+
     }
 
     /**
