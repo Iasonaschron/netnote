@@ -202,4 +202,5 @@ public class NoteTest {
         note.setId(123);
         assertEquals(123, note.getId());
     }
+
 }
