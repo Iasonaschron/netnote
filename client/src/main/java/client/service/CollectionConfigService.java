@@ -80,7 +80,7 @@ public class CollectionConfigService {
         if (collectionConfig == null) {
             collectionConfig = readConfig();
         }
-        collectionConfig.updateCollection(updatedCollection);
+        collectionConfig.updateCollection(updatedCollection.getTitle(),updatedCollection);
         writeConfig(collectionConfig);
     }
 

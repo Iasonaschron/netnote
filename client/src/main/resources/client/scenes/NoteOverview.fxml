@@ -8,6 +8,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.NoteOverviewCtrl">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.NoteOverviewCtrl">
    <children>
       <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -35,7 +36,12 @@
                               </TextField>
                            </children>
                         </AnchorPane>
-                        <AnchorPane minHeight="32.0" minWidth="32.0" prefHeight="32.0" prefWidth="32.0" HBox.hgrow="NEVER">
+                        <AnchorPane layoutX="576.0" layoutY="10.0" minHeight="32.0" minWidth="36.0" prefHeight="32.0" prefWidth="36.0">
+                           <children>
+                              <ImageView fx:id="languageIndicator" fitHeight="24.0" fitWidth="36.0" layoutX="-82.0" layoutY="-65.0" pickOnBounds="true" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="4.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane minHeight="32.0" minWidth="32.0" prefHeight="32.0" prefWidth="32.0">
                            <children>
                               <ChoiceBox fx:id="languageSelector" layoutX="-61.0" layoutY="3.0" prefWidth="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="3.0" />
                            </children>
@@ -101,7 +107,7 @@
                                                                <children>
                                                                   <CheckBox fx:id="searchByContentCheckBox" mnemonicParsing="false" text="\%content_search" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                      <font>
-                                                                        <Font name="Arial" size="8.0" />
+                                                                        <Font name="Arial" size="11.0" />
                                                                      </font>
                                                                   </CheckBox>
                                                                </children>
@@ -212,7 +218,7 @@
                         </AnchorPane>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #fff; -fx-border-color: #000;" HBox.hgrow="ALWAYS">
                            <children>
-                              <TextArea fx:id="content" layoutX="50.0" layoutY="61.0" minWidth="220.0" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" promptText="\%content_prompt" style="-fx-background-color: #fff;" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TextArea fx:id="content" layoutX="10.0" layoutY="1.0" minWidth="220.0" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" promptText="\%content_prompt" style="-fx-background-color: #fff;" wrapText="true" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="-8.0" AnchorPane.topAnchor="1.0">
                                  <font>
                                     <Font name="Arial" size="11.0" />
                                  </font>

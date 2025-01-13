@@ -13,6 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
@@ -65,6 +66,9 @@ public class NoteOverviewCtrl implements Initializable {
 
     @FXML
     private ChoiceBox<String> tagsMenu;
+
+    @FXML
+    private ImageView languageIndicator;
 
     @FXML
     private ChoiceBox<String> languageSelector;
@@ -123,7 +127,8 @@ public class NoteOverviewCtrl implements Initializable {
 
 
     /**
-     * Opens a file explorer window for the user to select a file, and then uploads that file to  the server
+     * Opens a file explorer window for the user to select a file, and then uploads
+     * that file to the server
      */
     public void selectAndUploadFile(){
         try{
@@ -138,12 +143,10 @@ public class NoteOverviewCtrl implements Initializable {
             if(selectedFile != null){
                 server.uploadFile(selectedFile, getNote().getId(), getCurrentCollection().getServer());
                 System.out.println("File uploaded");
-            }
-            else {
+            } else {
                 System.out.println("no file selected");
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Error uploading file");
             e.printStackTrace();
         }
@@ -389,6 +392,8 @@ public class NoteOverviewCtrl implements Initializable {
         listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
 
         startPolling();
+
+        updateLanguage();
     }
 
     /**
@@ -697,7 +702,24 @@ public class NoteOverviewCtrl implements Initializable {
         content.setPromptText(LanguageManager.getString("content_prompt"));
         title.setPromptText(LanguageManager.getString("title_prompt"));
 
-        ((Stage) mainNotes.getPrimaryStage()).setTitle(LanguageManager.getString("overview_title"));
+        switch (LanguageManager.getCurrentLanguageCode().toUpperCase()) {
+            case "EN":
+                languageIndicator.setImage(
+                        new ImageView(getClass().getResource("/client/img/UK.png").toExternalForm()).getImage());
+                break;
+            case "NL":
+                languageIndicator.setImage(
+                        new ImageView(getClass().getResource("/client/img/NL.png").toExternalForm()).getImage());
+                break;
+            case "RO":
+                languageIndicator.setImage(
+                        new ImageView(getClass().getResource("/client/img/RO.png").toExternalForm()).getImage());
+                break;
+        }
+
+        if (mainNotes != null) {
+            ((Stage) mainNotes.getPrimaryStage()).setTitle(LanguageManager.getString("overview_title"));
+        }
 
         refresh();
     }
@@ -709,6 +731,19 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void setMainNotesCtrl(MainNotesCtrl mainNotesCtrl) {
         mainNotes = mainNotesCtrl;
+    }
+
+    public void setSelectedNote(Note newNote) {
+        lastSelectedNote.setTitle(newNote.getTitle());
+        lastSelectedNote.setContent(newNote.getContent());
+        lastSelectedNote.renderRawText();
+        lastSelectedNote.extractTagsFromContent();
+        updateWebView();
+        if (hasSelectedTag) {
+            tagUpdateList();
+            return;
+        }
+        updateList();
     }
 
 }
