@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class CollectionConfigTest {
@@ -19,12 +17,11 @@ class CollectionConfigTest {
     }
 
     @Test
-    public void constructorTest(){
+    public void constructorTest() {
         assertNotNull(collectionConfig.getCollections());
 
         assertTrue(collectionConfig.getCollections().isEmpty());
     }
-
 
     @Test
     void getCollections() {
@@ -68,8 +65,9 @@ class CollectionConfigTest {
         Collection collTest2 = new Collection("Test3");
         collectionConfig.addCollection(collTest);
 
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> collectionConfig.addCollection(collTest2));
-        assertEquals("A collection with this title already exists.",thrown.getMessage());
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> collectionConfig.addCollection(collTest2));
+        assertEquals("A collection with this title already exists.", thrown.getMessage());
         assertEquals(collectionConfig.getCollections().size(), 1);
     }
 
@@ -80,8 +78,6 @@ class CollectionConfigTest {
         assertEquals(collectionConfig.getCollections().size(), 1);
         assertEquals(collectionConfig.getCollections().get(0).getTitle(), "");
     }
-
-
 
     @Test
     void removeCollection() {
@@ -103,7 +99,6 @@ class CollectionConfigTest {
 
     }
 
-    
     @Test
     void updateCollection() {
         Collection collTest = new Collection("Test5");
@@ -112,12 +107,11 @@ class CollectionConfigTest {
         Collection updatedCollection = new Collection("UpdatedCollection");
         collectionConfig.updateCollection("Test5", updatedCollection);
         assertNotNull(collectionConfig.getCollections());
-        assertEquals("UpdatedCollection",collectionConfig.getCollections().get(0).getTitle() );
-        assertEquals(1,collectionConfig.getCollections().size());
+        assertEquals("UpdatedCollection", collectionConfig.getCollections().get(0).getTitle());
+        assertEquals(1, collectionConfig.getCollections().size());
     }
 
-
-    //Only important if we allow Collections with duplicate titles.
+    // Only important if we allow Collections with duplicate titles.
     @Test
     void updatingToDuplicateCollection(){
         Collection collTest = new Collection("Test6");

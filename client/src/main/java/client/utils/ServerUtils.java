@@ -22,6 +22,7 @@ import java.net.ConnectException;
 import java.util.List;
 
 import commons.Note;
+import commons.Collection;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -97,7 +98,8 @@ public class ServerUtils {
         return ClientBuilder.newClient(new ClientConfig())
                 .target(server).path("api/files/" + noteid)
                 .request(APPLICATION_JSON)
-                .get(new GenericType<List<String>>(){});
+                .get(new GenericType<List<String>>() {
+                });
     }
 
     /**

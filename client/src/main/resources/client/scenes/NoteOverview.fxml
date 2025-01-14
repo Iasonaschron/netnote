@@ -29,7 +29,7 @@
                      <children>
                         <AnchorPane minHeight="32.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <TextField fx:id="title" alignment="CENTER" layoutX="117.0" layoutY="1.0" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" prefHeight="25.0" prefWidth="249.0" promptText="\%title_prompt" style="-fx-background-color: #dedcff;" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="18.0" AnchorPane.topAnchor="4.0">
+                              <TextField fx:id="title" alignment="CENTER" layoutX="117.0" layoutY="1.0" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" prefHeight="25.0" prefWidth="420.0" promptText="\%title_prompt" style="-fx-background-color: #dedcff;" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="18.0" AnchorPane.topAnchor="4.0">
                                  <font>
                                     <Font name="Arial Black" size="12.0" />
                                  </font>
@@ -154,7 +154,30 @@
                                                             <Font name="Arial" size="15.0" />
                                                          </font>
                                                          <graphic>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="⟳" textAlignment="CENTER" wrappingWidth="24.0">
+                                                            <Text boundsType="VISUAL" strokeType="OUTSIDE" strokeWidth="0.0" text="⟳" wrappingWidth="18.0">
+                                                               <font>
+                                                                  <Font size="32.0" />
+                                                               </font>
+                                                            </Text>
+                                                         </graphic>
+                                                      </Button>
+                                                   </children>
+                                                   <HBox.margin>
+                                                      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                                   </HBox.margin>
+                                                </AnchorPane>
+                                                <AnchorPane layoutX="64.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" />
+                                                <AnchorPane layoutX="92.0" layoutY="14.0" maxHeight="23.0" maxWidth="23.0" minHeight="23.0" minWidth="23.0" prefHeight="200.0" prefWidth="200.0">
+                                                   <children>
+                                                      <Button fx:id="collection" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="4.0" layoutY="6.0" maxHeight="32.0" maxWidth="32.0" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#openCollectionMenu" style="-fx-background-color: #dedcff;" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <font>
+                                                            <Font name="Arial" size="15.0" />
+                                                         </font>
+                                                         <padding>
+                                                            <Insets bottom="4.0" left="4.0" top="4.0" />
+                                                         </padding>
+                                                         <graphic>
+                                                            <Text boundsType="VISUAL" strokeType="OUTSIDE" strokeWidth="0.0" text="⛁" translateX="-3.0" wrappingWidth="18.0">
                                                                <font>
                                                                   <Font size="32.0" />
                                                                </font>
@@ -173,11 +196,8 @@
                                                          <font>
                                                             <Font name="Arial" size="15.0" />
                                                          </font>
-                                                         <padding>
-                                                            <Insets bottom="4.0" left="4.0" top="4.0" />
-                                                         </padding>
                                                          <graphic>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="-" textAlignment="CENTER" wrappingWidth="24.0">
+                                                            <Text boundsType="VISUAL" strokeType="OUTSIDE" strokeWidth="0.0" text="-" wrappingWidth="18.0">
                                                                <font>
                                                                   <Font size="32.0" />
                                                                </font>
@@ -196,7 +216,7 @@
                                                             <Font name="Arial" size="15.0" />
                                                          </font>
                                                          <graphic>
-                                                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="+" textAlignment="CENTER" wrappingWidth="24.0">
+                                                            <Text boundsType="VISUAL" strokeType="OUTSIDE" strokeWidth="0.0" text="+" textAlignment="CENTER" wrappingWidth="24.0">
                                                                <font>
                                                                   <Font size="32.0" />
                                                                </font>

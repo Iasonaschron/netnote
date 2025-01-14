@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
@@ -82,6 +83,9 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private Button clear;
 
+    @FXML
+    private Button collectionMenuButton;
+
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
     private ObservableList<Note> tagNotes;
@@ -94,7 +98,7 @@ public class NoteOverviewCtrl implements Initializable {
     private boolean isEditing = false;
     private boolean hasSelectedTag = false;
 
-    private boolean isSaveAction = false;
+    public boolean isSaveAction = false;
     private boolean justEdited = false;
 
     private List<String> tags = new ArrayList<>();
@@ -128,8 +132,6 @@ public class NoteOverviewCtrl implements Initializable {
         }
         return collectionConfigService.getCollectionByTitle(getSelectedNote().getCollectionId());
     }
-
-
 
     /**
      * Opens a file explorer window for the user to select a file, and then uploads
@@ -297,8 +299,10 @@ public class NoteOverviewCtrl implements Initializable {
         done.disableProperty().set(false);
         done.setOnAction(_ -> create());
         isSaveAction = false;
+        isEditing = true;
         lastSelectedNote = null;
         listView.setItems(visibleNotes);
+        title.requestFocus();
     }
 
     /**
@@ -400,6 +404,124 @@ public class NoteOverviewCtrl implements Initializable {
         startPolling();
 
         updateLanguage();
+
+    }
+
+    /**
+     *Implements keyboard shortcuts in the app
+     * S+Control: Saves or adds note (acts like the done check button)
+     * ESCAPE: Selects the searching search field
+     * Up+Control: Selects the previous note on the list view
+     * Down+Control: Selects the next note on the list view
+     * (Both are usable without having any note selected, automatically selecting the first note)
+     * T+Control: Selects Title text field
+     * C+Control: Selects Content text field
+     * D+Control: Deletes note, or clears note about to be made
+     * N+Control: New note creation
+     * M+Control: Shoes tag menu
+     * X+Control: Clears applied filters
+     * B+Control: Checks or unchecks the search content checkbox
+     *
+     * @param e key pressed
+     */
+    public void keyPressed(KeyEvent e) {
+        switch (e.getCode()) {
+            case S:
+                if (e.isControlDown()) {
+                    if (isSaveAction) {
+                        save();
+                    } else {
+                        create();
+                    }
+                    e.consume();
+                }
+                break;
+            case ESCAPE:
+                searchBox.requestFocus();
+                e.consume();
+                break;
+            case UP:
+                if (e.isControlDown()) {
+                    if (listView.getSelectionModel().isEmpty()) {
+                        listView.getSelectionModel().select(0);
+                        break;
+                    } else if (listView.getSelectionModel().getSelectedIndex() <= 0) {
+                        break;
+                    } else {
+                        listView.getSelectionModel().selectPrevious();
+                    }
+                    e.consume();
+                }
+                break;
+            case DOWN:
+                if (e.isControlDown()) {
+                    if (listView.getSelectionModel().isEmpty()) {
+                        listView.getSelectionModel().select(0);
+                        break;
+                    } else {
+                        listView.getSelectionModel().selectNext();
+                    }
+                    e.consume();
+                }
+                break;
+            case T:
+                if (e.isControlDown()) {
+                    title.requestFocus();
+                    updateNote();
+                    title.positionCaret(title.getText().length());
+                }
+                e.consume();
+                break;
+            case C:
+                if (e.isControlDown()) {
+                    content.requestFocus();
+                    updateNote();
+                    content.positionCaret(content.getText().length());
+                }
+                e.consume();
+                break;
+            case D:
+                if (e.isControlDown()) {
+                    if (isSaveAction) {
+                        deleteNote();
+                        updateNote();
+                    } else {
+                        clearFields();
+                    }
+                }
+                e.consume();
+                break;
+            case N:
+                if (e.isControlDown()) {
+                    createNote();
+                }
+                e.consume();
+                break;
+            case M:
+                if (e.isControlDown()) {
+                    tagsMenu.show();
+                }
+                e.consume();
+                break;
+            case X:
+                if (e.isControlDown()) {
+                    clearTags();
+                }
+                e.consume();
+                break;
+            case B:
+                if (e.isControlDown()) {
+                    if (searchByContentCheckBox.isSelected()) {
+                        searchByContentCheckBox.selectedProperty().set(false);
+                    } else {
+                        searchByContentCheckBox.selectedProperty().set(true);
+                    }
+                }
+                e.consume();
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -507,6 +629,8 @@ public class NoteOverviewCtrl implements Initializable {
         done.disableProperty().set(true);
         done.setOnAction(_ -> save());
         isSaveAction = true;
+        title.requestFocus();
+        title.positionCaret(title.getText().length());
     }
 
     /**
@@ -529,6 +653,7 @@ public class NoteOverviewCtrl implements Initializable {
         filterTagList();
         clearFields();
         refresh();
+        title.requestFocus();
     }
 
     /**
@@ -559,13 +684,18 @@ public class NoteOverviewCtrl implements Initializable {
 
         isEditing = false;
         justEdited = true;
+        int lastSelectedIndex = listView.getSelectionModel().getSelectedIndex();
         filterTagList();
         refresh();
+        isEditing = true;
         justEdited = false;
         title.setText(displayTitle);
         content.setText(displayContent);
         updateWebView();
-        done.disableProperty().set(true);
+        listView.getSelectionModel().select(lastSelectedIndex);
+        done.disableProperty().set(false);
+        content.requestFocus();
+        content.positionCaret(content.getText().length());
     }
 
     /**
@@ -739,6 +869,10 @@ public class NoteOverviewCtrl implements Initializable {
         mainNotes = mainNotesCtrl;
     }
 
+    public void openCollectionMenu() {
+        mainNotes.showCollectionOverview();
+    }
+
     /**
      * Sets the selected note, updating its title, content, and rendering the raw text.
      * If a tag is selected, the tag update list is refreshed; otherwise, the regular list is updated.
@@ -757,6 +891,5 @@ public class NoteOverviewCtrl implements Initializable {
         }
         updateList();
     }
-
 
 }
