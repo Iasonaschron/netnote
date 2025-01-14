@@ -1,7 +1,7 @@
 package server.service;
 
 import commons.Collection;
-import commons.CollectionConfig;
+import server.api.CollectionConfig;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
@@ -77,7 +77,7 @@ public class CollectionConfigService {
     private Collection createDefaultCollection() {
         Collection defaultCollection = new Collection(DEFAULT_COLLECTION_TITLE, new ArrayList<>());
         try {
-            addCollectionToConfig(defaultCollection);  // Add to the config
+            addCollectionToConfig(defaultCollection); // Add to the config
         } catch (IOException e) {
             e.printStackTrace(); // Handle or log error
         }
@@ -87,7 +87,7 @@ public class CollectionConfigService {
     @PostConstruct
     public void loadCollections() {
         try {
-            collectionConfig = readConfig();  // Load collections from the config file at startup
+            collectionConfig = readConfig(); // Load collections from the config file at startup
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,7 +97,7 @@ public class CollectionConfigService {
     public void saveCollections() {
         try {
             if (collectionConfig != null) {
-                writeConfig(collectionConfig);  // Save collections to the config file at shutdown
+                writeConfig(collectionConfig); // Save collections to the config file at shutdown
             }
         } catch (IOException e) {
             e.printStackTrace();

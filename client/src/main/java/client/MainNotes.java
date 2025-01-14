@@ -2,6 +2,7 @@ package client;
 
 import client.scenes.MainNotesCtrl;
 import client.scenes.NoteOverviewCtrl;
+import client.scenes.CollectionOverviewCtrl;
 import client.utils.LanguageManager;
 import client.utils.ServerUtils;
 import com.google.inject.Injector;
@@ -44,9 +45,12 @@ public class MainNotes extends Application {
             return;
         }
 
-        var overview = FXML.load(NoteOverviewCtrl.class, LanguageManager.getBundle(), "client", "scenes", "NoteOverview.fxml");
+        var overview = FXML.load(NoteOverviewCtrl.class, LanguageManager.getBundle(), "client", "scenes",
+                "NoteOverview.fxml");
+        var collectionOverview = FXML.load(CollectionOverviewCtrl.class, LanguageManager.getBundle(), "client",
+                "scenes", "CollectionOverview.fxml");
 
         var mainNotesCtrl = INJECTOR.getInstance(MainNotesCtrl.class);
-        mainNotesCtrl.initialize(primaryStage, overview);
+        mainNotesCtrl.initialize(primaryStage, overview, collectionOverview);
     }
 }

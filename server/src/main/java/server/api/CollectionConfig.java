@@ -1,8 +1,10 @@
-package commons;
+package server.api;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import commons.Collection;
 
 public class CollectionConfig {
     private List<Collection> collections;

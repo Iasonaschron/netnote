@@ -80,6 +80,9 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private Button clear;
 
+    @FXML
+    private Button collectionMenuButton;
+
     private Long selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
@@ -843,6 +846,10 @@ public class NoteOverviewCtrl implements Initializable {
 
     public void setMainNotesCtrl(MainNotesCtrl mainNotesCtrl) {
         mainNotes = mainNotesCtrl;
+    }
+
+    public void openCollectionMenu() {
+        mainNotes.showCollectionOverview();
     }
 
     public void setSelectedNote(Note newNote) {

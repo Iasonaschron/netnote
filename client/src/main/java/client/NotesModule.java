@@ -16,6 +16,7 @@ public class NotesModule implements Module {
     public void configure(Binder binder) {
         binder.bind(MainNotesCtrl.class).in(Scopes.SINGLETON);
         binder.bind(NoteOverviewCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(CollectionOverviewCtrl.class).in(Scopes.SINGLETON);
     }
 
 }
