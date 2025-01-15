@@ -157,7 +157,7 @@ public class NoteOverviewCtrl implements Initializable {
      * Opens a file explorer window for the user to select a file, and then uploads
      * that file to the server
      */
-    public void selectAndUploadFile(){
+    public void SelectAndUploadFile(){
         try{
             FileChooser fc = new FileChooser();
             Stage stage = new Stage();
