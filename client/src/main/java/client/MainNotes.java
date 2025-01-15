@@ -10,7 +10,6 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import static com.google.inject.Guice.createInjector;
 
@@ -22,10 +21,9 @@ public class MainNotes extends Application {
      * launches application
      *
      * @param args the command-line arguments
-     * @throws URISyntaxException if a URI syntax error occurs
      * @throws IOException        if an I/O error occurs
      */
-    public static void main(String[] args) throws URISyntaxException, IOException {
+    public static void main(String[] args) throws IOException {
         launch(args);
     }
 
@@ -39,7 +37,7 @@ public class MainNotes extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         var serverUtils = INJECTOR.getInstance(ServerUtils.class);
-        if (!serverUtils.isServerAvailable()) {
+        if (!serverUtils.isServerAvailable("http://localhost:8080/")) {
             var msg = "Server needs to be started before the client, but it does not seem to be available. Shutting down.";
             System.err.println(msg);
             return;

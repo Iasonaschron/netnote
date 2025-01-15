@@ -38,10 +38,10 @@ class GetNotesTest {
         List<Note> mockNotes = Arrays.asList(note1, note2); // List of notes to mock the response
 
         // Mock the getNotes method to return the predefined list of notes
-        when(serverUtils.getNotes()).thenReturn(mockNotes);
+        when(serverUtils.getNotes("http://localhost:8080/")).thenReturn(mockNotes);
 
         // Act
-        List<Note> result = serverUtils.getNotes(); // This will call the mocked method
+        List<Note> result = serverUtils.getNotes("http://localhost:8080/"); // This will call the mocked method
 
         // Assert
         assertEquals(2, result.size()); // Check that the returned list has 2 notes
@@ -60,10 +60,10 @@ class GetNotesTest {
         List<Note> emptyList = Arrays.asList(); // Empty list to mock the response
 
         // Mock the getNotes method to return an empty list
-        when(serverUtils.getNotes()).thenReturn(emptyList);
+        when(serverUtils.getNotes("http://localhost:8080/")).thenReturn(emptyList);
 
         // Act
-        List<Note> result = serverUtils.getNotes(); // This will call the mocked method
+        List<Note> result = serverUtils.getNotes("http://localhost:8080/"); // This will call the mocked method
 
         // Assert
         assertEquals(0, result.size()); // Check that the returned list is empty

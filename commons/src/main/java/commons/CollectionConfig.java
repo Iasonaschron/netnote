@@ -1,10 +1,8 @@
-package server.api;
+package commons;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import commons.Collection;
 
 public class CollectionConfig {
     private List<Collection> collections;
@@ -51,40 +49,35 @@ public class CollectionConfig {
      *
      * @param collectionId The ID of the collection to remove.
      */
-    public void removeCollection(Long collectionId) {
-        collections.removeIf(c -> c.getId().equals(collectionId));
+    public void removeCollection(String collectionId) {
+        collections.removeIf(c -> c.getTitle().equals(collectionId));
     }
 
     /**
      * Updates an existing collection in the list.
-     * 
-     * @param oldTitle the title of the collection to be updated.
+     *
+     * @param oldTitle The title of the collection to be replaced.
      * @param updatedCollection The collection with updated data.
+     * @throws IllegalArgumentException if no collection with the given title exists or if a collection with the new title already exists.
      */
-    public void updateCollection(String oldTitle ,Collection updatedCollection) {
-
-        boolean found = false;
-        for(int i = 0; i < collections.size(); i++) {
-            for (Collection collection : collections) {
-                //Check for every collection in collections if there are any duplicate titles
-                if (collection.getTitle().equals(oldTitle)) {
-                    collections.set(i, updatedCollection);
-                    found = true;
-                    break;
-                }
-            }
-        }
-        if(!found){
-            throw new IllegalArgumentException("A collection with this title does not exist.");
+    public void updateCollection(String oldTitle, Collection updatedCollection) {
+        if (collections.stream().anyMatch(c -> Objects.equals(c.getTitle(), updatedCollection.getTitle()))) {
+            throw new IllegalArgumentException("A collection with this title already exists.");
         }
 
-        for (int i = 0; i< collections.size(); i++) {
-            for(int j = i+1; j< collections.size(); j++) {
-                if(collections.get(i).getTitle().equals(updatedCollection.getTitle())) {
-                    throw new IllegalArgumentException("Duplicate Collection titles are not allowed");
-                }
-            }
+        boolean collectionUpdated = false;
 
+        for (int i = 0; i < collections.size(); i++) {
+            if (collections.get(i).getTitle().equals(oldTitle)) {
+                collections.set(i, updatedCollection);
+                collectionUpdated = true;
+                break;
+            }
+        }
+
+        if (!collectionUpdated) {
+            throw new IllegalArgumentException("No collection with the given title exists.");
         }
     }
+
 }

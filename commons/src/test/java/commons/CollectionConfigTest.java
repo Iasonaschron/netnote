@@ -1,6 +1,5 @@
-package server.api;
+package commons;
 
-import commons.Collection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +28,7 @@ class CollectionConfigTest {
         assertNotNull(collectionConfig.getCollections());
         ArrayList<Collection> collectionsTest = new ArrayList<>();
 
-        Collection collTest = new Collection("Test1", new ArrayList<>());
+        Collection collTest = new Collection("Test1");
         collectionsTest.add(collTest);
 
         collectionConfig.setCollections(collectionsTest);
@@ -42,7 +41,7 @@ class CollectionConfigTest {
     void setCollections() {
 
         ArrayList<Collection> collectionsTest = new ArrayList<>();
-        Collection collTest = new Collection("Test2", new ArrayList<>());
+        Collection collTest = new Collection("Test2");
         collectionsTest.add(collTest);
 
         collectionConfig.setCollections(collectionsTest);
@@ -53,7 +52,7 @@ class CollectionConfigTest {
 
     @Test
     void addCollection() {
-        Collection collTest = new Collection("Test3", new ArrayList<>());
+        Collection collTest = new Collection("Test3");
         collectionConfig.addCollection(collTest);
         assertNotNull(collectionConfig.getCollections());
         assertEquals(collectionConfig.getCollections().get(0).getTitle(), "Test3");
@@ -62,8 +61,8 @@ class CollectionConfigTest {
 
     @Test
     void addDuplicateCollection() {
-        Collection collTest = new Collection("Test3", new ArrayList<>());
-        Collection collTest2 = new Collection("Test3", new ArrayList<>());
+        Collection collTest = new Collection("Test3");
+        Collection collTest2 = new Collection("Test3");
         collectionConfig.addCollection(collTest);
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
@@ -73,8 +72,8 @@ class CollectionConfigTest {
     }
 
     @Test
-    void addEmptyTitle() {
-        Collection collTest = new Collection("", new ArrayList<>());
+    void addEmptyTitle(){
+        Collection collTest = new Collection("");
         collectionConfig.addCollection(collTest);
         assertEquals(collectionConfig.getCollections().size(), 1);
         assertEquals(collectionConfig.getCollections().get(0).getTitle(), "");
@@ -82,10 +81,10 @@ class CollectionConfigTest {
 
     @Test
     void removeCollection() {
-        Collection collTest = new Collection("Test4", new ArrayList<>());
+        Collection collTest = new Collection("Test4");
 
         collectionConfig.addCollection(collTest);
-        collectionConfig.removeCollection(collTest.getId());
+        collectionConfig.removeCollection(collTest.getTitle());
 
         assertNotNull(collectionConfig.getCollections());
         assertTrue(collectionConfig.getCollections().isEmpty());
@@ -94,18 +93,18 @@ class CollectionConfigTest {
 
     @Test
     void removeWhileEmpty() {
-        Collection collTest = new Collection("Test5", new ArrayList<>());
-        collectionConfig.removeCollection(collTest.getId());
+        Collection collTest = new Collection("Test5");
+        collectionConfig.removeCollection(collTest.getTitle());
         assertTrue(collectionConfig.getCollections().isEmpty());
 
     }
 
     @Test
     void updateCollection() {
-        Collection collTest = new Collection("Test5", new ArrayList<>());
+        Collection collTest = new Collection("Test5");
         collectionConfig.addCollection(collTest);
 
-        Collection updatedCollection = new Collection("UpdatedCollection", new ArrayList<>());
+        Collection updatedCollection = new Collection("UpdatedCollection");
         collectionConfig.updateCollection("Test5", updatedCollection);
         assertNotNull(collectionConfig.getCollections());
         assertEquals("UpdatedCollection", collectionConfig.getCollections().get(0).getTitle());
@@ -114,17 +113,17 @@ class CollectionConfigTest {
 
     // Only important if we allow Collections with duplicate titles.
     @Test
-    void updatingToDuplicateCollection() {
-        Collection collTest = new Collection("Test6", new ArrayList<>());
-        Collection collTest2 = new Collection("Test7", new ArrayList<>());
+    void updatingToDuplicateCollection(){
+        Collection collTest = new Collection("Test6");
+        Collection collTest2 = new Collection("Test7");
         collectionConfig.addCollection(collTest);
         collectionConfig.addCollection(collTest2);
 
-        Collection updatedCollection = new Collection("Test6", new ArrayList<>());
+        Collection updatedCollection = new Collection("Test6");
 
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
-                () -> collectionConfig.updateCollection("Test7", updatedCollection));
-        assertEquals("Duplicate Collection titles are not allowed", thrown.getMessage());
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> collectionConfig.updateCollection("Test7", updatedCollection));
+        assertEquals("A collection with this title already exists.",thrown.getMessage());
 
     }
 }

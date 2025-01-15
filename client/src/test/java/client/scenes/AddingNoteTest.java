@@ -31,9 +31,9 @@ class AddingNoteTest {
         mockNote.setTitle("Test Title");
         mockNote.setContent("Test Content");
 
-        when(serverUtils.addNote(inputNote)).thenReturn(mockNote); // Define the mock behavior
+        when(serverUtils.addNote(inputNote, "http://localhost:8080/")).thenReturn(mockNote); // Define the mock behavior
 
-        Note result = serverUtils.addNote(inputNote); // This will call the mocked method
+        Note result = serverUtils.addNote(inputNote, "http://localhost:8080/"); // This will call the mocked method
 
         assertEquals(1, result.getId()); // Check that the ID is set to 1
         assertEquals("Test Title", result.getTitle()); // Check the title
@@ -51,9 +51,9 @@ class AddingNoteTest {
         mockNote.setTitle(""); // Empty title
         mockNote.setContent("Test Content");
 
-        when(serverUtils.addNote(inputNote)).thenReturn(mockNote); // Define the mock behavior
+        when(serverUtils.addNote(inputNote, "http://localhost:8080/")).thenReturn(mockNote); // Define the mock behavior
 
-        Note result = serverUtils.addNote(inputNote); // This will call the mocked method
+        Note result = serverUtils.addNote(inputNote, "http://localhost:8080/"); // This will call the mocked method
 
         assertEquals(2, result.getId()); // Check that the ID is set to 2
         assertEquals("", result.getTitle()); // Ensure the title is empty
@@ -71,9 +71,9 @@ class AddingNoteTest {
         mockNote.setTitle("Test Title");
         mockNote.setContent(""); // Empty content
 
-        when(serverUtils.addNote(inputNote)).thenReturn(mockNote); // Define the mock behavior
+        when(serverUtils.addNote(inputNote, "http://localhost:8080/")).thenReturn(mockNote); // Define the mock behavior
 
-        Note result = serverUtils.addNote(inputNote); // This will call the mocked method
+        Note result = serverUtils.addNote(inputNote, "http://localhost:8080/"); // This will call the mocked method
 
         assertEquals(3, result.getId()); // Check that the ID is set to 3
         assertEquals("Test Title", result.getTitle()); // Ensure the title is correct

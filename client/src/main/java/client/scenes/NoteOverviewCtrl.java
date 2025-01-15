@@ -19,8 +19,11 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import commons.Collection;
+import client.service.CollectionConfigService;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -83,7 +86,6 @@ public class NoteOverviewCtrl implements Initializable {
     @FXML
     private Button collectionMenuButton;
 
-    private Long selectedCollectionId;
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
     private ObservableList<Note> tagNotes;
@@ -101,6 +103,9 @@ public class NoteOverviewCtrl implements Initializable {
 
     private List<String> tags = new ArrayList<>();
 
+    private CollectionConfigService collectionConfigService;
+    private Collection selectedCollection; //collection used for filtering
+
     /**
      * Constructor for the NoteOverviewCtrl.
      *
@@ -112,29 +117,38 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Sets the collection id and updates dataCollection
+     * Retrieves the current collection based on the selected note's collection ID, or the default collection if no note is selected.
      *
-     * @param selectedCollectionId The new selection ID
+     * @return The current or default collection.
+     * @throws RuntimeException if an error occurs while getting or creating the default collection.
      */
-    public void setSelectedCollectionId(long selectedCollectionId) {
-        this.selectedCollectionId = selectedCollectionId;
+    public Collection getCurrentCollection() {
+        if (getSelectedNote() == null) {
+            try {
+                return collectionConfigService.getOrCreateDefaultCollection();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return collectionConfigService.getCollectionByTitle(getSelectedNote().getCollectionId());
     }
 
     /**
      * Opens a file explorer window for the user to select a file, and then uploads
      * that file to the server
      */
-    public void SelectAndUploadFile() {
-        try {
+    public void selectAndUploadFile(){
+        try{
             FileChooser fc = new FileChooser();
             Stage stage = new Stage();
             fc.setTitle("Select a file");
             fc.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("All Files", "*.*"),
-                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+            );
             File selectedFile = fc.showOpenDialog(stage);
-            if (selectedFile != null) {
-                server.uploadFile(selectedFile, getNote().getId());
+            if(selectedFile != null){
+                server.uploadFile(selectedFile, getNote().getId(), getCurrentCollection().getServer());
                 System.out.println("File uploaded");
             } else {
                 System.out.println("no file selected");
@@ -150,7 +164,7 @@ public class NoteOverviewCtrl implements Initializable {
      * collection
      */
     private List<Note> getNotesBySelectedCollection() {
-        return data.stream().filter(note -> Objects.equals(note.getCollectionId(), selectedCollectionId)).toList();
+        return data.stream().filter(note -> Objects.equals(note.getCollectionId(), getCurrentCollection().getTitle())).toList();
     }
 
     /**
@@ -162,7 +176,7 @@ public class NoteOverviewCtrl implements Initializable {
             return;
         }
 
-        data = server.getNotes();
+        data = server.getNotes(selectedCollection.getServer());
 
         if (hasSelectedTag) {
             tagUpdateList();
@@ -323,7 +337,12 @@ public class NoteOverviewCtrl implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        setSelectedCollectionId(0);
+        collectionConfigService = new CollectionConfigService();
+        try {
+            selectedCollection = collectionConfigService.getOrCreateDefaultCollection();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         webEngine = webview.getEngine();
         URL stylesheet = getClass().getResource("/client/styles/notes.css");
         if (stylesheet != null) {
@@ -381,11 +400,6 @@ public class NoteOverviewCtrl implements Initializable {
 
         tagsMenu.setOnAction(this::tagMenuSelect);
         listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
-
-        content.setOnKeyPressed(this::keyPressed);
-        title.setOnKeyPressed(this::keyPressed);
-        searchBox.setOnKeyPressed(this::keyPressed);
-
 
         startPolling();
 
@@ -629,7 +643,7 @@ public class NoteOverviewCtrl implements Initializable {
             return;
         }
         try {
-            server.addNote(getNote());
+            server.addNote(getNote(), getCurrentCollection().getServer());
         } catch (NullPointerException | WebApplicationException e) {
             AlertMethods.createError(e.getMessage());
             return;
@@ -661,8 +675,8 @@ public class NoteOverviewCtrl implements Initializable {
         }
 
         try {
-            server.saveNote(selectedNote.getId(), getNote());
-            lastSelectedNote = server.getNoteById(selectedNote.getId());
+            server.saveNote(selectedNote.getId(), getNote(), getCurrentCollection().getServer());
+            lastSelectedNote = server.getNoteById(selectedNote.getId(), getCurrentCollection().getServer());
         } catch (NullPointerException | WebApplicationException e) {
             AlertMethods.createError(e.getMessage());
             return;
@@ -701,7 +715,7 @@ public class NoteOverviewCtrl implements Initializable {
             if (!newContent.equals(note.getContent())) {
                 note.setContent(newContent);
                 try {
-                    server.saveNote(note.getId(), note);
+                    server.saveNote(note.getId(), note, getCurrentCollection().getServer());
                 } catch (NullPointerException | WebApplicationException e) {
                     AlertMethods.createError(e.getMessage());
                 }
@@ -747,7 +761,7 @@ public class NoteOverviewCtrl implements Initializable {
 
         var c = content.getText();
 
-        Note temporary = new Note(t, c, selectedCollectionId);
+        Note temporary = new Note(t, c, selectedCollection.getTitle());
         temporary.renderRawText();
         return temporary;
     }
@@ -758,7 +772,9 @@ public class NoteOverviewCtrl implements Initializable {
      * @return Currently selected note object
      */
     public Note getSelectedNote() {
-        return listView.getSelectionModel().getSelectedItems().getFirst();
+        return listView.getSelectionModel().getSelectedItems().isEmpty()
+                ? null
+                : listView.getSelectionModel().getSelectedItems().getFirst();
     }
 
     /**
@@ -767,7 +783,7 @@ public class NoteOverviewCtrl implements Initializable {
     public void deleteNote() {
         Note selectedNote = getSelectedNote();
         clearFields();
-        server.deleteNoteById(selectedNote.getId());
+        server.deleteNoteById(selectedNote.getId(), getCurrentCollection().getServer());
         isEditing = false;
         refresh();
         done.setOnAction(_ -> create());
@@ -844,6 +860,11 @@ public class NoteOverviewCtrl implements Initializable {
         refresh();
     }
 
+    /**
+     * Setter for mainNotesCtrl
+     *
+     * @param mainNotesCtrl The object being set
+     */
     public void setMainNotesCtrl(MainNotesCtrl mainNotesCtrl) {
         mainNotes = mainNotesCtrl;
     }
@@ -852,6 +873,12 @@ public class NoteOverviewCtrl implements Initializable {
         mainNotes.showCollectionOverview();
     }
 
+    /**
+     * Sets the selected note, updating its title, content, and rendering the raw text.
+     * If a tag is selected, the tag update list is refreshed; otherwise, the regular list is updated.
+     *
+     * @param newNote The new note to set as selected.
+     */
     public void setSelectedNote(Note newNote) {
         lastSelectedNote.setTitle(newNote.getTitle());
         lastSelectedNote.setContent(newNote.getContent());

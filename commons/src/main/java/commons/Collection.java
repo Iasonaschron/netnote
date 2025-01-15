@@ -1,30 +1,16 @@
 package commons;
 
-import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Represents a collection of notes.
- * It is related to Notes in that every note has exactly 1 collection it belongs
- * to.
+ * It is related to Notes in that every note has exactly 1 collection it belongs to.
  */
-@Entity
 public class Collection {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-
-    @Column
-    private long id;
-
-    @Column
     private String title;
-
-    @OneToMany(mappedBy = "collectionId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Note> notes;
+    private String name;
+    private String server;
 
     /**
      * Default constructor required for the object mapper.
@@ -33,19 +19,41 @@ public class Collection {
     }
 
     /**
-     * Constructs a new collection provided a title and List of notes
-     * 
-     * @param title      The title of the collection
-     * @param notes The list of notes that belong to this collection.
+     * Constructs a new Collection with the specified title, using the title for both the name and the URL.
+     *
+     * @param title The title of the collection.
      */
-    public Collection(String title, List<Note> notes) {
+    public Collection(String title) {
+        this(title, title, "http://localhost:8080/");
+    }
+
+    /**
+     * Constructs a new Collection with the specified title and name, using a default URL.
+     *
+     * @param title The title of the collection.
+     * @param name The name of the collection.
+     */
+    public Collection(String title, String name) {
+        this(title, name, "http://localhost:8080/");
+    }
+
+
+    /**
+     * Constructs a new collection provided a title, name, and server URL.
+     *
+     * @param title  The title of the collection.
+     * @param name   The name of the collection.
+     * @param server The server URL of the collection.
+     */
+    public Collection(String title, String name, String server) {
         this.title = title;
-        this.notes = notes;
+        this.name = name;
+        this.server = server;
     }
 
     /**
      * Getter for the title of the collection.
-     * 
+     *
      * @return The title of the collection.
      */
     public String getTitle() {
@@ -53,26 +61,8 @@ public class Collection {
     }
 
     /**
-     * Getter for the collection of notes.
-     * 
-     * @return The collection of notes.
-     */
-    public List<Note> getNotes() {
-        return notes;
-    }
-
-    /**
-     * The getter for the id of the collection.
-     * 
-     * @return The id of the collection.
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * Sets the title of the collection.
-     * 
+     * Setter for the title of the collection.
+     *
      * @param title the new title of the collection.
      */
     public void setTitle(String title) {
@@ -80,34 +70,44 @@ public class Collection {
     }
 
     /**
-     * Sets the list of notes that belongs to the collection.
-     * 
-     * @param collection the new list of notes.
+     * Getter for the name of the collection.
+     *
+     * @return The name of the collection.
      */
-    public void setNotes(List<Note> collection) {
-        this.notes = collection;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Sets the id of the collection to the provided id.
-     * @param id the new id of the collection.
+     * Setter for the name of the collection.
+     *
+     * @param name the new name of the collection.
      */
-    public void setId(Long id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
-     * Adds a note to the collection.
-     * 
-     * @param note the new note to be added.
+     * Getter for the server URL of the collection.
+     *
+     * @return The server URL of the collection.
      */
-    public void addNote(Note note) {
-        notes.add(note);
+    public String getServer() {
+        return server;
+    }
+
+    /**
+     * Setter for the server URL of the collection.
+     *
+     * @param server the new server URL of the collection.
+     */
+    public void setServer(String server) {
+        this.server = server;
     }
 
     /**
      * Checks if the provided object is equal to the collection.
-     * 
+     *
      * @param o the object to be compared.
      * @return true if the objects are equal, otherwise returns false.
      */
@@ -118,7 +118,7 @@ public class Collection {
 
     /**
      * Generates a hashcode for this collection.
-     * 
+     *
      * @return the hashcode for this collection.
      */
     @Override
@@ -127,13 +127,12 @@ public class Collection {
     }
 
     /**
-     * Returns a string representation of the collection
-     * 
-     * @return the titles of the collection and the titles of the notes in the
-     *         collection.
+     * Returns a string representation of the collection.
+     *
+     * @return the title of the collection.
      */
     @Override
     public String toString() {
-        return title + ":" + notes.stream().map(Note::toString).collect(Collectors.joining(", "));
+        return title;
     }
 }
