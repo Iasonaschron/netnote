@@ -10,6 +10,7 @@ import server.database.FileRepository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/files")
@@ -42,14 +43,13 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
-
     /**
      *
      * @param noteid
      * @return All the names of the files related with the note id provided
      */
     @GetMapping("/{noteid}")
-    public ResponseEntity<List<String>> fetchFileName(@PathVariable("noteid") long noteid){
+    public ResponseEntity<List<FileData>> fetchFileName(@PathVariable("noteid") long noteid){
         return ResponseEntity.ok(repo.fetchAllFileNamesById(noteid));
     }
 
@@ -71,6 +71,30 @@ public class FileController {
             return ResponseEntity.ok("File uploaded successfully\n");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed\n");
+        }
+    }
+
+    /**
+     * Changes the name of the file indicated
+     * @param noteid the id of the note
+     * @param oldFileName the filename to be replaced
+     * @param newFileName the new filename
+     * @return a response entity indicating if the change was successful or not
+     */
+    @PostMapping("/{noteid}/{Oldfilename}/change")
+    public ResponseEntity<String> changeName(@PathVariable("noteid") long noteid,
+                                             @PathVariable("Oldfilename") String oldFileName,
+                                             @RequestBody String newFileName){
+        try{
+            FileCompositeKey key = new FileCompositeKey(oldFileName, noteid);
+            byte[] binaryD = Objects.requireNonNull(repo.findById(key).orElse(null)).getData();
+            repo.deleteById(new FileCompositeKey(oldFileName, noteid));
+            repo.save(new FileData(newFileName, binaryD, noteid));
+            return ResponseEntity.ok("File name changed successfully\n");
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File name change failed\n");
         }
     }
 
@@ -104,6 +128,21 @@ public class FileController {
             return ResponseEntity.ok("Files successfully deleted\n");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error deleting files: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes all files in the server
+     * @return a response indicating if the deletion was successful or not
+     */
+    @DeleteMapping("/all")
+    public ResponseEntity<String> deleteAll(){
+        try{
+            repo.deleteAll();
+            return ResponseEntity.ok("Files Deleted success\n");
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error Deleting");
         }
     }
 

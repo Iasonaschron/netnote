@@ -68,7 +68,7 @@ public class NoteService {
         Note existingNote = noteRepository.findById(id).get();
         existingNote.setTitle(updatedNote.getTitle());
         existingNote.setContent(updatedNote.getContent());
-        existingNote.renderRawText();
+        existingNote.renderRawText(existingNote.getId());
         if (existingNote.getTags() == null) {
             existingNote.setTags(new HashSet<>());
         }

@@ -25,6 +25,6 @@ public interface FileRepository extends JpaRepository<FileData, FileCompositeKey
      * @return The names of the files with a given noteid
      */
     @Transactional
-    @Query("SELECT id.filename FROM FileData f WHERE f.id.relatedNoteId = :noteid")
-    List<String> fetchAllFileNamesById(long noteid);
+    @Query("SELECT f FROM FileData f WHERE f.id.relatedNoteId = :noteid")
+    List<FileData> fetchAllFileNamesById(long noteid);
 }
