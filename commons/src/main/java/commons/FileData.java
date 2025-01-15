@@ -1,10 +1,13 @@
 package commons;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Lob;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FileData {
 
     @EmbeddedId
@@ -25,6 +28,7 @@ public class FileData {
      * @param data the binary data of the file
      * @param relatedNoteId the id of the related note
      */
+    @Autowired
     public FileData(String filename, byte[] data, long relatedNoteId) {
         this.data = data;
         id = new FileCompositeKey(filename, relatedNoteId);
@@ -52,6 +56,14 @@ public class FileData {
      */
     public FileCompositeKey getId() {
         return id;
+    }
+
+    /**
+     * sets the filename
+     * @param name
+     */
+    public void setFileName(String name){
+        id.filename = name;
     }
 
     /**

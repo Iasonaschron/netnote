@@ -16,9 +16,9 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.NoteOverviewCtrl">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="511.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.NoteOverviewCtrl">
    <children>
-      <VBox prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox layoutY="-65.0" prefHeight="465.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <AnchorPane maxHeight="32.0" maxWidth="1.7976931348623157E308" minHeight="32.0" minWidth="600.0" style="-fx-background-color: #dedcff; -fx-border-color: #000;">
                <VBox.margin>
@@ -238,7 +238,7 @@
                         </AnchorPane>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #fff; -fx-border-color: #000;" HBox.hgrow="ALWAYS">
                            <children>
-                              <TextArea fx:id="content" layoutX="10.0" layoutY="1.0" minWidth="220.0" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" promptText="\%content_prompt" style="-fx-background-color: #fff;" wrapText="true" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="-8.0" AnchorPane.topAnchor="1.0">
+                              <TextArea fx:id="content" layoutX="10.0" layoutY="1.0" minWidth="220.0" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" promptText="\%content_prompt" style="-fx-background-color: #fff;" wrapText="true" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-8.0" AnchorPane.topAnchor="1.0">
                                  <font>
                                     <Font name="Arial" size="11.0" />
                                  </font>
@@ -268,6 +268,25 @@
                            <children>
                               <WebView fx:id="webview" layoutX="-20.0" layoutY="27.0" minWidth="220.0" prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
+                        </AnchorPane>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+            <AnchorPane VBox.vgrow="ALWAYS">
+               <children>
+                  <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <AnchorPane HBox.hgrow="ALWAYS">
+                           <children>
+                              <ListView fx:id="fileDataListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" orientation="HORIZONTAL" prefHeight="118.0" prefWidth="600.0" AnchorPane.bottomAnchor="38.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <Button fx:id="fileSelectButton" layoutY="116.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#SelectAndUploadFile" prefHeight="39.0" prefWidth="138.0" text="Add a file" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
+                              <Button layoutX="138.0" layoutY="117.0" mnemonicParsing="false" onAction="#DeleteFilesNoteID" prefHeight="39.0" prefWidth="166.0" text="Delete all files in this note" AnchorPane.bottomAnchor="0.0" />
+                              <Button layoutX="304.0" layoutY="117.0" mnemonicParsing="false" onAction="#DeleteAllFiles" prefHeight="39.0" prefWidth="99.0" text="Delete All Files" AnchorPane.bottomAnchor="0.0" />
+                           </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
                         </AnchorPane>
                      </children>
                   </HBox>

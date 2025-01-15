@@ -4,6 +4,7 @@ import client.utils.LanguageManager;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import commons.AlertMethods;
+import commons.FileData;
 import commons.Note;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.application.Platform;
@@ -15,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
@@ -81,6 +83,9 @@ public class NoteOverviewCtrl implements Initializable {
     private Button fileSelectButton;
 
     @FXML
+    ListView<FileData> fileDataListView;
+
+    @FXML
     private Button clear;
 
     @FXML
@@ -89,6 +94,8 @@ public class NoteOverviewCtrl implements Initializable {
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
     private ObservableList<Note> tagNotes;
+
+    private ObservableList<FileData> noteFiles;
 
     private final ServerUtils server;
 
@@ -134,6 +141,19 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
+     * Deletes all files related with the current selected note
+     */
+    public void DeleteFilesNoteID(){
+        try{
+            server.deleteFile(lastSelectedNote.getId(), null);
+            noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId()));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Opens a file explorer window for the user to select a file, and then uploads
      * that file to the server
      */
@@ -147,14 +167,28 @@ public class NoteOverviewCtrl implements Initializable {
                     new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
             );
             File selectedFile = fc.showOpenDialog(stage);
-            if(selectedFile != null){
-                server.uploadFile(selectedFile, getNote().getId(), getCurrentCollection().getServer());
+            if (selectedFile != null) {
+                server.uploadFile(selectedFile, lastSelectedNote.getId());
                 System.out.println("File uploaded");
             } else {
                 System.out.println("no file selected");
             }
+            noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId()));
         } catch (Exception e) {
             System.out.println("Error uploading file");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Deletes all files in the server
+     */
+    public void DeleteAllFiles(){
+        try{
+            server.deleteAllFiles();
+            noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId()));
+        }
+        catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -366,6 +400,51 @@ public class NoteOverviewCtrl implements Initializable {
                 }
             }
         });
+
+        fileDataListView.setCellFactory(_ -> new ListCell<>(){
+            @Override
+            protected void updateItem(FileData fileData, boolean empty){
+                super.updateItem(fileData, empty);
+
+                if(empty || fileData == null) {
+                    setText(null);
+                    setGraphic(null);
+                }
+                else{
+                    Button deleteB = new Button("Delete");
+                    Button renameB = new Button("Rename");
+
+                    deleteB.setOnAction(event -> {
+                        if(server.deleteFile(lastSelectedNote.getId(), fileData.getFileName())){
+                            getListView().getItems().remove(fileData);
+                        }
+                    });
+
+                    renameB.setOnAction(event -> {
+                        TextInputDialog dialog = new TextInputDialog(fileData.getFileName());
+                        dialog.setTitle("Rename file");
+                        dialog.setHeaderText(null);
+                        dialog.setContentText("New file name: ");
+                        Optional<String> result = dialog.showAndWait();
+                        result.ifPresent(newName -> {
+                            if (server.changeFileName(fileData.getRelatedNoteId(), fileData.getFileName(), newName)) {
+                                fileData.setFileName(newName);
+                                getListView().refresh();
+                            }
+                        });
+                    });
+
+
+                    VBox cellLayout = new VBox(10);
+                    cellLayout.getChildren().addAll(deleteB, renameB);
+                    setText(fileData.getFileName());
+                    setGraphic(cellLayout);
+                }
+            }
+        });
+
+        noteFiles = FXCollections.observableArrayList(new ArrayList<FileData>());
+        fileDataListView.setItems(noteFiles);
 
         listView.setCellFactory(_ -> new ListCell<>() {
             @Override
@@ -623,6 +702,8 @@ public class NoteOverviewCtrl implements Initializable {
 
         updateWebView();
 
+        noteFiles.setAll(server.fetchFileNames(newValue.getId()));
+
         lastSelectedNote = newValue;
         delete.disableProperty().set(false);
         add.disableProperty().set(false);
@@ -762,7 +843,9 @@ public class NoteOverviewCtrl implements Initializable {
         var c = content.getText();
 
         Note temporary = new Note(t, c, selectedCollection.getTitle());
-        temporary.renderRawText();
+        if(lastSelectedNote != null){
+            temporary.renderRawText(lastSelectedNote.getId());
+        }
         return temporary;
     }
 
@@ -882,7 +965,7 @@ public class NoteOverviewCtrl implements Initializable {
     public void setSelectedNote(Note newNote) {
         lastSelectedNote.setTitle(newNote.getTitle());
         lastSelectedNote.setContent(newNote.getContent());
-        lastSelectedNote.renderRawText();
+        lastSelectedNote.renderRawText(lastSelectedNote.getId());
         lastSelectedNote.extractTagsFromContent();
         updateWebView();
         if (hasSelectedTag) {
