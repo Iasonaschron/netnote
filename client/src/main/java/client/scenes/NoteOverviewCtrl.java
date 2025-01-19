@@ -26,7 +26,10 @@ import client.service.CollectionConfigService;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -412,6 +415,7 @@ public class NoteOverviewCtrl implements Initializable {
                 } else {
                     Button deleteB = new Button("Delete");
                     Button renameB = new Button("Rename");
+                    Button downloadB = new Button("Download");
 
                     deleteB.setOnAction(event -> {
                         if (server.deleteFile(lastSelectedNote.getId(), fileData.getFileName())) {
@@ -433,8 +437,28 @@ public class NoteOverviewCtrl implements Initializable {
                         });
                     });
 
+                    downloadB.setOnAction(event -> {
+                        try (InputStream is = server.downloadFile(fileData.getRelatedNoteId(), fileData.getFileName())) {
+                            FileChooser fileChooser = new FileChooser();
+                            fileChooser.setTitle("Save File");
+                            fileChooser.setInitialFileName(fileData.getFileName());
+                            File saveFile = fileChooser.showSaveDialog(null);
+
+                            if(saveFile != null){
+                                Files.copy(is, saveFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                                System.out.println("File downloaded successfully");
+                            }
+                            else{
+                                System.out.println("Download cancelled");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+
                     VBox cellLayout = new VBox(10);
-                    cellLayout.getChildren().addAll(deleteB, renameB);
+                    cellLayout.getChildren().addAll(deleteB, renameB, downloadB);
                     setText(fileData.getFileName());
                     setGraphic(cellLayout);
                 }
@@ -866,6 +890,7 @@ public class NoteOverviewCtrl implements Initializable {
         Note selectedNote = getSelectedNote();
         clearFields();
         server.deleteNoteById(selectedNote.getId(), getCurrentCollection().getServer());
+        server.deleteFile(selectedNote.getId(), null);
         isEditing = false;
         refresh();
         done.setOnAction(_ -> create());
