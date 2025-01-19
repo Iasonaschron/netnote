@@ -29,9 +29,6 @@ import javafx.stage.Stage;
 import commons.Collection;
 import client.service.CollectionConfigService;
 import javafx.util.Duration;
-import org.springframework.messaging.simp.stomp.StompCommand;
-import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 
 import java.io.File;
 import java.io.IOException;
@@ -217,16 +214,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * collection
      */
     private List<Note> getNotesBySelectedCollection() {
-<<<<<<< client/src/main/java/client/scenes/NoteOverviewCtrl.java
-        if (getCurrentCollection() == null) {
-            return new ArrayList<>();
-        } else {
-            return data.stream().filter(note -> Objects.equals(note.getCollectionId(), getCurrentCollection().getTitle())).toList();
-        }
-=======
         return data.stream().filter(note -> Objects.equals(note.getCollectionId(), getCurrentCollection().getTitle()))
                 .toList();
->>>>>>> client/src/main/java/client/scenes/NoteOverviewCtrl.java
     }
 
     /**
@@ -1161,7 +1150,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         mainNotes.showInformationOverview();}
 
 
-     * Getter for the selected collection ID
+     /** Getter for the selected collection ID
      *
      * @return The title of the selected collection
      */
