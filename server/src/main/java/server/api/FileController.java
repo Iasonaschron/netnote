@@ -2,7 +2,11 @@ package server.api;
 
 import commons.FileCompositeKey;
 import commons.FileData;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +45,33 @@ public class FileController {
             return ResponseEntity.ok(fd.getData());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+
+    /**
+     *
+     * @param noteid the id of the note related to the file
+     * @param filename the name of the file
+     * @return a byteArray resource with the binary data of the selected file
+     */
+    @GetMapping("/{noteid}/{filename}/download")
+    public ResponseEntity<Resource> downloadFile(@PathVariable("noteid") long noteid,
+                                                 @PathVariable("filename") String filename){
+        try{
+            FileCompositeKey fck = new FileCompositeKey(filename, noteid);
+            FileData fd = repo.findById(fck).orElse(null);
+            if(fd == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+
+            ByteArrayResource resource = new ByteArrayResource(fd.getData());
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                    .body(resource);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     /**

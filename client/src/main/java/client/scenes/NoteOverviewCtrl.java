@@ -2,6 +2,10 @@ package client.scenes;
 
 import client.utils.LanguageManager;
 import client.utils.ServerUtils;
+import client.utils.StompClient;
+import client.utils.UpdateListener;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import commons.AlertMethods;
 import commons.FileData;
@@ -25,10 +29,18 @@ import javafx.stage.Stage;
 import commons.Collection;
 import client.service.CollectionConfigService;
 import javafx.util.Duration;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -39,7 +51,7 @@ import java.util.concurrent.TimeUnit;
  * Manages a list of notes and provides functionality for creating, viewing, and
  * editing notes.
  */
-public class NoteOverviewCtrl implements Initializable {
+public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     private MainNotesCtrl mainNotes;
 
@@ -116,7 +128,10 @@ public class NoteOverviewCtrl implements Initializable {
     private List<String> tags = new ArrayList<>();
 
     private CollectionConfigService collectionConfigService;
-    private Collection selectedCollection; //collection used for filtering
+    private Collection selectedCollection; // collection used for filtering
+
+    private StompClient stompClient;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Constructor for the NoteOverviewCtrl.
@@ -129,10 +144,12 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Retrieves the current collection based on the selected note's collection ID, or the default collection if no note is selected.
+     * Retrieves the current collection based on the selected note's collection ID,
+     * or the default collection if no note is selected.
      *
      * @return The current or default collection.
-     * @throws RuntimeException if an error occurs while getting or creating the default collection.
+     * @throws RuntimeException if an error occurs while getting or creating the
+     *                          default collection.
      */
     public Collection getCurrentCollection() {
         if (getSelectedNote() == null) {
@@ -148,12 +165,11 @@ public class NoteOverviewCtrl implements Initializable {
     /**
      * Deletes all files related with the current selected note
      */
-    public void DeleteFilesNoteID(){
-        try{
+    public void DeleteFilesNoteID() {
+        try {
             server.deleteFile(lastSelectedNote.getId(), null);
             noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId()));
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -162,15 +178,14 @@ public class NoteOverviewCtrl implements Initializable {
      * Opens a file explorer window for the user to select a file, and then uploads
      * that file to the server
      */
-    public void SelectAndUploadFile(){
-        try{
+    public void SelectAndUploadFile() {
+        try {
             FileChooser fc = new FileChooser();
             Stage stage = new Stage();
             fc.setTitle("Select a file");
             fc.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("All Files", "*.*"),
-                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-            );
+                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
             File selectedFile = fc.showOpenDialog(stage);
             if (selectedFile != null) {
                 server.uploadFile(selectedFile, lastSelectedNote.getId());
@@ -188,12 +203,11 @@ public class NoteOverviewCtrl implements Initializable {
     /**
      * Deletes all files in the server
      */
-    public void DeleteAllFiles(){
-        try{
+    public void DeleteAllFiles() {
+        try {
             server.deleteAllFiles();
             noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId()));
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -203,11 +217,16 @@ public class NoteOverviewCtrl implements Initializable {
      * collection
      */
     private List<Note> getNotesBySelectedCollection() {
+<<<<<<< client/src/main/java/client/scenes/NoteOverviewCtrl.java
         if (getCurrentCollection() == null) {
             return new ArrayList<>();
         } else {
             return data.stream().filter(note -> Objects.equals(note.getCollectionId(), getCurrentCollection().getTitle())).toList();
         }
+=======
+        return data.stream().filter(note -> Objects.equals(note.getCollectionId(), getCurrentCollection().getTitle()))
+                .toList();
+>>>>>>> client/src/main/java/client/scenes/NoteOverviewCtrl.java
     }
 
     /**
@@ -423,22 +442,21 @@ public class NoteOverviewCtrl implements Initializable {
         });
 
 
-
-        fileDataListView.setCellFactory(_ -> new ListCell<>(){
+        fileDataListView.setCellFactory(_ -> new ListCell<>() {
             @Override
-            protected void updateItem(FileData fileData, boolean empty){
+            protected void updateItem(FileData fileData, boolean empty) {
                 super.updateItem(fileData, empty);
 
-                if(empty || fileData == null) {
+                if (empty || fileData == null) {
                     setText(null);
                     setGraphic(null);
-                }
-                else{
+                } else {
                     Button deleteB = new Button("Delete");
                     Button renameB = new Button("Rename");
+                    Button downloadB = new Button("Download");
 
                     deleteB.setOnAction(event -> {
-                        if(server.deleteFile(lastSelectedNote.getId(), fileData.getFileName())){
+                        if (server.deleteFile(lastSelectedNote.getId(), fileData.getFileName())) {
                             getListView().getItems().remove(fileData);
                         }
                     });
@@ -457,9 +475,28 @@ public class NoteOverviewCtrl implements Initializable {
                         });
                     });
 
+                    downloadB.setOnAction(event -> {
+                        try (InputStream is = server.downloadFile(fileData.getRelatedNoteId(), fileData.getFileName())) {
+                            FileChooser fileChooser = new FileChooser();
+                            fileChooser.setTitle("Save File");
+                            fileChooser.setInitialFileName(fileData.getFileName());
+                            File saveFile = fileChooser.showSaveDialog(null);
+
+                            if(saveFile != null){
+                                Files.copy(is, saveFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                                System.out.println("File downloaded successfully");
+                            }
+                            else{
+                                System.out.println("Download cancelled");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
 
                     VBox cellLayout = new VBox(10);
-                    cellLayout.getChildren().addAll(deleteB, renameB);
+                    cellLayout.getChildren().addAll(deleteB, renameB, downloadB);
                     setText(fileData.getFileName());
                     setGraphic(cellLayout);
                 }
@@ -517,6 +554,16 @@ public class NoteOverviewCtrl implements Initializable {
         searchBox.setOnKeyPressed(this::keyPressed);
         webview.setOnKeyPressed(this::keyPressed);
         fileDataListView.setOnKeyPressed(this::keyPressed);
+
+
+        try {
+            stompClient = new StompClient(new URI("ws://localhost:8080/ws"), this);
+        }
+        catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        stompClient.connect();
 
         startPolling();
 
@@ -806,6 +853,13 @@ public class NoteOverviewCtrl implements Initializable {
             return;
         }
 
+        try {
+            stompClient.send("SEND\n" + "destination:/app/note-updates\n\n" + objectMapper.writeValueAsString(getNote()) + "\0");
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
         isEditing = false;
         filterTagList();
         clearFields();
@@ -843,6 +897,18 @@ public class NoteOverviewCtrl implements Initializable {
         } catch (NullPointerException | WebApplicationException e) {
             AlertMethods.createError(e.getMessage());
             return;
+        }
+
+        selectedNote.setTitle(getNote().getTitle());
+        selectedNote.setContent(getNote().getContent());
+        selectedNote.renderRawText(selectedNote.getId());
+        selectedNote.extractTagsFromContent();
+
+        try {
+            stompClient.send("SEND\n" + "destination:/app/note-updates\n\n" + objectMapper.writeValueAsString(selectedNote) + "\0");
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
 
         isEditing = false;
@@ -929,7 +995,7 @@ public class NoteOverviewCtrl implements Initializable {
         var c = content.getText();
 
         Note temporary = new Note(t, c, selectedCollection.getTitle());
-        if(lastSelectedNote != null){
+        if (lastSelectedNote != null) {
             temporary.renderRawText(lastSelectedNote.getId());
         }
         return temporary;
@@ -959,8 +1025,17 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void deleteNote() {
         Note selectedNote = getSelectedNote();
+        Long selectedNoteId = selectedNote.getId();
         clearFields();
         server.deleteNoteById(selectedNote.getId(), getCurrentCollection().getServer());
+        server.deleteFile(selectedNote.getId(), null);
+        try {
+            System.out.println("Sending delete message for note with ID: " + selectedNoteId);
+            stompClient.send("SEND\n" + "destination:/app/note-deletions\n\n" + objectMapper.writeValueAsString(selectedNote) + "\0");
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         isEditing = false;
         refresh();
         done.setOnAction(_ -> create());
@@ -1001,9 +1076,7 @@ public class NoteOverviewCtrl implements Initializable {
      */
     private void startPolling() {
         scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(() -> {
-            Platform.runLater(this::refresh);
-        }, 0, 5, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(() -> Platform.runLater(this::refresh), 0, 5, TimeUnit.SECONDS);
     }
 
     /**
@@ -1058,8 +1131,10 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Sets the selected note, updating its title, content, and rendering the raw text.
-     * If a tag is selected, the tag update list is refreshed; otherwise, the regular list is updated.
+     * Sets the selected note, updating its title, content, and rendering the raw
+     * text.
+     * If a tag is selected, the tag update list is refreshed; otherwise, the
+     * regular list is updated.
      *
      * @param newNote The new note to set as selected.
      */
@@ -1085,4 +1160,81 @@ public class NoteOverviewCtrl implements Initializable {
     public void openInformation() {
         mainNotes.showInformationOverview();}
 
+
+     * Getter for the selected collection ID
+     *
+     * @return The title of the selected collection
+     */
+    public String getSelectedCollectionID() {
+        return selectedCollection.getTitle();
+    }
+
+    /**
+     * Getter for hasSelectedTag
+     *
+     * @return True if a tag is selected, false otherwise
+     */
+    public boolean getHasSelectedTag() {
+        return hasSelectedTag;
+    }
+
+    /**
+     * Adds new note to the data list when received from the server through WS
+     *
+     * @param newNote The new note to add
+     */
+    public void addNoteToData(Note newNote){
+        data.add(newNote);
+    }
+
+    @Override
+    public void handleNoteUpdate(Note updatedNote){
+        try {
+            if (getSelectedNote() != null && updatedNote.getId() == getSelectedNote().getId()) {
+                setSelectedNote(updatedNote);
+            }
+            else if (updatedNote.getCollectionId().equals(getCurrentCollection().getTitle())) {
+                for (Note note : data) {
+                    if (note.getId() == updatedNote.getId()) {
+                        note.setTitle(updatedNote.getTitle());
+                        note.setContent(updatedNote.getContent());
+                        note.setTags(updatedNote.getTags());
+                        note.renderRawText(updatedNote.getId());
+                        if (getHasSelectedTag()) {
+                            tagUpdateList();
+                            return;
+                        }
+                        updateList();
+                        return;
+                    }
+                }
+            }
+            else if(updatedNote.getCollectionId().equals(getCurrentCollection().getTitle())){
+                addNoteToData(updatedNote);
+                if (getHasSelectedTag()) {
+                    tagUpdateList();
+                    return;
+                }
+                updateList();
+            }
+        }
+        catch (Exception e) {
+            System.err.println("Error processing WebSocket update: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void handleNoteDeletion(Long deletedNoteID){
+        for (Note note : data) {
+            if (note.getId() == deletedNoteID) {
+                data.remove(note);
+                break;
+            }
+        }
+        if (getHasSelectedTag()) {
+            tagUpdateList();
+            return;
+        }
+        updateList();
+    }
 }
