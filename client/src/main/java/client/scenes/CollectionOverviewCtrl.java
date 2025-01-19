@@ -75,6 +75,26 @@ public class CollectionOverviewCtrl implements Initializable {
     }
 
     /**
+     * Initiates the process of adding a new collection.
+     * Sets the editing mode to true and clears the input fields
+     * for collection title and collection name.
+     */
+    public void addCollection() {
+        isEditing = true;
+        collectionTitleField.clear();
+        collectionNameField.clear();
+    }
+
+    /**
+     * Sets the editing state to true.
+     * This method is used to indicate that the collection is currently being
+     * edited.
+     */
+    public void edit() {
+        isEditing = true;
+    }
+
+    /**
      * Retrieves the currently selected collection from the collection list.
      *
      * @return the currently selected Collection if there is a selection,
@@ -138,6 +158,23 @@ public class CollectionOverviewCtrl implements Initializable {
     }
 
     /**
+     * Handles the event when the selected collection changes.
+     * If the current collection is null, the method returns immediately.
+     * Otherwise, it sets the editing state to false and updates the collection
+     * fields.
+     */
+    public void selectedCollectionChange() {
+        Collection collection = getCurrentCollection();
+        if (collection == null) {
+            return;
+        }
+
+        isEditing = false;
+
+        setCollectionFields(collection);
+    }
+
+    /**
      * Sets the fields of the collection with the provided collection data.
      *
      * @param collection the collection object containing the data to be set
@@ -158,6 +195,8 @@ public class CollectionOverviewCtrl implements Initializable {
         if (!isValidCollection(collection)) {
             return false; // TODO Maybe show an error message
         }
+
+        isEditing = false;
 
         try {
             collectionConfigService.addCollectionToConfig(collection);
@@ -208,6 +247,8 @@ public class CollectionOverviewCtrl implements Initializable {
         if (collection == null) {
             return false;
         }
+
+        isEditing = false;
 
         try {
             collectionConfigService.removeCollectionFromConfig(collection.getTitle());
