@@ -96,7 +96,7 @@ public class NoteTest {
     public void testRenderRawText() {
         Note note = new Note();
         note.setContent("**Bold Text**");
-        note.renderRawText();
+        note.renderRawText(1);
         assertNotNull(note.getHTML());
     }
 
