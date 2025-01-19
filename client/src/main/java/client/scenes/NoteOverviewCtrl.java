@@ -2,6 +2,10 @@ package client.scenes;
 
 import client.utils.LanguageManager;
 import client.utils.ServerUtils;
+import client.utils.StompClient;
+import client.utils.UpdateListener;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import commons.AlertMethods;
 import commons.FileData;
@@ -23,9 +27,14 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import commons.Collection;
 import client.service.CollectionConfigService;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompSession;
+import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -40,7 +49,7 @@ import java.util.concurrent.TimeUnit;
  * Manages a list of notes and provides functionality for creating, viewing, and
  * editing notes.
  */
-public class NoteOverviewCtrl implements Initializable {
+public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     private MainNotesCtrl mainNotes;
 
@@ -115,6 +124,9 @@ public class NoteOverviewCtrl implements Initializable {
 
     private CollectionConfigService collectionConfigService;
     private Collection selectedCollection; // collection used for filtering
+
+    private StompClient stompClient;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Constructor for the NoteOverviewCtrl.
@@ -502,6 +514,15 @@ public class NoteOverviewCtrl implements Initializable {
         tagsMenu.setOnAction(this::tagMenuSelect);
         listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
 
+        try {
+            stompClient = new StompClient(new URI("ws://localhost:8080/ws"), this);
+        }
+        catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        stompClient.connect();
+
         startPolling();
 
         updateLanguage();
@@ -753,6 +774,13 @@ public class NoteOverviewCtrl implements Initializable {
             return;
         }
 
+        try {
+            stompClient.send("SEND\n" + "destination:/app/note-updates\n\n" + objectMapper.writeValueAsString(getNote()) + "\0");
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
         isEditing = false;
         filterTagList();
         clearFields();
@@ -784,6 +812,18 @@ public class NoteOverviewCtrl implements Initializable {
         } catch (NullPointerException | WebApplicationException e) {
             AlertMethods.createError(e.getMessage());
             return;
+        }
+
+        selectedNote.setTitle(getNote().getTitle());
+        selectedNote.setContent(getNote().getContent());
+        selectedNote.renderRawText(selectedNote.getId());
+        selectedNote.extractTagsFromContent();
+
+        try {
+            stompClient.send("SEND\n" + "destination:/app/note-updates\n\n" + objectMapper.writeValueAsString(selectedNote) + "\0");
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
 
         isEditing = false;
@@ -888,9 +928,17 @@ public class NoteOverviewCtrl implements Initializable {
      */
     public void deleteNote() {
         Note selectedNote = getSelectedNote();
+        Long selectedNoteId = selectedNote.getId();
         clearFields();
         server.deleteNoteById(selectedNote.getId(), getCurrentCollection().getServer());
         server.deleteFile(selectedNote.getId(), null);
+        try {
+            System.out.println("Sending delete message for note with ID: " + selectedNoteId);
+            stompClient.send("SEND\n" + "destination:/app/note-deletions\n\n" + objectMapper.writeValueAsString(selectedNote) + "\0");
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         isEditing = false;
         refresh();
         done.setOnAction(_ -> create());
@@ -927,9 +975,7 @@ public class NoteOverviewCtrl implements Initializable {
      */
     private void startPolling() {
         scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(() -> {
-            Platform.runLater(this::refresh);
-        }, 0, 5, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(() -> Platform.runLater(this::refresh), 0, 5, TimeUnit.SECONDS);
     }
 
     /**
@@ -1001,4 +1047,81 @@ public class NoteOverviewCtrl implements Initializable {
         updateList();
     }
 
+    /**
+     * Getter for the selected collection ID
+     *
+     * @return The title of the selected collection
+     */
+    public String getSelectedCollectionID() {
+        return selectedCollection.getTitle();
+    }
+
+    /**
+     * Getter for hasSelectedTag
+     *
+     * @return True if a tag is selected, false otherwise
+     */
+    public boolean getHasSelectedTag() {
+        return hasSelectedTag;
+    }
+
+    /**
+     * Adds new note to the data list when received from the server through WS
+     *
+     * @param newNote The new note to add
+     */
+    public void addNoteToData(Note newNote){
+        data.add(newNote);
+    }
+
+    @Override
+    public void handleNoteUpdate(Note updatedNote){
+        try {
+            if (getSelectedNote() != null && updatedNote.getId() == getSelectedNote().getId()) {
+                setSelectedNote(updatedNote);
+            }
+            else if (updatedNote.getCollectionId().equals(getCurrentCollection().getTitle())) {
+                for (Note note : data) {
+                    if (note.getId() == updatedNote.getId()) {
+                        note.setTitle(updatedNote.getTitle());
+                        note.setContent(updatedNote.getContent());
+                        note.setTags(updatedNote.getTags());
+                        note.renderRawText(updatedNote.getId());
+                        if (getHasSelectedTag()) {
+                            tagUpdateList();
+                            return;
+                        }
+                        updateList();
+                        return;
+                    }
+                }
+            }
+            else if(updatedNote.getCollectionId().equals(getCurrentCollection().getTitle())){
+                addNoteToData(updatedNote);
+                if (getHasSelectedTag()) {
+                    tagUpdateList();
+                    return;
+                }
+                updateList();
+            }
+        }
+        catch (Exception e) {
+            System.err.println("Error processing WebSocket update: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void handleNoteDeletion(Long deletedNoteID){
+        for (Note note : data) {
+            if (note.getId() == deletedNoteID) {
+                data.remove(note);
+                break;
+            }
+        }
+        if (getHasSelectedTag()) {
+            tagUpdateList();
+            return;
+        }
+        updateList();
+    }
 }
