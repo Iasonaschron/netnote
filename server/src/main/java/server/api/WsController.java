@@ -13,9 +13,15 @@ public class WsController {
      * @param newNote the new note that is being broadcast
      * @return the new note with all its elements
      */
-    @MessageMapping("/notes")
-    @SendTo("/topic/notes")
+    @MessageMapping("/note-updates")
+    @SendTo("/topic/note-updates")
     public Note broadcastNoteChanges(Note newNote){
         return newNote;
+    }
+
+    @MessageMapping("/note-deletions")
+    @SendTo("/topic/note-deletions")
+    public Note broadcastNoteDeletions(Note deletedNote){
+        return deletedNote;
     }
 }
