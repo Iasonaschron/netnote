@@ -114,7 +114,7 @@ public class NoteOverviewCtrl implements Initializable {
     private List<String> tags = new ArrayList<>();
 
     private CollectionConfigService collectionConfigService;
-    private Collection selectedCollection; //collection used for filtering
+    private Collection selectedCollection; // collection used for filtering
 
     /**
      * Constructor for the NoteOverviewCtrl.
@@ -127,10 +127,12 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Retrieves the current collection based on the selected note's collection ID, or the default collection if no note is selected.
+     * Retrieves the current collection based on the selected note's collection ID,
+     * or the default collection if no note is selected.
      *
      * @return The current or default collection.
-     * @throws RuntimeException if an error occurs while getting or creating the default collection.
+     * @throws RuntimeException if an error occurs while getting or creating the
+     *                          default collection.
      */
     public Collection getCurrentCollection() {
         if (getSelectedNote() == null) {
@@ -146,12 +148,11 @@ public class NoteOverviewCtrl implements Initializable {
     /**
      * Deletes all files related with the current selected note
      */
-    public void DeleteFilesNoteID(){
-        try{
+    public void DeleteFilesNoteID() {
+        try {
             server.deleteFile(lastSelectedNote.getId(), null);
             noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId()));
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -160,15 +161,14 @@ public class NoteOverviewCtrl implements Initializable {
      * Opens a file explorer window for the user to select a file, and then uploads
      * that file to the server
      */
-    public void SelectAndUploadFile(){
-        try{
+    public void SelectAndUploadFile() {
+        try {
             FileChooser fc = new FileChooser();
             Stage stage = new Stage();
             fc.setTitle("Select a file");
             fc.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("All Files", "*.*"),
-                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-            );
+                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
             File selectedFile = fc.showOpenDialog(stage);
             if (selectedFile != null) {
                 server.uploadFile(selectedFile, lastSelectedNote.getId());
@@ -186,12 +186,11 @@ public class NoteOverviewCtrl implements Initializable {
     /**
      * Deletes all files in the server
      */
-    public void DeleteAllFiles(){
-        try{
+    public void DeleteAllFiles() {
+        try {
             server.deleteAllFiles();
             noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId()));
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -201,7 +200,8 @@ public class NoteOverviewCtrl implements Initializable {
      * collection
      */
     private List<Note> getNotesBySelectedCollection() {
-        return data.stream().filter(note -> Objects.equals(note.getCollectionId(), getCurrentCollection().getTitle())).toList();
+        return data.stream().filter(note -> Objects.equals(note.getCollectionId(), getCurrentCollection().getTitle()))
+                .toList();
     }
 
     /**
@@ -404,22 +404,21 @@ public class NoteOverviewCtrl implements Initializable {
             }
         });
 
-        fileDataListView.setCellFactory(_ -> new ListCell<>(){
+        fileDataListView.setCellFactory(_ -> new ListCell<>() {
             @Override
-            protected void updateItem(FileData fileData, boolean empty){
+            protected void updateItem(FileData fileData, boolean empty) {
                 super.updateItem(fileData, empty);
 
-                if(empty || fileData == null) {
+                if (empty || fileData == null) {
                     setText(null);
                     setGraphic(null);
-                }
-                else{
+                } else {
                     Button deleteB = new Button("Delete");
                     Button renameB = new Button("Rename");
                     Button downloadB = new Button("Download");
 
                     deleteB.setOnAction(event -> {
-                        if(server.deleteFile(lastSelectedNote.getId(), fileData.getFileName())){
+                        if (server.deleteFile(lastSelectedNote.getId(), fileData.getFileName())) {
                             getListView().getItems().remove(fileData);
                         }
                     });
@@ -510,12 +509,13 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     *Implements keyboard shortcuts in the app
+     * Implements keyboard shortcuts in the app
      * S+Control: Saves or adds note (acts like the done check button)
      * ESCAPE: Selects the searching search field
      * Up+Control: Selects the previous note on the list view
      * Down+Control: Selects the next note on the list view
-     * (Both are usable without having any note selected, automatically selecting the first note)
+     * (Both are usable without having any note selected, automatically selecting
+     * the first note)
      * T+Control: Selects Title text field
      * C+Control: Selects Content text field
      * D+Control: Deletes note, or clears note about to be made
@@ -866,7 +866,7 @@ public class NoteOverviewCtrl implements Initializable {
         var c = content.getText();
 
         Note temporary = new Note(t, c, selectedCollection.getTitle());
-        if(lastSelectedNote != null){
+        if (lastSelectedNote != null) {
             temporary.renderRawText(lastSelectedNote.getId());
         }
         return temporary;
@@ -981,8 +981,10 @@ public class NoteOverviewCtrl implements Initializable {
     }
 
     /**
-     * Sets the selected note, updating its title, content, and rendering the raw text.
-     * If a tag is selected, the tag update list is refreshed; otherwise, the regular list is updated.
+     * Sets the selected note, updating its title, content, and rendering the raw
+     * text.
+     * If a tag is selected, the tag update list is refreshed; otherwise, the
+     * regular list is updated.
      *
      * @param newNote The new note to set as selected.
      */
