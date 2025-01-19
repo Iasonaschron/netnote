@@ -1,7 +1,6 @@
 package client.scenes;
 
 import commons.Collection;
-import commons.CollectionConfig;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -64,7 +63,7 @@ public class CollectionOverviewCtrl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        refresh();
+        // refresh();
     }
 
     /**
