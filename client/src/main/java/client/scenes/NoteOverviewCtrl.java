@@ -868,9 +868,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      */
     private void startPolling() {
         scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(() -> {
-            Platform.runLater(this::refresh);
-        }, 0, 5, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(() -> Platform.runLater(this::refresh), 0, 5, TimeUnit.SECONDS);
     }
 
     /**
@@ -951,6 +949,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     /**
      * Getter for hasSelectedTag
+     *
+     * @return True if a tag is selected, false otherwise
      */
     public boolean getHasSelectedTag() {
         return hasSelectedTag;

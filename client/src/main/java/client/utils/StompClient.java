@@ -22,7 +22,6 @@ public class StompClient extends WebSocketClient {
 
     @Override
     public void onOpen(ServerHandshake handshake) {
-        System.out.println("Connected to STOMP WebSocket server.");
         send("CONNECT\naccept-version:1.2\n\n\0");
         // Subscribes to the deletion topic and update topic
         send("SUBSCRIBE\ndestination:/topic/note-updates\nid:sub-1\n\n\0");
@@ -32,18 +31,13 @@ public class StompClient extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         try {
-            System.out.println("Received message: " + message);
-
-            // Check if it's a STOMP frame message
             if (message.startsWith("MESSAGE")) {
                 // Split message by newline to separate headers from the body
                 String[] messageParts = message.split("\n\n", 2); // Separate headers from the body
 
-                // Extract the headers (first part)
                 String headers = messageParts[0];
                 String[] headerLines = headers.split("\n");
 
-                // Find the destination header
                 String destination = null;
                 for (String line : headerLines) {
                     if (line.startsWith("destination:")) {
@@ -52,12 +46,9 @@ public class StompClient extends WebSocketClient {
                     }
                 }
 
-                // The body contains the payload
                 String body = messageParts.length > 1 ? messageParts[1] : "";
 
-                // Parse the payload if the body exists
                 if (body != null && !body.isEmpty()) {
-                    // Check if the destination is "note-updates" or "note-deletions"
                     if (destination != null) {
                         if (destination.equals("/topic/note-updates")) {
                             Note updatedNote = objectMapper.readValue(body, Note.class);
@@ -72,8 +63,7 @@ public class StompClient extends WebSocketClient {
                     }
                 }
             } else {
-                // Handle unexpected message format (not a valid STOMP frame)
-                System.err.println("Unexpected message format: " + message);
+                return;
             }
 
         } catch (Exception e) {
