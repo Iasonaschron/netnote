@@ -1,6 +1,180 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CollectionOverviewCtrl" />
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="308.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.CollectionOverviewCtrl">
+   <children>
+      <HBox layoutX="1.0" layoutY="96.8" prefHeight="308.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <VBox prefHeight="308.0" prefWidth="34.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <AnchorPane prefHeight="349.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <AnchorPane prefHeight="242.0" prefWidth="172.0" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <VBox prefHeight="244.0" prefWidth="198.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1.5999999999999943" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <ListView fx:id="collectionList" prefHeight="244.0" prefWidth="198.0" VBox.vgrow="ALWAYS" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane layoutY="244.0" prefHeight="66.0" prefWidth="200.0" AnchorPane.bottomAnchor="-2.842170943040401E-14" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="244.0">
+                           <children>
+                              <Button fx:id="deleteCollectionButton" layoutX="14.0" layoutY="7.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="50.0" AnchorPane.bottomAnchor="5.799999999999997" AnchorPane.leftAnchor="14.0">
+                                 <graphic>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="🗑" textAlignment="CENTER" wrappingWidth="28.35430908203125">
+                                       <font>
+                                          <Font size="25.0" />
+                                       </font>
+                                    </Text>
+                                 </graphic>
+                              </Button>
+                              <Button fx:id="addCollectionButton" layoutX="72.0" layoutY="7.399999999999999" mnemonicParsing="false" prefHeight="51.0" prefWidth="50.0" AnchorPane.bottomAnchor="5.399999999999999" AnchorPane.leftAnchor="72.0">
+                                 <graphic>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="+" textAlignment="CENTER" translateY="-2.0" wrappingWidth="13.009032964706421">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Text>
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <AnchorPane prefHeight="308.0" prefWidth="417.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <VBox layoutX="-3.0" layoutY="-0.8" nodeOrientation="LEFT_TO_RIGHT" prefHeight="308.0" prefWidth="464.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-3.0" AnchorPane.rightAnchor="-3.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <AnchorPane prefHeight="62.0" prefWidth="453.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <HBox layoutX="0.8" prefHeight="62.0" prefWidth="442.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <AnchorPane prefHeight="62.0" prefWidth="106.0">
+                                             <children>
+                                                <Text layoutX="14.0" layoutY="36.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Title:" textAlignment="CENTER" AnchorPane.bottomAnchor="15.400000000000006" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="16.0">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                </Text>
+                                             </children>
+                                          </AnchorPane>
+                                          <AnchorPane prefHeight="62.0" prefWidth="340.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <TextField fx:id="collectionTitleField" layoutY="13.0" prefHeight="36.0" prefWidth="294.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="30.399999999999977" AnchorPane.topAnchor="13.0" />
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="62.0" prefWidth="406.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <HBox layoutX="2.4" prefHeight="62.0" prefWidth="443.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <AnchorPane prefHeight="62.0" prefWidth="106.0">
+                                             <children>
+                                                <Text layoutX="14.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Server:" AnchorPane.bottomAnchor="15.400000000000006" AnchorPane.leftAnchor="14.4" AnchorPane.topAnchor="16.0">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                </Text>
+                                             </children>
+                                          </AnchorPane>
+                                          <AnchorPane prefHeight="62.0" prefWidth="340.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <TextField fx:id="collectionServerField" layoutX="-3.2" layoutY="13.0" prefHeight="36.0" prefWidth="294.0" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="13.0" />
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="66.0" prefWidth="412.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <HBox layoutX="2.4" prefHeight="62.0" prefWidth="442.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <AnchorPane prefHeight="62.0" prefWidth="106.0">
+                                             <children>
+                                                <Text layoutX="14.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Collection:" AnchorPane.bottomAnchor="17.65859375" AnchorPane.leftAnchor="14.4" AnchorPane.topAnchor="16.0">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                </Text>
+                                             </children>
+                                          </AnchorPane>
+                                          <AnchorPane prefHeight="62.0" prefWidth="340.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <TextField fx:id="collectionNameField" layoutX="1.0000000000000568" layoutY="12.8" prefHeight="36.0" prefWidth="294.0" AnchorPane.bottomAnchor="12.800000000000004" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="30.19999999999999" AnchorPane.topAnchor="12.8" />
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="52.0" prefWidth="410.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <HBox prefHeight="51.0" prefWidth="442.0" AnchorPane.leftAnchor="0.0">
+                                       <children>
+                                          <AnchorPane prefHeight="51.0" prefWidth="111.0">
+                                             <children>
+                                                <Text layoutX="14.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Status:" AnchorPane.bottomAnchor="9.082421875000001" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="8.799999999999997">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                </Text>
+                                             </children>
+                                          </AnchorPane>
+                                          <AnchorPane prefHeight="51.0" prefWidth="280.0">
+                                             <children>
+                                                <Text fx:id="collectionStatus" layoutY="29.623828125" strokeType="OUTSIDE" strokeWidth="0.0" text="Collections Exists" wrappingWidth="182.13669204711914" AnchorPane.bottomAnchor="17.05859375" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="10.2">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                </Text>
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane prefHeight="66.0" prefWidth="451.0">
+                                 <children>
+                                    <HBox nodeOrientation="RIGHT_TO_LEFT" prefHeight="66.0" prefWidth="404.0" AnchorPane.bottomAnchor="0.8000000000000114" AnchorPane.rightAnchor="32.0" AnchorPane.topAnchor="1.4210854715202004E-14">
+                                       <children>
+                                          <AnchorPane prefHeight="66.0" prefWidth="114.0">
+                                             <children>
+                                                <Button layoutX="11.400000000000006" layoutY="15.199999999999996" mnemonicParsing="false" prefHeight="42.0" prefWidth="119.0" text="Make Default" AnchorPane.bottomAnchor="8.0" AnchorPane.rightAnchor="0.0" />
+                                             </children>
+                                          </AnchorPane>
+                                          <AnchorPane prefHeight="66.0" prefWidth="119.0">
+                                             <children>
+                                                <Button fx:id="saveButton" layoutX="13.0" layoutY="15.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="73.0" text="Save" AnchorPane.bottomAnchor="8.199999999999996" AnchorPane.rightAnchor="32.60000000000001" />
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>

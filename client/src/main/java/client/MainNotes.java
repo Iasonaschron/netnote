@@ -1,9 +1,7 @@
 package client;
 
 import atlantafx.base.theme.PrimerLight;
-import client.scenes.MainNotesCtrl;
-import client.scenes.NoteOverviewCtrl;
-import client.scenes.CollectionOverviewCtrl;
+import client.scenes.*;
 import client.utils.LanguageManager;
 import client.utils.ServerUtils;
 import com.google.inject.Injector;
@@ -50,8 +48,14 @@ public class MainNotes extends Application {
                 "NoteOverview.fxml");
         var collectionOverview = FXML.load(CollectionOverviewCtrl.class, LanguageManager.getBundle(), "client",
                 "scenes", "CollectionOverview.fxml");
-
+        var informationOverview = FXML.load(InformationOverviewCtrl.class, LanguageManager.getBundle(), "client",
+                "scenes", "InformationOverview.fxml");
+        var deleteConfirmation = FXML.load(DeleteConfirmationCtrl.class, LanguageManager.getBundle(), "client",
+                "scenes", "DeleteConfirmation.fxml");
         var mainNotesCtrl = INJECTOR.getInstance(MainNotesCtrl.class);
-        mainNotesCtrl.initialize(primaryStage, overview, collectionOverview);
+
+
+        mainNotesCtrl.initialize(primaryStage, overview, collectionOverview, informationOverview, deleteConfirmation);
     }
+
 }

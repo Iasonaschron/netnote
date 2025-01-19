@@ -29,7 +29,7 @@
                      <children>
                         <AnchorPane prefHeight="43.0" prefWidth="94.0">
                            <children>
-                              <Button fx:id="information" layoutX="3.0" layoutY="2.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="16.0" AnchorPane.leftAnchor="3.0" AnchorPane.topAnchor="2.0">
+                              <Button fx:id="information" layoutX="3.0" layoutY="2.0" mnemonicParsing="false" onAction="#openInformation" prefHeight="16.0" prefWidth="16.0" AnchorPane.leftAnchor="3.0" AnchorPane.topAnchor="2.0">
                                  <font>
                                     <Font size="11.0" />
                                  </font>
@@ -218,14 +218,14 @@
                                                 </AnchorPane>
                                                 <AnchorPane layoutX="119.0" layoutY="14.0" maxHeight="23.0" maxWidth="23.0" minHeight="23.0" minWidth="23.0" prefHeight="200.0" prefWidth="200.0" translateX="20.0">
                                                    <children>
-                                                      <Button fx:id="delete" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="4.0" layoutY="6.0" maxHeight="32.0" maxWidth="32.0" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#deleteNote" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                      <Button fx:id="delete" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="4.0" layoutY="6.0" maxHeight="32.0" maxWidth="32.0" minHeight="32.0" minWidth="32.0" mnemonicParsing="false" onAction="#deleteConfirm" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <font>
                                                             <Font name="Arial" size="15.0" />
                                                          </font>
                                                          <graphic>
-                                                            <Text boundsType="VISUAL" strokeType="OUTSIDE" strokeWidth="0.0" text="-" wrappingWidth="18.0">
+                                                            <Text boundsType="VISUAL" strokeType="OUTSIDE" strokeWidth="0.0" text="🗑" wrappingWidth="18.0">
                                                                <font>
-                                                                  <Font size="32.0" />
+                                                                  <Font size="24.0" />
                                                                </font>
                                                             </Text>
                                                          </graphic>

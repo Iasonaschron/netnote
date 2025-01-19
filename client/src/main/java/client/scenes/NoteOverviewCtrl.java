@@ -483,7 +483,7 @@ public class NoteOverviewCtrl implements Initializable {
 
         delete.setOnAction(_ -> {
             if (isSaveAction) {
-                deleteNote();
+                deleteConfirm();
             } else {
                 clearFields();
             }
@@ -545,6 +545,7 @@ public class NoteOverviewCtrl implements Initializable {
      * L+Control: Opens languages menu
      * R+Control: Refreshes
      * C+Alt: Opens Collections menu
+     * I+Ctrl: Opens Information menu
      *
      *
      * @param e key pressed
@@ -613,13 +614,15 @@ public class NoteOverviewCtrl implements Initializable {
                     } else {
                         content.positionCaret(0);
                     }
+                } else if (e.isAltDown()) {
+                    openCollectionMenu();
                 }
                 e.consume();
                 break;
             case D:
                 if (e.isControlDown()) {
                     if (isSaveAction) {
-                        deleteNote();
+                        deleteConfirm();
                         updateNote();
                     } else {
                         clearFields();
@@ -664,6 +667,12 @@ public class NoteOverviewCtrl implements Initializable {
             case L:
                 if (e.isControlDown()) {
                     languageSelector.show();
+                }
+                e.consume();
+                break;
+            case I:
+                if (e.isControlDown()) {
+                    openInformation();
                 }
                 e.consume();
                 break;
@@ -802,8 +811,9 @@ public class NoteOverviewCtrl implements Initializable {
         clearFields();
         refresh();
         title.requestFocus();
+        isEditing = true;
         done.setText("Added!");
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.3));
         pause.setOnFinished(event -> done.setText("Done"));
         pause.play();
 
@@ -936,6 +946,14 @@ public class NoteOverviewCtrl implements Initializable {
                 : listView.getSelectionModel().getSelectedItems().getFirst();
     }
 
+
+    /**
+     * Shows deletion confirmation menu
+     */
+    public void deleteConfirm() {
+        mainNotes.showDeleteConfirmation();
+    }
+
     /**
      * Deletes the currently selected note from the ListView.
      */
@@ -952,6 +970,10 @@ public class NoteOverviewCtrl implements Initializable {
             listView.getSelectionModel().select(0);
         }
         delete.disableProperty().set(true);
+        done.setText("Deleted!");
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.3));
+        pause.setOnFinished(event -> done.setText("Done"));
+        pause.play();
     }
 
     /**
@@ -1028,6 +1050,9 @@ public class NoteOverviewCtrl implements Initializable {
         mainNotes = mainNotesCtrl;
     }
 
+    /**
+     * Opens the Collection menu
+     */
     public void openCollectionMenu() {
         mainNotes.showCollectionOverview();
     }
@@ -1050,5 +1075,14 @@ public class NoteOverviewCtrl implements Initializable {
         }
         updateList();
     }
+
+    /**
+     *
+     * Opens information window
+     *
+     *
+     */
+    public void openInformation() {
+        mainNotes.showInformationOverview();}
 
 }

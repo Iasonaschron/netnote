@@ -17,6 +17,8 @@ public class NotesModule implements Module {
         binder.bind(MainNotesCtrl.class).in(Scopes.SINGLETON);
         binder.bind(NoteOverviewCtrl.class).in(Scopes.SINGLETON);
         binder.bind(CollectionOverviewCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(InformationOverviewCtrl.class).in(Scopes.SINGLETON);
+        binder.bind(DeleteConfirmationCtrl.class).in(Scopes.SINGLETON);
     }
 
 }

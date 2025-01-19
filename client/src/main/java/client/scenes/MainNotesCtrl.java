@@ -3,6 +3,7 @@ package client.scenes;
 import client.utils.LanguageManager;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
@@ -14,12 +15,20 @@ import javafx.util.Pair;
 public class MainNotesCtrl {
     private Stage primaryStage;
     private Stage secondaryStage;
+    private Stage tertiaryStage;
+    private Stage informationStage;
 
     private CollectionOverviewCtrl collectionOverviewCtrl;
     private Scene collectionOverview;
 
     private NoteOverviewCtrl noteOverviewCtrl;
     private Scene overview;
+
+    private InformationOverviewCtrl informationOverviewCtrl;
+    private Scene informationOverview;
+
+    private DeleteConfirmationCtrl deleteConfirmationCtrl;
+    private Scene deleteConfirmation;
 
     /**
      * Initializes the main application window and sets up the overview scene.
@@ -31,18 +40,37 @@ public class MainNotesCtrl {
      * @param collectionOverview a Pair containing the collection overview
      *                           controller and the Parent node representing the
      *                           collection overview scene layout
+     * @param informationOverview a Pair containing the information overview
+     *                            controller and the Parent node representing the
+     *                            information overview scene layout
+     * @param deleteConfirmation a Pair containing the delete confirmation
+     *                           controller and the Parent node representing the
+     *                           delete confirmation scene layout
      */
     public void initialize(Stage primaryStage, Pair<NoteOverviewCtrl, Parent> overview,
-            Pair<CollectionOverviewCtrl, Parent> collectionOverview) {
+            Pair<CollectionOverviewCtrl, Parent> collectionOverview,
+                           Pair<InformationOverviewCtrl, Parent> informationOverview,
+                           Pair<DeleteConfirmationCtrl, Parent> deleteConfirmation) {
 
         this.primaryStage = primaryStage;
         this.secondaryStage = new Stage();
+        this.tertiaryStage = new Stage();
+        this.informationStage = new Stage();
 
         this.collectionOverviewCtrl = collectionOverview.getKey();
         this.collectionOverview = new Scene(collectionOverview.getValue());
 
+        this.informationOverviewCtrl = informationOverview.getKey();
+        this.informationOverview = new Scene(informationOverview.getValue());
+
+        this.deleteConfirmationCtrl = deleteConfirmation.getKey();
+        this.deleteConfirmation = new Scene(deleteConfirmation.getValue());
+
         this.noteOverviewCtrl = overview.getKey();
         this.overview = new Scene(overview.getValue());
+
+        tertiaryStage.initOwner(primaryStage);
+        tertiaryStage.initModality(Modality.WINDOW_MODAL);
 
         noteOverviewCtrl.setMainNotesCtrl(this);
 
@@ -60,6 +88,42 @@ public class MainNotesCtrl {
         collectionOverviewCtrl.refresh();
 
         secondaryStage.show();
+    }
+
+
+    /**
+     * Displays the information overview scene in the secondary stage.
+     * Sets the stage title.
+     */
+    public void showInformationOverview() {
+        informationStage.setTitle("Netnote: Information");
+        informationStage.setScene(informationOverview);
+        informationStage.setResizable(false);
+
+
+        informationStage.show();
+    }
+
+    /**
+     * Displays the deletion confirmation menu in the tertiary stage.
+     * Sets the stage title.
+     */
+    public void showDeleteConfirmation() {
+        tertiaryStage.setTitle("Confirm Delete");
+        tertiaryStage.setScene(deleteConfirmation);
+        tertiaryStage.setResizable(false);
+
+        deleteConfirmationCtrl.setNoteOverviewCtrl(noteOverviewCtrl);
+        deleteConfirmationCtrl.setMainNotesCtrl(this);
+
+        tertiaryStage.showAndWait();
+    }
+
+    /**
+     * Closes the deletion confirmation menu
+     */
+    public void closeDeleteConfirmation(){
+        tertiaryStage.close();
     }
 
     /**

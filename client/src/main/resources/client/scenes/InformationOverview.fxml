@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="476.0" prefWidth="278.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.scenes.InformationOverviewCtrl">
+   <children>
+      <VBox layoutX="-1.0" prefHeight="476.0" prefWidth="290.0">
+         <children>
+            <AnchorPane prefHeight="46.0" prefWidth="272.0">
+               <children>
+                  <Text layoutX="0.19999999999999996" layoutY="42.80380859375" strokeType="OUTSIDE" strokeWidth="0.0" text="Keyboard Shortcuts:" textAlignment="CENTER" wrappingWidth="277.9999999999999" AnchorPane.leftAnchor="0.19999999999999996" AnchorPane.rightAnchor="35.40000000000015" AnchorPane.topAnchor="10.399999999999999">
+                     <font>
+                        <Font name="Arial Nova Cond Bold" size="31.0" />
+                     </font>
+                  </Text>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="290.0" prefWidth="226.0">
+               <children>
+                  <Text layoutX="26.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="S+Ctrl: Save or add note&#10;ESCAPE: Focus the search field &#10;Up+Alt: Select the previous note    &#10;Down+Alt: Select the next note&#10;T+Ctrl: Focus the Title field&#10;C+Ctrl: Focus the Content field&#10;D+Ctrl: Delete or clear&#10;N+Ctrl: Create a new note &#10;M+Ctrl: Open the tag menu  &#10;X+Ctrl: Clear filters &#10;B+Ctrl: Toggle the search content checkbox &#10;L+Control: Open the language menu &#10;R+Control: Refresh&#10;C+Alt: Open the Collections menu&#10;I+Ctrl: Open Information menu" wrappingWidth="240.0" AnchorPane.bottomAnchor="25.96992187500001" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="25.19999999999999" AnchorPane.topAnchor="24.892578125">
+                     <font>
+                        <Font name="Arial Nova Cond Light" size="18.0" />
+                     </font>
+                  </Text>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
