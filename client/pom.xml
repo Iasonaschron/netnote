@@ -85,6 +85,11 @@
 			<artifactId>javafx-web</artifactId>
 			<version>${version.jfx}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.controlsfx</groupId>
+			<artifactId>controlsfx</artifactId>
+			<version>11.2.1</version>
+		</dependency>
 
 		<!-- test -->
 		<dependency>
