@@ -49,9 +49,7 @@ public class CollectionOverviewCtrl implements Initializable {
     private final CollectionConfigService collectionConfigService;
 
     /**
-     * Controller for the Collection Overview scene.
-     * This class handles the interactions between the server and the collection
-     * overview UI.
+     * Constructor for the CollectionOverviewCtrl class.
      *
      * @param server The server utility instance used for server communication.
      */
@@ -61,6 +59,16 @@ public class CollectionOverviewCtrl implements Initializable {
         this.collectionConfigService = new CollectionConfigService();
     }
 
+    /**
+     * Initializes the controller class. This method is automatically called
+     * after the fxml file has been loaded. It can be used to perform any
+     * necessary setup or initialization tasks.
+     *
+     * @param location  The location used to resolve relative paths for the root
+     *                  object, or null if the location is not known.
+     * @param resources The resources used to localize the root object, or null if
+     *                  the root object was not localized.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // refresh();
@@ -88,13 +96,12 @@ public class CollectionOverviewCtrl implements Initializable {
 
     /**
      * Refreshes the collection overview by reloading the collections from the
-     * configuration service.
-     * If the view is currently in editing mode, the refresh operation is skipped.
+     * configuration service. If the view is currently in editing mode, the refresh
+     * operation is skipped.
      * 
      * This method attempts to read the collection configuration and update the
-     * observable list
-     * of collections. If an exception occurs during this process, the stack trace
-     * is printed.
+     * observable list of collections. If an exception occurs during this process,
+     * the stack trace is printed.
      */
     public void refresh() {
         if (isEditing) {
@@ -184,5 +191,31 @@ public class CollectionOverviewCtrl implements Initializable {
 
         return collection != null && collection.getTitle() != null && collection.getName() != null;
 
+    }
+
+    /**
+     * Deletes the current collection.
+     *
+     * This method retrieves the current collection and attempts to remove it from
+     * the configuration. If the collection is null, it returns false. If an
+     * exception occurs during the removal process, it prints the stack trace and
+     * returns false.
+     *
+     * @return true if the collection was successfully deleted, false otherwise.
+     */
+    public boolean deleteCollection() {
+        Collection collection = getCurrentCollection();
+        if (collection == null) {
+            return false;
+        }
+
+        try {
+            collectionConfigService.removeCollectionFromConfig(collection.getTitle());
+            collectionConfigService.saveCollections();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
