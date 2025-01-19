@@ -820,7 +820,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         selectedNote.extractTagsFromContent();
 
         try {
-            stompClient.send("SEND\n" + "destination:/app/note-updates\n\n" + objectMapper.writeValueAsString(selectedNote) + "\0";
+            stompClient.send("SEND\n" + "destination:/app/note-updates\n\n" + objectMapper.writeValueAsString(selectedNote) + "\0");
         }
         catch (JsonProcessingException e) {
             throw new RuntimeException(e);
