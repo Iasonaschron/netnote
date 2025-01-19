@@ -18,12 +18,12 @@ package client.utils;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.List;
 
 import commons.FileData;
 import commons.Note;
-import commons.Collection;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -102,6 +102,20 @@ public class ServerUtils {
                 .request(APPLICATION_JSON)
                 .get(new GenericType<List<FileData>>() {
                 });
+    }
+
+    /**
+     *
+     * @param noteid the note id
+     * @param filename the filename
+     * @return an input stream containing the binary data of the file to be downloaded
+     */
+    public InputStream downloadFile(long noteid, String filename){
+        Client client = ClientBuilder.newClient(new ClientConfig());
+        Response response = client.target(SERVER).path("api/files/" + noteid + "/" + filename + "/download")
+                .request(MediaType.APPLICATION_OCTET_STREAM)
+                .get();
+        return response.readEntity(InputStream.class);
     }
 
     /**
