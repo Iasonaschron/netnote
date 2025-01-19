@@ -92,9 +92,8 @@ public class Note {
      * @param noteid
      */
     public void renderRawText(long noteid) {
-        String processedContent = ContentProcessor.processTags(content);
 
-        this.html = MarkDownMethods.renderRawTextToText(processedContent, noteid);
+        this.html = MarkDownMethods.renderRawTextToText(content, noteid);
     }
 
     /**

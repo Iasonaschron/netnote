@@ -11,6 +11,7 @@ import commons.AlertMethods;
 import commons.FileData;
 import commons.Note;
 import jakarta.ws.rs.WebApplicationException;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -27,9 +28,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import commons.Collection;
 import client.service.CollectionConfigService;
-import org.springframework.messaging.simp.stomp.StompCommand;
-import org.springframework.messaging.simp.stomp.StompSession;
-import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,6 +101,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     @FXML
     private Button collectionMenuButton;
+
+    @FXML
+    private Button information;
 
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
@@ -413,8 +415,21 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 } else {
                     AlertMethods.createWarning(LanguageManager.getString("note_not_found") + " " + noteTitle);
                 }
+            } else if (url.startsWith("tag://")) {
+                String tagName = url.substring(6); // Extract the tag name after "tag://"
+                System.out.println("Tag clicked: " + tagName); // Debug: Print the tag name
+                if (tagsMenu.getItems().contains(tagName)) {
+                    tagsMenu.getSelectionModel().select(tagName);
+                    tagNotes = FXCollections.observableList(filterNotesByTag(tagName));
+                    listView.setItems(tagNotes);
+                    listView.getSelectionModel().select(0);
+                    isSaveAction = true;
+                    hasSelectedTag = true;
+                    clear.disableProperty().set(false);
+                }
             }
         });
+
 
         fileDataListView.setCellFactory(_ -> new ListCell<>() {
             @Override
@@ -494,7 +509,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         delete.setOnAction(_ -> {
             if (isSaveAction) {
-                deleteNote();
+                deleteConfirm();
             } else {
                 clearFields();
             }
@@ -511,8 +526,24 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             updateLanguage();
         });
 
+        content.textProperty().addListener((observable, oldValue, newValue) -> {
+            done.disableProperty().set(false);
+        });
+
+        title.textProperty().addListener((observable, oldValue, newValue) -> {
+            done.disableProperty().set(false);
+        });
+
         tagsMenu.setOnAction(this::tagMenuSelect);
         listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
+
+        listView.setOnKeyPressed(this::keyPressed);
+        content.setOnKeyPressed(this::keyPressed);
+        title.setOnKeyPressed(this::keyPressed);
+        searchBox.setOnKeyPressed(this::keyPressed);
+        webview.setOnKeyPressed(this::keyPressed);
+        fileDataListView.setOnKeyPressed(this::keyPressed);
+
 
         try {
             stompClient = new StompClient(new URI("ws://localhost:8080/ws"), this);
@@ -527,16 +558,19 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         updateLanguage();
 
+        Platform.runLater(() -> title.requestFocus());
+        Platform.runLater(() -> isEditing = true);
+
+
     }
 
     /**
-     * Implements keyboard shortcuts in the app
-     * S+Control: Saves or adds note (acts like the done check button)
+     *Implements keyboard shortcuts in the app
+     * S+Control: Saves or adds note (acts like the done button)
      * ESCAPE: Selects the searching search field
-     * Up+Control: Selects the previous note on the list view
-     * Down+Control: Selects the next note on the list view
-     * (Both are usable without having any note selected, automatically selecting
-     * the first note)
+     * Up+Alt: Selects the previous note on the list view
+     * Down+Alt: Selects the next note on the list view
+     * (Both are usable without having any note selected, automatically selecting the first note)
      * T+Control: Selects Title text field
      * C+Control: Selects Content text field
      * D+Control: Deletes note, or clears note about to be made
@@ -544,6 +578,11 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * M+Control: Shoes tag menu
      * X+Control: Clears applied filters
      * B+Control: Checks or unchecks the search content checkbox
+     * L+Control: Opens languages menu
+     * R+Control: Refreshes
+     * C+Alt: Opens Collections menu
+     * I+Ctrl: Opens Information menu
+     *
      *
      * @param e key pressed
      */
@@ -564,25 +603,32 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 e.consume();
                 break;
             case UP:
-                if (e.isControlDown()) {
+                if (e.isAltDown()) {
                     if (listView.getSelectionModel().isEmpty()) {
                         listView.getSelectionModel().select(0);
+                        e.consume();
                         break;
                     } else if (listView.getSelectionModel().getSelectedIndex() <= 0) {
+                        e.consume();
                         break;
                     } else {
                         listView.getSelectionModel().selectPrevious();
+                        title.requestFocus();
+                        title.positionCaret(title.getText().length());
                     }
                     e.consume();
                 }
                 break;
             case DOWN:
-                if (e.isControlDown()) {
+                if (e.isAltDown()) {
                     if (listView.getSelectionModel().isEmpty()) {
                         listView.getSelectionModel().select(0);
+                        e.consume();
                         break;
                     } else {
                         listView.getSelectionModel().selectNext();
+                        title.requestFocus();
+                        title.positionCaret(title.getText().length());
                     }
                     e.consume();
                 }
@@ -599,14 +645,20 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 if (e.isControlDown()) {
                     content.requestFocus();
                     updateNote();
-                    content.positionCaret(content.getText().length());
+                    if (content.getText() != null) {
+                        content.positionCaret(content.getText().length());
+                    } else {
+                        content.positionCaret(0);
+                    }
+                } else if (e.isAltDown()) {
+                    openCollectionMenu();
                 }
                 e.consume();
                 break;
             case D:
                 if (e.isControlDown()) {
                     if (isSaveAction) {
-                        deleteNote();
+                        deleteConfirm();
                         updateNote();
                     } else {
                         clearFields();
@@ -639,6 +691,24 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                     } else {
                         searchByContentCheckBox.selectedProperty().set(true);
                     }
+                }
+                e.consume();
+                break;
+            case R:
+                if (e.isControlDown()) {
+                    refresh();
+                }
+                e.consume();
+                break;
+            case L:
+                if (e.isControlDown()) {
+                    languageSelector.show();
+                }
+                e.consume();
+                break;
+            case I:
+                if (e.isControlDown()) {
+                    openInformation();
                 }
                 e.consume();
                 break;
@@ -754,8 +824,6 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         done.disableProperty().set(true);
         done.setOnAction(_ -> save());
         isSaveAction = true;
-        title.requestFocus();
-        title.positionCaret(title.getText().length());
     }
 
     /**
@@ -786,6 +854,12 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         clearFields();
         refresh();
         title.requestFocus();
+        isEditing = true;
+        done.setText("Added!");
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.3));
+        pause.setOnFinished(event -> done.setText("Done"));
+        pause.play();
+
     }
 
     /**
@@ -840,6 +914,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         done.disableProperty().set(false);
         content.requestFocus();
         content.positionCaret(content.getText().length());
+        done.setText("Saved!");
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.3));
+        pause.setOnFinished(event -> done.setText("Done"));
+        pause.play();
     }
 
     /**
@@ -923,6 +1001,14 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 : listView.getSelectionModel().getSelectedItems().getFirst();
     }
 
+
+    /**
+     * Shows deletion confirmation menu
+     */
+    public void deleteConfirm() {
+        mainNotes.showDeleteConfirmation();
+    }
+
     /**
      * Deletes the currently selected note from the ListView.
      */
@@ -948,6 +1034,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             listView.getSelectionModel().select(0);
         }
         delete.disableProperty().set(true);
+        done.setText("Deleted!");
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.3));
+        pause.setOnFinished(event -> done.setText("Done"));
+        pause.play();
     }
 
     /**
@@ -1022,6 +1112,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         mainNotes = mainNotesCtrl;
     }
 
+    /**
+     * Opens the Collection menu
+     */
     public void openCollectionMenu() {
         mainNotes.showCollectionOverview();
     }
@@ -1048,7 +1141,16 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     }
 
     /**
-     * Getter for the selected collection ID
+     *
+     * Opens information window
+     *
+     *
+     */
+    public void openInformation() {
+        mainNotes.showInformationOverview();}
+
+
+     /** Getter for the selected collection ID
      *
      * @return The title of the selected collection
      */
