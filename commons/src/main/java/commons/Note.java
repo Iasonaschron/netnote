@@ -56,7 +56,7 @@ public class Note {
             this.content = "";
         }
         collectionId = null;
-        renderRawText();
+        renderRawText(id);
         this.tags = new HashSet<>();
         extractTagsFromContent();
     }
@@ -89,11 +89,12 @@ public class Note {
 
     /**
      * Renders the raw Text currently in content into HTML
+     * @param noteid
      */
-    public void renderRawText() {
+    public void renderRawText(long noteid) {
         String processedContent = ContentProcessor.processTags(content);
 
-        this.html = MarkDownMethods.renderRawTextToText(processedContent, id);
+        this.html = MarkDownMethods.renderRawTextToText(processedContent, noteid);
     }
 
     /**
@@ -176,7 +177,7 @@ public class Note {
      */
     public void setContent(String content) {
         this.content = content;
-        renderRawText();
+        renderRawText(id);
     }
 
     /**
