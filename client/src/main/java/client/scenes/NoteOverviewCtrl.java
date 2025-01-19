@@ -7,6 +7,7 @@ import commons.AlertMethods;
 import commons.FileData;
 import commons.Note;
 import jakarta.ws.rs.WebApplicationException;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -23,6 +24,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import commons.Collection;
 import client.service.CollectionConfigService;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,6 +92,9 @@ public class NoteOverviewCtrl implements Initializable {
 
     @FXML
     private Button collectionMenuButton;
+
+    @FXML
+    private Button information;
 
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
@@ -198,7 +203,11 @@ public class NoteOverviewCtrl implements Initializable {
      * collection
      */
     private List<Note> getNotesBySelectedCollection() {
-        return data.stream().filter(note -> Objects.equals(note.getCollectionId(), getCurrentCollection().getTitle())).toList();
+        if (getCurrentCollection() == null) {
+            return new ArrayList<>();
+        } else {
+            return data.stream().filter(note -> Objects.equals(note.getCollectionId(), getCurrentCollection().getTitle())).toList();
+        }
     }
 
     /**
@@ -398,8 +407,22 @@ public class NoteOverviewCtrl implements Initializable {
                 } else {
                     AlertMethods.createWarning(LanguageManager.getString("note_not_found") + " " + noteTitle);
                 }
+            } else if (url.startsWith("tag://")) {
+                String tagName = url.substring(6); // Extract the tag name after "tag://"
+                System.out.println("Tag clicked: " + tagName); // Debug: Print the tag name
+                if (tagsMenu.getItems().contains(tagName)) {
+                    tagsMenu.getSelectionModel().select(tagName);
+                    tagNotes = FXCollections.observableList(filterNotesByTag(tagName));
+                    listView.setItems(tagNotes);
+                    listView.getSelectionModel().select(0);
+                    isSaveAction = true;
+                    hasSelectedTag = true;
+                    clear.disableProperty().set(false);
+                }
             }
         });
+
+
 
         fileDataListView.setCellFactory(_ -> new ListCell<>(){
             @Override
@@ -477,21 +500,40 @@ public class NoteOverviewCtrl implements Initializable {
             updateLanguage();
         });
 
+        content.textProperty().addListener((observable, oldValue, newValue) -> {
+            done.disableProperty().set(false);
+        });
+
+        title.textProperty().addListener((observable, oldValue, newValue) -> {
+            done.disableProperty().set(false);
+        });
+
         tagsMenu.setOnAction(this::tagMenuSelect);
         listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
+
+        listView.setOnKeyPressed(this::keyPressed);
+        content.setOnKeyPressed(this::keyPressed);
+        title.setOnKeyPressed(this::keyPressed);
+        searchBox.setOnKeyPressed(this::keyPressed);
+        webview.setOnKeyPressed(this::keyPressed);
+        fileDataListView.setOnKeyPressed(this::keyPressed);
 
         startPolling();
 
         updateLanguage();
 
+        Platform.runLater(() -> title.requestFocus());
+        Platform.runLater(() -> isEditing = true);
+
+
     }
 
     /**
      *Implements keyboard shortcuts in the app
-     * S+Control: Saves or adds note (acts like the done check button)
+     * S+Control: Saves or adds note (acts like the done button)
      * ESCAPE: Selects the searching search field
-     * Up+Control: Selects the previous note on the list view
-     * Down+Control: Selects the next note on the list view
+     * Up+Alt: Selects the previous note on the list view
+     * Down+Alt: Selects the next note on the list view
      * (Both are usable without having any note selected, automatically selecting the first note)
      * T+Control: Selects Title text field
      * C+Control: Selects Content text field
@@ -500,6 +542,10 @@ public class NoteOverviewCtrl implements Initializable {
      * M+Control: Shoes tag menu
      * X+Control: Clears applied filters
      * B+Control: Checks or unchecks the search content checkbox
+     * L+Control: Opens languages menu
+     * R+Control: Refreshes
+     * C+Alt: Opens Collections menu
+     *
      *
      * @param e key pressed
      */
@@ -520,25 +566,32 @@ public class NoteOverviewCtrl implements Initializable {
                 e.consume();
                 break;
             case UP:
-                if (e.isControlDown()) {
+                if (e.isAltDown()) {
                     if (listView.getSelectionModel().isEmpty()) {
                         listView.getSelectionModel().select(0);
+                        e.consume();
                         break;
                     } else if (listView.getSelectionModel().getSelectedIndex() <= 0) {
+                        e.consume();
                         break;
                     } else {
                         listView.getSelectionModel().selectPrevious();
+                        title.requestFocus();
+                        title.positionCaret(title.getText().length());
                     }
                     e.consume();
                 }
                 break;
             case DOWN:
-                if (e.isControlDown()) {
+                if (e.isAltDown()) {
                     if (listView.getSelectionModel().isEmpty()) {
                         listView.getSelectionModel().select(0);
+                        e.consume();
                         break;
                     } else {
                         listView.getSelectionModel().selectNext();
+                        title.requestFocus();
+                        title.positionCaret(title.getText().length());
                     }
                     e.consume();
                 }
@@ -555,7 +608,11 @@ public class NoteOverviewCtrl implements Initializable {
                 if (e.isControlDown()) {
                     content.requestFocus();
                     updateNote();
-                    content.positionCaret(content.getText().length());
+                    if (content.getText() != null) {
+                        content.positionCaret(content.getText().length());
+                    } else {
+                        content.positionCaret(0);
+                    }
                 }
                 e.consume();
                 break;
@@ -595,6 +652,18 @@ public class NoteOverviewCtrl implements Initializable {
                     } else {
                         searchByContentCheckBox.selectedProperty().set(true);
                     }
+                }
+                e.consume();
+                break;
+            case R:
+                if (e.isControlDown()) {
+                    refresh();
+                }
+                e.consume();
+                break;
+            case L:
+                if (e.isControlDown()) {
+                    languageSelector.show();
                 }
                 e.consume();
                 break;
@@ -710,8 +779,6 @@ public class NoteOverviewCtrl implements Initializable {
         done.disableProperty().set(true);
         done.setOnAction(_ -> save());
         isSaveAction = true;
-        title.requestFocus();
-        title.positionCaret(title.getText().length());
     }
 
     /**
@@ -735,6 +802,11 @@ public class NoteOverviewCtrl implements Initializable {
         clearFields();
         refresh();
         title.requestFocus();
+        done.setText("Added!");
+        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        pause.setOnFinished(event -> done.setText("Done"));
+        pause.play();
+
     }
 
     /**
@@ -777,6 +849,10 @@ public class NoteOverviewCtrl implements Initializable {
         done.disableProperty().set(false);
         content.requestFocus();
         content.positionCaret(content.getText().length());
+        done.setText("Saved!");
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.3));
+        pause.setOnFinished(event -> done.setText("Done"));
+        pause.play();
     }
 
     /**

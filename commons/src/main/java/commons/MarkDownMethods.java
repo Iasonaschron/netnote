@@ -25,7 +25,10 @@ public class MarkDownMethods {
                 convertedString += "![" + a1[i+1] + "](http://localhost:8080/api/files/" + noteid + "/" + a1[i+1] + ")";
             }
         }
-        Node document = parser.parse(convertedString);
+
+        String tagProcessing = ContentProcessor.processTags(convertedString);
+
+        Node document = parser.parse(tagProcessing);
         String s1 = Htmlrenderer.render(document);
         return s1;
     }

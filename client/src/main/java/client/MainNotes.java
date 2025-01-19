@@ -1,5 +1,6 @@
 package client;
 
+import atlantafx.base.theme.PrimerLight;
 import client.scenes.MainNotesCtrl;
 import client.scenes.NoteOverviewCtrl;
 import client.scenes.CollectionOverviewCtrl;
@@ -42,6 +43,8 @@ public class MainNotes extends Application {
             System.err.println(msg);
             return;
         }
+
+        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
 
         var overview = FXML.load(NoteOverviewCtrl.class, LanguageManager.getBundle(), "client", "scenes",
                 "NoteOverview.fxml");
