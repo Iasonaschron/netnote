@@ -96,7 +96,8 @@ public class MainNotesCtrl {
      * Sets the stage title.
      */
     public void showInformationOverview() {
-        informationStage.setTitle("Netnote: Information");
+        informationStage.setTitle(LanguageManager.getBundle().getString("information_title"));
+        informationOverviewCtrl.refreshLanguage();
         informationStage.setScene(informationOverview);
         informationStage.setResizable(false);
 
