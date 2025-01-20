@@ -29,6 +29,7 @@ import javafx.stage.Stage;
 import commons.Collection;
 import client.service.CollectionConfigService;
 import javafx.util.Duration;
+import org.controlsfx.control.CheckComboBox;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,7 +80,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     private Button add;
 
     @FXML
-    private ChoiceBox<String> tagsMenu;
+    private CheckComboBox<String> tagsMenu;
 
     @FXML
     private ImageView languageIndicator;
@@ -245,11 +246,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      */
     public void updateList() {
         visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
-        tagsMenu.getSelectionModel().clearSelection();
+        tagsMenu.getCheckModel().clearChecks();
         hasSelectedTag = false;
-        if (!tagsMenu.isShowing()) {
-            filterTagList();
-        }
+        filterTagList();
         listView.setItems(visibleNotes);
 
         if (lastSelectedNote == null || !visibleNotes.contains(lastSelectedNote))
@@ -266,8 +265,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      */
     public void tagUpdateList() {
         visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
-        tagNotes = FXCollections.observableList(filterNotesByTag(tagsMenu.getValue()));
-        if (!tagsMenu.isShowing()) {
+        tagNotes = FXCollections.observableList(filterNotesByTag(tagsMenu.getCheckModel().getCheckedItems()));
+        if (!tagsMenu.isFocused()) {
             filterTagList();
         }
         listView.setItems(tagNotes);
@@ -285,14 +284,17 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * Updates the dropdown menu of available tags to filter by
      */
     public void filterTagList() {
-        int lastTagIndex = tagsMenu.getSelectionModel().getSelectedIndex();
+        List<Integer> indexes = tagsMenu.getCheckModel().getCheckedIndices();
 
         visibleNotes = FXCollections.observableList(getVisibleNotes(searchBox.getText()));
 
         tags = visibleNotes.stream().flatMap(note -> note.getTags().stream()).distinct().toList();
-        tagsMenu.setItems(FXCollections.observableArrayList(tags));
+        tagsMenu.getItems().setAll(tags);
 
-        tagsMenu.getSelectionModel().select(lastTagIndex);
+
+        for (Integer i: indexes) {
+            tagsMenu.getCheckModel().check(i);
+        }
 
     }
 
@@ -340,7 +342,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      */
     public void createNote() {
         clearFields();
-        tagsMenu.getSelectionModel().clearSelection();
+        tagsMenu.getCheckModel().clearChecks();
         hasSelectedTag = false;
         clear.disableProperty().set(true);
 
@@ -369,7 +371,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * Clears the selected tag from the menu
      */
     public void clearTags() {
-        tagsMenu.getSelectionModel().clearSelection();
+        tagsMenu.getCheckModel().clearChecks();
         clearFields();
         hasSelectedTag = false;
         clear.disableProperty().set(true);
@@ -419,8 +421,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 String tagName = url.substring(6); // Extract the tag name after "tag://"
                 System.out.println("Tag clicked: " + tagName); // Debug: Print the tag name
                 if (tagsMenu.getItems().contains(tagName)) {
-                    tagsMenu.getSelectionModel().select(tagName);
-                    tagNotes = FXCollections.observableList(filterNotesByTag(tagName));
+                    tagsMenu.getCheckModel().check(tagName);
+                    List<String> tag = new ArrayList<>();
+                    tag.add(tagName);
+                    tagNotes = FXCollections.observableList(filterNotesByTag(tag));
                     listView.setItems(tagNotes);
                     listView.getSelectionModel().select(0);
                     isSaveAction = true;
@@ -515,6 +519,25 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             }
         });
 
+
+        tagsMenu.getCheckModel().getCheckedItems().addListener((javafx.collections.ListChangeListener<String>) change -> {
+            while (change.next()) {
+                if (change.wasAdded()) {
+                    for (String addedItem : change.getAddedSubList()) {
+                        // Handle item checked
+                        tagMenuSelect();
+                    }
+                }
+                if (change.wasRemoved()) {
+                    for (String removedItem : change.getRemoved()) {
+                        // Handle item unchecked
+                        tagMenuSelect();
+                    }
+                }
+            }
+        });
+
+
         searchByContentCheckBox.selectedProperty().addListener(_ -> updateList());
 
         languageSelector.setItems(FXCollections.observableArrayList("EN", "NL", "RO"));
@@ -527,14 +550,17 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         });
 
         content.textProperty().addListener((observable, oldValue, newValue) -> {
+            tagsMenu.hide();
+            isEditing = true;
             done.disableProperty().set(false);
         });
 
         title.textProperty().addListener((observable, oldValue, newValue) -> {
+            tagsMenu.hide();
+            isEditing = true;
             done.disableProperty().set(false);
         });
 
-        tagsMenu.setOnAction(this::tagMenuSelect);
         listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
 
         listView.setOnKeyPressed(this::keyPressed);
@@ -558,8 +584,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         updateLanguage();
 
-        Platform.runLater(() -> title.requestFocus());
         Platform.runLater(() -> isEditing = true);
+        title.requestFocus();
 
 
     }
@@ -720,10 +746,16 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     /**
      * Is called when the user selects a tag from the dropdown menu
      *
-     * @param actionEvent selection from tags menu
      */
-    private void tagMenuSelect(javafx.event.ActionEvent actionEvent) {
-        tagNotes = FXCollections.observableList(filterNotesByTag(tagsMenu.getValue()));
+    public void tagMenuSelect() {
+        tagNotes = FXCollections.observableList(filterNotesByTag(tagsMenu.getCheckModel().getCheckedItems()));
+        if (tagNotes.isEmpty()) {
+            hasSelectedTag = false;
+            isSaveAction = false;
+            isEditing = false;
+            refresh();
+            return;
+        }
         listView.setItems(tagNotes);
         listView.getSelectionModel().select(0);
         isSaveAction = true;
@@ -734,13 +766,15 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     /**
      * Filters notes based on the selected tag from the dropdown menu
      * 
-     * @param tag tag selected
+     * @param tags tags selected
      * @return The filtered list of notes
      */
-    public List<Note> filterNotesByTag(String tag) {
-        return visibleNotes.stream().filter(note -> note.getTags().contains(tag)).toList();
-
+    public List<Note> filterNotesByTag(List<String> tags) {
+        return visibleNotes.stream()
+                .filter(note -> note.getTags().stream().anyMatch(tags::contains))
+                .toList();
     }
+
 
     /**
      * Parses the current HTML and replaces notes references with links, checking if
@@ -849,9 +883,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             throw new RuntimeException(e);
         }
 
-        isEditing = false;
         filterTagList();
         clearFields();
+        isEditing = false;
         refresh();
         title.requestFocus();
         isEditing = true;
@@ -903,8 +937,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         isEditing = false;
         justEdited = true;
         int lastSelectedIndex = listView.getSelectionModel().getSelectedIndex();
-        filterTagList();
         refresh();
+        filterTagList();
         isEditing = true;
         justEdited = false;
         title.setText(displayTitle);
