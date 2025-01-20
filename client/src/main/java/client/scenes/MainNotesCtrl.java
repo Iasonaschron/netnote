@@ -109,12 +109,13 @@ public class MainNotesCtrl {
      * Sets the stage title.
      */
     public void showDeleteConfirmation() {
-        tertiaryStage.setTitle("Confirm Delete");
+        tertiaryStage.setTitle(LanguageManager.getBundle().getString("delete_confirmation_title"));
         tertiaryStage.setScene(deleteConfirmation);
         tertiaryStage.setResizable(false);
 
         deleteConfirmationCtrl.setNoteOverviewCtrl(noteOverviewCtrl);
         deleteConfirmationCtrl.setMainNotesCtrl(this);
+        deleteConfirmationCtrl.refreshLanguage();
 
         tertiaryStage.showAndWait();
     }

@@ -166,7 +166,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="47.0" prefWidth="150.0">
                                        <children>
-                                          <Button layoutX="4.0" layoutY="41.0" mnemonicParsing="false" onAction="#DeleteAllFiles" prefHeight="30.0" prefWidth="141.0" text="Delete All Files" />
+                                          <Button fx:id="deleteAllFilesButton" layoutX="4.0" layoutY="41.0" mnemonicParsing="false" onAction="#DeleteAllFiles" prefHeight="30.0" prefWidth="141.0" text="%delete_all_files" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="104.0" minHeight="25.0" prefHeight="25.0" prefWidth="141.0">
@@ -279,7 +279,7 @@
                                                       <Cursor fx:constant="TEXT" />
                                                    </cursor>
                                                 </TextArea>
-                                                <Button fx:id="done" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="128.60000000000002" layoutY="253.60000000000002" maxHeight="38.0" maxWidth="87.0" minHeight="23.0" minWidth="32.0" mnemonicParsing="false" onAction="#create" prefHeight="35.0" prefWidth="87.0" text="Done" textAlignment="CENTER" AnchorPane.bottomAnchor="7.199999999999989" AnchorPane.rightAnchor="8.199999999999989">
+                                                <Button fx:id="done" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" layoutX="128.60000000000002" layoutY="253.60000000000002" maxHeight="38.0" maxWidth="87.0" minHeight="23.0" minWidth="32.0" mnemonicParsing="false" onAction="#create" prefHeight="35.0" prefWidth="87.0" text="%done" textAlignment="CENTER" AnchorPane.bottomAnchor="7.199999999999989" AnchorPane.rightAnchor="8.199999999999989">
                                                    <font>
                                                       <Font name="Arial" size="14.0" />
                                                    </font>
@@ -304,8 +304,8 @@
                                           </AnchorPane>
                                           <AnchorPane layoutY="418.0" prefHeight="30.0" prefWidth="192.0" AnchorPane.bottomAnchor="3.552713678800501E-14" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="418.0">
                                              <children>
-                                                <Button fx:id="fileSelectButton" layoutX="1.4" layoutY="14.400000000000048" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#SelectAndUploadFile" prefHeight="26.0" prefWidth="79.0" text="Add file" AnchorPane.bottomAnchor="2.3999999999999986" AnchorPane.leftAnchor="1.4" />
-                                                <Button layoutX="87.0" layoutY="14.400000000000048" mnemonicParsing="false" onAction="#DeleteFilesNoteID" prefHeight="26.0" prefWidth="94.0" text="Delete files" AnchorPane.bottomAnchor="2.3999999999999986" AnchorPane.leftAnchor="87.0" />
+                                                <Button fx:id="fileSelectButton" layoutX="1.4" layoutY="14.400000000000048" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#SelectAndUploadFile" prefHeight="26.0" prefWidth="79.0" text="%add_file" AnchorPane.bottomAnchor="2.3999999999999986" AnchorPane.leftAnchor="1.4" />
+                                                <Button fx:id="deleteFilesButton" layoutX="87.0" layoutY="14.400000000000048" mnemonicParsing="false" onAction="#DeleteFilesNoteID" prefHeight="26.0" prefWidth="94.0" text="%delete_files" AnchorPane.bottomAnchor="2.3999999999999986" AnchorPane.leftAnchor="87.0" />
                                                 <AnchorPane layoutX="200.0" layoutY="5.0" maxHeight="26.0" maxWidth="36.0" minHeight="23.0" minWidth="23.0" prefHeight="26.0" prefWidth="36.0" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="3.0" />
                                              </children>
                                           </AnchorPane>

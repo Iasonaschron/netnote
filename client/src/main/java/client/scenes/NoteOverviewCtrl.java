@@ -92,9 +92,6 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     private CheckBox searchByContentCheckBox;
 
     @FXML
-    private Button fileSelectButton;
-
-    @FXML
     ListView<FileData> fileDataListView;
 
     @FXML
@@ -105,6 +102,15 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     @FXML
     private Button information;
+
+    @FXML
+    private Button deleteAllFilesButton;
+
+    @FXML
+    private Button fileSelectButton;
+
+    @FXML
+    private Button deleteFilesButton;
 
     private List<Note> data;
     private ObservableList<Note> visibleNotes;
@@ -889,9 +895,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         refresh();
         title.requestFocus();
         isEditing = true;
-        done.setText("Added!");
+        done.setText(LanguageManager.getString("added_prompt"));
         PauseTransition pause = new PauseTransition(Duration.seconds(1.3));
-        pause.setOnFinished(event -> done.setText("Done"));
+        pause.setOnFinished(event -> done.setText(LanguageManager.getString("done")));
         pause.play();
 
     }
@@ -948,9 +954,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         done.disableProperty().set(false);
         content.requestFocus();
         content.positionCaret(content.getText().length());
-        done.setText("Saved!");
+        done.setText(LanguageManager.getString("saved_prompt"));
         PauseTransition pause = new PauseTransition(Duration.seconds(1.3));
-        pause.setOnFinished(event -> done.setText("Done"));
+        pause.setOnFinished(event -> done.setText(LanguageManager.getString("done")));
         pause.play();
     }
 
@@ -1068,9 +1074,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             listView.getSelectionModel().select(0);
         }
         delete.disableProperty().set(true);
-        done.setText("Deleted!");
+        done.setText(LanguageManager.getString("deleted_prompt"));
         PauseTransition pause = new PauseTransition(Duration.seconds(1.3));
-        pause.setOnFinished(event -> done.setText("Done"));
+        pause.setOnFinished(event -> done.setText(LanguageManager.getString("done")));
         pause.play();
     }
 
@@ -1114,6 +1120,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         searchByContentCheckBox.setText(LanguageManager.getString("content_search"));
         content.setPromptText(LanguageManager.getString("content_prompt"));
         title.setPromptText(LanguageManager.getString("title_prompt"));
+        deleteAllFilesButton.setText(LanguageManager.getString("delete_all_files"));
+        fileSelectButton.setText(LanguageManager.getString("add_file"));
+        deleteFilesButton.setText(LanguageManager.getString("delete_files"));
+
 
         switch (LanguageManager.getCurrentLanguageCode().toUpperCase()) {
             case "EN":
