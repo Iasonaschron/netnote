@@ -546,7 +546,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         searchByContentCheckBox.selectedProperty().addListener(_ -> updateList());
 
-        languageSelector.setItems(FXCollections.observableArrayList("EN", "NL", "RO"));
+        languageSelector.setItems(FXCollections.observableArrayList("EN", "NL", "RO", "EL"));
         languageSelector.getSelectionModel().select(LanguageManager.getCurrentLanguageCode().toUpperCase());
 
         languageSelector.setOnAction(_ -> {
@@ -1137,6 +1137,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             case "RO":
                 languageIndicator.setImage(
                         new ImageView(getClass().getResource("/client/img/RO.png").toExternalForm()).getImage());
+                break;
+            case "EL":
+                languageIndicator.setImage(
+                        new ImageView(getClass().getResource("/client/img/EL.png").toExternalForm()).getImage());
                 break;
         }
 
