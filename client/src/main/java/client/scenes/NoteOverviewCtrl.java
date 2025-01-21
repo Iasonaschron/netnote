@@ -19,6 +19,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
@@ -86,7 +87,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     private ImageView languageIndicator;
 
     @FXML
-    private ChoiceBox<String> languageSelector;
+    private ComboBox<String> languageSelectorCombo;
 
     @FXML
     private CheckBox searchByContentCheckBox;
@@ -546,11 +547,52 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         searchByContentCheckBox.selectedProperty().addListener(_ -> updateList());
 
-        languageSelector.setItems(FXCollections.observableArrayList("EN", "NL", "RO", "EL"));
-        languageSelector.getSelectionModel().select(LanguageManager.getCurrentLanguageCode().toUpperCase());
+        languageSelectorCombo.setItems(FXCollections.observableArrayList("EN", "NL", "RO", "EL"));
 
-        languageSelector.setOnAction(_ -> {
-            String selectedLanguage = languageSelector.getValue().toUpperCase();
+        languageSelectorCombo.setCellFactory(cb -> new ListCell<>() {
+            private final ImageView imageView = new ImageView();
+
+            @Override
+            protected void updateItem(String languageCode, boolean empty) {
+                super.updateItem(languageCode, empty);
+                if (empty || languageCode == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    String imagePath = switch (languageCode) {
+                        case "EN" -> "/client/img/UK.png";
+                        case "NL" -> "/client/img/NL.png";
+                        case "RO" -> "/client/img/RO.png";
+                        case "EL" -> "/client/img/EL.png";
+                        default -> null;
+                    };
+                    imageView.setImage(new Image(getClass().getResource(imagePath).toExternalForm()));
+                    imageView.setFitWidth(22);
+                    imageView.setFitHeight(16);
+                    setGraphic(imageView);
+                    setText(languageCode);
+                }
+            }
+        });
+
+        languageSelectorCombo.setButtonCell(new ListCell<>() {
+            private final ImageView imageView = new ImageView();
+
+            @Override
+            protected void updateItem(String languageCode, boolean empty) {
+                super.updateItem(languageCode, empty);
+                imageView.setImage(new Image(getClass().getResource("/client/img/icon.png").toExternalForm()));
+                imageView.setFitWidth(22);
+                imageView.setFitHeight(22);
+                setGraphic(imageView);
+                setText(null);
+            }
+        });
+
+        languageSelectorCombo.getSelectionModel().select(LanguageManager.getCurrentLanguageCode().toUpperCase());
+
+        languageSelectorCombo.setOnAction(_ -> {
+            String selectedLanguage = languageSelectorCombo.getValue().toUpperCase();
             LanguageManager.loadLocale(selectedLanguage);
             updateLanguage();
         });
@@ -734,7 +776,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 break;
             case L:
                 if (e.isControlDown()) {
-                    languageSelector.show();
+                    languageSelectorCombo.show();
                 }
                 e.consume();
                 break;
