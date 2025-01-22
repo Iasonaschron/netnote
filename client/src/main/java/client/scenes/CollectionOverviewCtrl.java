@@ -1,7 +1,10 @@
 package client.scenes;
 
+import client.utils.LanguageManager;
+import commons.AlertMethods;
 import commons.Collection;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -72,6 +75,8 @@ public class CollectionOverviewCtrl implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // refresh();
+
+        collectionList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {selectedCollectionChange();});
     }
 
     /**
@@ -80,9 +85,70 @@ public class CollectionOverviewCtrl implements Initializable {
      * for collection title and collection name.
      */
     public void addCollection() {
-        isEditing = true;
+
+        collectionList.getSelectionModel().clearSelection();
+
         collectionTitleField.clear();
+        collectionServerField.clear();
         collectionNameField.clear();
+
+        isEditing = true;
+    }
+
+    /**
+     * Checks the inputted fields to see if they fit the requirements of a collection.
+     * The collection must have a unique title, server and name.
+     * The server must start with https:// or http://
+     * @return  boolean of whether the collection is valid or not.
+     * @throws IOException
+     */
+
+    public boolean checkInput() throws IOException {
+        isEditing = false;
+
+
+        if( collectionTitleField.getText() == null || collectionTitleField.getText().isBlank() ){
+            //AlertMethods.createWarning(LanguageManager.getString("Collection Title cannot be empty"));
+
+            return false;
+        }
+
+        String title = collectionTitleField.getText();
+        if(collectionConfigService.getCollections().stream().anyMatch(collection -> collection.getTitle().equals(title)
+                && !collection.equals(getCurrentCollection()))){
+            //AlertMethods.createWarning(LanguageManager.getString("Collection Title already exists"));
+
+            return false;
+        }
+
+
+        if( collectionNameField.getText() == null || collectionNameField.getText().isBlank() ){
+            //AlertMethods.createWarning(LanguageManager.getString("Collection Name cannot be empty"));
+
+            return false;
+        }
+
+        String name = collectionNameField.getText();
+        if(collectionConfigService.getCollections().stream().anyMatch(collection -> collection.getName().equals(name)
+                && !collection.equals(getCurrentCollection()))){
+            //AlertMethods.createWarning(LanguageManager.getString("Collection Name already exists"));
+
+            return false;
+        }
+
+        String server = collectionServerField.getText();
+        if( server == null || server.isBlank() || (!server.startsWith("http://")) && (!server.startsWith("https://"))){
+            //AlertMethods.createWarning(LanguageManager.getString("Invalid Server URL"));
+            return false;
+        }
+
+        if(collectionConfigService.getCollections().stream().anyMatch(collection -> collection.getServer().equals(server) && !collection.equals(getCurrentCollection()))){
+            //AlertMethods.createWarning(LanguageManager.getString("Collection Server already exists"));
+
+            return false;
+        }
+        return true;
+
     }
 
     /**
@@ -118,7 +184,6 @@ public class CollectionOverviewCtrl implements Initializable {
      * Refreshes the collection overview by reloading the collections from the
      * configuration service. If the view is currently in editing mode, the refresh
      * operation is skipped.
-     * 
      * This method attempts to read the collection configuration and update the
      * observable list of collections. If an exception occurs during this process,
      * the stack trace is printed.
@@ -168,10 +233,9 @@ public class CollectionOverviewCtrl implements Initializable {
         if (collection == null) {
             return;
         }
-
-        isEditing = false;
-
         setCollectionFields(collection);
+
+        isEditing = true;
     }
 
     /**
@@ -180,8 +244,10 @@ public class CollectionOverviewCtrl implements Initializable {
      * @param collection the collection object containing the data to be set
      */
     public void setCollectionFields(Collection collection) {
+
         collectionTitleField.setText(collection.getTitle());
         collectionNameField.setText(collection.getName());
+        collectionServerField.setText(collection.getServer());
     }
 
     /**
@@ -190,23 +256,52 @@ public class CollectionOverviewCtrl implements Initializable {
      *
      * @return true if the collection was successfully saved, false otherwise
      */
-    public boolean saveCollection() {
-        Collection collection = getCollection();
-        if (!isValidCollection(collection)) {
+    public boolean saveCollection() throws IOException {
+        if (!checkInput()) {
+            //AlertMethods.createWarning("The provided Collection is not valid");
             return false; // TODO Maybe show an error message
         }
 
         isEditing = false;
 
+        Collection current = getCurrentCollection();
+        if (current == null) {
+            Collection collection = new Collection();
+            collection.setTitle(collectionTitleField.getText());
+            collection.setServer(collectionServerField.getText());
+            collection.setName(collectionNameField.getText());
+
+            try {
+                collectionConfigService.addCollectionToConfig(collection);
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            String oldTitle = current.getTitle();
+            current.setTitle(collectionTitleField.getText());
+            current.setServer(collectionServerField.getText());
+            current.setName(collectionNameField.getText());
+
+            try {
+                collectionConfigService.updateCollectionInConfig(oldTitle, current);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
         try {
-            collectionConfigService.addCollectionToConfig(collection);
             collectionConfigService.saveCollections();
+            refresh();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
+
 
     /**
      * Checks if the given collection is valid.
@@ -223,18 +318,17 @@ public class CollectionOverviewCtrl implements Initializable {
     public boolean isValidCollection(Collection collection) {
         for (Collection existingCollection : collections) {
             if (existingCollection.getTitle().equals(collection.getTitle()) ||
-                    existingCollection.getName().equals(collection.getName())) {
+                    existingCollection.getName().equals(collection.getName()) || existingCollection.getServer().equals(collection.getServer())) {
                 return false;
             }
         }
 
-        return collection != null && collection.getTitle() != null && collection.getName() != null;
+        return collection != null && collection.getTitle() != null && collection.getName() != null && collection.getServer() != null;
 
     }
 
     /**
      * Deletes the current collection.
-     *
      * This method retrieves the current collection and attempts to remove it from
      * the configuration. If the collection is null, it returns false. If an
      * exception occurs during the removal process, it prints the stack trace and
@@ -253,10 +347,13 @@ public class CollectionOverviewCtrl implements Initializable {
         try {
             collectionConfigService.removeCollectionFromConfig(collection.getTitle());
             collectionConfigService.saveCollections();
+            refresh();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
+
+
 }
