@@ -1,24 +1,13 @@
 package client.scenes;
 
-import client.utils.LanguageManager;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.text.Text;
 
 public class InformationOverviewCtrl implements Initializable {
-
-    @FXML
-    private Text shortcutsTitle;
-
-    @FXML
-    private Text shortcuts;
-
 
     private MainNotesCtrl mainNotesCtrl;
 
@@ -41,11 +30,6 @@ public class InformationOverviewCtrl implements Initializable {
 
     public void setMainNotesCtrl(MainNotesCtrl mainNotesCtrl) {
         this.mainNotesCtrl = mainNotesCtrl;
-    }
-
-    public void refreshLanguage() {
-        shortcutsTitle.setText(LanguageManager.getString("shortcuts_title"));
-        shortcuts.setText(LanguageManager.getBundle().getString("shortcuts"));
     }
 
 }

@@ -1,13 +1,11 @@
 package client.scenes;
 
-import client.utils.LanguageManager;
 import client.utils.ServerUtils;
 import com.google.inject.Inject;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.text.Text;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -19,9 +17,6 @@ public class DeleteConfirmationCtrl implements Initializable {
 
     @FXML
     private Button cancelButton;
-
-    @FXML
-    private Text deleteConfirmationText;
 
     private MainNotesCtrl mainNotesCtrl;
     private NoteOverviewCtrl noteOverviewCtrl;
@@ -76,12 +71,4 @@ public class DeleteConfirmationCtrl implements Initializable {
         mainNotesCtrl.closeDeleteConfirmation();
     }
 
-    /**
-     * Refreshes the language for the confirmation window
-     */
-    public void refreshLanguage() {
-        deleteButton.setText(LanguageManager.getBundle().getString("delete"));
-        cancelButton.setText(LanguageManager.getBundle().getString("cancel"));
-        deleteConfirmationText.setText(LanguageManager.getBundle().getString("delete_confirmation"));
-    }
 }
