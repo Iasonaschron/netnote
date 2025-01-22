@@ -1100,6 +1100,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         clearFields();
         server.deleteNoteById(selectedNote.getId(), getCurrentCollection().getServer());
         server.deleteFile(selectedNote.getId(), null);
+        noteFiles.setAll(server.fetchFileNames(selectedNote.getId()));
         try {
             System.out.println("Sending delete message for note with ID: " + selectedNoteId);
             stompClient.send("SEND\n" + "destination:/app/note-deletions\n\n" + objectMapper.writeValueAsString(selectedNote) + "\0");
