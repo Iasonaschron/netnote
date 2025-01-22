@@ -23,6 +23,10 @@ public class WsConfig implements WebSocketMessageBrokerConfigurer {
         regBrker.setApplicationDestinationPrefixes("/app");
     }
 
+    /**
+     * Registers the endpoint for the WebSocket connection
+     * @param regStmp The registry for the STOMP endpoints
+     */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry regStmp) {
         regStmp.addEndpoint("/ws").setAllowedOrigins("*");

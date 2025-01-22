@@ -2,15 +2,17 @@ package commons;
 
 import jakarta.persistence.Embeddable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+@Component
 @Embeddable
 public class FileCompositeKey implements Serializable {
 
     @Autowired
-    public String filename;
+    private String filename;
 
     private long relatedNoteId;
 
@@ -18,6 +20,22 @@ public class FileCompositeKey implements Serializable {
      * Constructor for object mappers
      */
     public FileCompositeKey() {
+    }
+
+    /**
+     * Get the filename
+     * @return the filename
+     */
+    public String getFilename() {
+        return filename;
+    }
+
+    /**
+     * Set the filename
+     * @param filename the filename
+     */
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     /**

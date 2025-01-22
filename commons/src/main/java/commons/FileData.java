@@ -47,7 +47,7 @@ public class FileData {
      * @return The name of the file
      */
     public String getFileName() {
-        return id.filename;
+        return id.getFilename();
     }
 
     /**
@@ -63,7 +63,7 @@ public class FileData {
      * @param name
      */
     public void setFileName(String name){
-        id.filename = name;
+        id.setFilename(name);
     }
 
     /**

@@ -159,7 +159,7 @@
                                     </AnchorPane>
                                     <AnchorPane prefHeight="47.0" prefWidth="150.0">
                                        <children>
-                                          <Button fx:id="deleteAllFilesButton" layoutX="4.0" layoutY="41.0" mnemonicParsing="false" onAction="#DeleteAllFiles" prefHeight="30.0" prefWidth="141.0" text="%delete_all_files" />
+                                          <Button fx:id="deleteAllFilesButton" layoutX="4.0" layoutY="41.0" mnemonicParsing="false" onAction="#deleteAllFiles" prefHeight="30.0" prefWidth="141.0" text="%delete_all_files" />
                                        </children>
                                     </AnchorPane>
                                     <AnchorPane maxHeight="104.0" minHeight="25.0" prefHeight="25.0" prefWidth="141.0">
@@ -304,8 +304,8 @@
                                           </AnchorPane>
                                           <AnchorPane layoutY="418.0" prefHeight="30.0" prefWidth="192.0" AnchorPane.bottomAnchor="3.552713678800501E-14" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                              <children>
-                                                <Button fx:id="fileSelectButton" layoutX="1.4" layoutY="14.400000000000048" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#SelectAndUploadFile" prefHeight="26.0" prefWidth="79.0" text="%add_file" AnchorPane.bottomAnchor="2.3999999999999986" AnchorPane.leftAnchor="1.4" />
-                                                <Button fx:id="deleteFilesButton" layoutX="87.0" layoutY="14.400000000000048" mnemonicParsing="false" onAction="#DeleteFilesNoteID" prefHeight="26.0" prefWidth="94.0" text="%delete_files" AnchorPane.bottomAnchor="2.3999999999999986" AnchorPane.leftAnchor="87.0" />
+                                                <Button fx:id="fileSelectButton" layoutX="1.4" layoutY="14.400000000000048" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#selectAndUploadFile" prefHeight="26.0" prefWidth="79.0" text="%add_file" AnchorPane.bottomAnchor="2.3999999999999986" AnchorPane.leftAnchor="1.4" />
+                                                <Button fx:id="deleteFilesButton" layoutX="87.0" layoutY="14.400000000000048" mnemonicParsing="false" onAction="#deleteFilesNoteID" prefHeight="26.0" prefWidth="94.0" text="%delete_files" AnchorPane.bottomAnchor="2.3999999999999986" AnchorPane.leftAnchor="87.0" />
                                                 <AnchorPane layoutX="200.0" layoutY="5.0" maxHeight="26.0" maxWidth="36.0" minHeight="23.0" minWidth="23.0" prefHeight="26.0" prefWidth="36.0" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="3.0" />
                                              </children>
                                           </AnchorPane>

@@ -40,6 +40,11 @@ public class DeleteConfirmationCtrl implements Initializable {
     }
 
 
+    /**
+     * Initializes the controller class.
+     * @param location the location of the FXML file
+     * @param resources the resources used in the FXML file
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 

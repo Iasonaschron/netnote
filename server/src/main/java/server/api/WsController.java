@@ -19,6 +19,11 @@ public class WsController {
         return newNote;
     }
 
+    /**
+     * Broadcasts the deletion of a note to all the clients that are subscribed to deletions in notes
+     * @param deletedNote the note that is being deleted
+     * @return the note that is being deleted
+     */
     @MessageMapping("/note-deletions")
     @SendTo("/topic/note-deletions")
     public Note broadcastNoteDeletions(Note deletedNote){

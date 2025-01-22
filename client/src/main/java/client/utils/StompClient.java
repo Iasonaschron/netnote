@@ -5,21 +5,28 @@ import commons.Note;
 import javafx.application.Platform;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
-import org.springframework.messaging.Message;
 
 import java.net.URI;
-import java.util.Map;
 
 public class StompClient extends WebSocketClient {
 
     private final UpdateListener listener;
-    ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Constructs a new StompClient with the specified server URI and update listener.
+     * @param serverUri the URI of the server
+     * @param listener the listener for updates
+     */
     public StompClient(URI serverUri, UpdateListener listener) {
         super(serverUri);
         this.listener = listener;
     }
 
+    /**
+     * Called when the WebSocket connection is opened.
+     * @param handshake the handshake data
+     */
     @Override
     public void onOpen(ServerHandshake handshake) {
         send("CONNECT\naccept-version:1.2\n\n\0");
@@ -28,6 +35,10 @@ public class StompClient extends WebSocketClient {
         send("SUBSCRIBE\ndestination:/topic/note-deletions\nid:sub-2\n\n\0");
     }
 
+    /**
+     * Called when a message is received from the WebSocket server.
+     * @param message the message received
+     */
     @Override
     public void onMessage(String message) {
         try {
@@ -49,17 +60,19 @@ public class StompClient extends WebSocketClient {
                 String body = messageParts.length > 1 ? messageParts[1] : "";
 
                 if (body != null && !body.isEmpty()) {
-                    if (destination != null) {
-                        if (destination.equals("/topic/note-updates")) {
-                            Note updatedNote = objectMapper.readValue(body, Note.class);
-                            System.out.println("Note updated: " + updatedNote.toString());
-                            Platform.runLater(() -> {listener.handleNoteUpdate(updatedNote);});
+                    if (destination != null && destination.equals("/topic/note-updates")) {
+                        Note updatedNote = objectMapper.readValue(body, Note.class);
+                        System.out.println("Note updated: " + updatedNote.toString());
+                        Platform.runLater(() -> {
+                            listener.handleNoteUpdate(updatedNote);
+                        });
 
-                        } else if (destination.equals("/topic/note-deletions")) {
-                            Note deletedNote = objectMapper.readValue(body, Note.class);
-                            System.out.println("Note deleted with ID: " + deletedNote.getId());
-                            Platform.runLater(() -> {listener.handleNoteDeletion(deletedNote.getId());});
-                        }
+                    } else if (destination != null && destination.equals("/topic/note-deletions")) {
+                        Note deletedNote = objectMapper.readValue(body, Note.class);
+                        System.out.println("Note deleted with ID: " + deletedNote.getId());
+                        Platform.runLater(() -> {
+                            listener.handleNoteDeletion(deletedNote.getId());
+                        });
                     }
                 }
             } else {
@@ -71,48 +84,21 @@ public class StompClient extends WebSocketClient {
         }
     }
 
-//    @Override
-//    public void onMessage(String message) {
-//        try {
-//            System.out.println("Received message: " + message);
-//
-////            // Extracting destination (like "/topic/note-updates")
-////            String destination = message.getHeaders().get("destination", String.class);
-////
-////            // Extracting the payload (in this case, the "newNote" content)
-////            String payload = new String(message.getPayload());
-//
-//            // Parse the message
-//            Map<String, Object> messageData = objectMapper.readValue(message, Map.class);
-//
-//            // Extract the destination/topic and payload
-//            String destination = (String) messageData.get("destination");
-//            System.out.println("Destination: " + destination);
-//            Object payload = messageData.get("payload");
-//            System.out.println("Payload: " + payload);
-//
-//            if (destination.equals("/topic/note-updates")) {
-//                Note updatedNote = objectMapper.convertValue(payload, Note.class);
-//                System.out.println("Note updated: " + updatedNote);
-//                listener.handleNoteUpdate(updatedNote);
-//
-//            }
-//            else if (destination.equals("/topic/note-deletions")) {
-//                Long deletedNoteId = objectMapper.convertValue(payload, Long.class);
-//                System.out.println("Note deleted with ID: " + deletedNoteId);
-//                listener.handleNoteDeletion(deletedNoteId);
-//            }
-//
-//        } catch (Exception e) {
-//            System.err.println("Error processing WebSocket message: " + e.getMessage());
-//        }
-//    }
-
+    /**
+     * Called when the WebSocket connection is closed.
+     * @param code the close code
+     * @param reason the reason for closing
+     * @param remote whether the close was initiated by the remote server
+     */
     @Override
     public void onClose(int code, String reason, boolean remote) {
         System.out.println("Disconnected from WebSocket server: " + reason);
     }
 
+    /**
+     * Called when an error occurs in the WebSocket connection.
+     * @param ex the exception that occurred
+     */
     @Override
     public void onError(Exception ex) {
         System.err.println("WebSocket error: " + ex.getMessage());
