@@ -52,12 +52,8 @@
                                     <Font name="Arial Black" size="18.0" />
                                  </font>
                               </TextField>
-                              <AnchorPane layoutX="404.0" minHeight="32.0" minWidth="36.0" prefHeight="43.0" prefWidth="48.0">
-                                 <children>
-                                    <ImageView fx:id="languageIndicator" fitHeight="24.0" fitWidth="36.0" layoutX="6.0" layoutY="10.0" pickOnBounds="true" AnchorPane.rightAnchor="6.0" AnchorPane.topAnchor="10.0" />
-                                 </children>
-                              </AnchorPane>
-                              <ComboBox fx:id="languageSelectorCombo" layoutX="452.0" layoutY="4.0" prefHeight="35.0" prefWidth="60.0" />
+                              <ImageView fx:id="languageIndicator" fitHeight="24.0" fitWidth="36.0" layoutX="406.0" layoutY="10.0" pickOnBounds="true" AnchorPane.rightAnchor="77.20000000000005" AnchorPane.topAnchor="10.0" />
+                              <ComboBox fx:id="languageSelectorCombo" layoutX="452.0" layoutY="4.0" prefHeight="35.0" prefWidth="60.0" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="7.2000000000000455" AnchorPane.topAnchor="4.0" />
                            </children>
                         </AnchorPane>
                      </children>
