@@ -93,7 +93,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     private CheckBox searchByContentCheckBox;
 
     @FXML
-    ListView<FileData> fileDataListView;
+    private ListView<FileData> fileDataListView;
 
     @FXML
     private Button clear;
@@ -127,7 +127,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     private boolean isEditing = false;
     private boolean hasSelectedTag = false;
 
-    public boolean isSaveAction = false;
+    private boolean isSaveAction = false;
     private boolean justEdited = false;
 
     private List<String> tags = new ArrayList<>();
@@ -136,7 +136,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     private Collection selectedCollection; // collection used for filtering
 
     private StompClient stompClient;
-    ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Constructor for the NoteOverviewCtrl.
@@ -170,7 +170,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     /**
      * Deletes all files related with the current selected note
      */
-    public void DeleteFilesNoteID() {
+    public void deleteFilesNoteID() {
         try {
             server.deleteFile(lastSelectedNote.getId(), null);
             noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId()));
@@ -183,7 +183,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * Opens a file explorer window for the user to select a file, and then uploads
      * that file to the server
      */
-    public void SelectAndUploadFile() {
+    public void selectAndUploadFile() {
         try {
             FileChooser fc = new FileChooser();
             Stage stage = new Stage();
@@ -208,7 +208,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     /**
      * Deletes all files in the server
      */
-    public void DeleteAllFiles() {
+    public void deleteAllFiles() {
         try {
             server.deleteAllFiles();
             noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId()));
@@ -403,6 +403,97 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        webInitialisation();
+
+        fileInitialisation();
+
+        noteFiles = FXCollections.observableArrayList(new ArrayList<FileData>());
+        fileDataListView.setItems(noteFiles);
+
+        listView.setCellFactory(_ -> new ListCell<>() {
+            @Override
+            protected void updateItem(Note item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getTitle());
+                }
+            }
+        });
+
+        delete.setOnAction(_ -> {
+            if (isSaveAction) {
+                deleteConfirm();
+            } else {
+                clearFields();
+            }
+        });
+
+        tagsMenu.getCheckModel().getCheckedItems().addListener((javafx.collections.ListChangeListener<String>) change -> {
+            while (change.next()) {
+                if (change.wasAdded()) {
+                    for (String addedItem : change.getAddedSubList()) {
+                        // Handle item checked
+                        tagMenuSelect();
+                    }
+                }
+                if (change.wasRemoved()) {
+                    for (String removedItem : change.getRemoved()) {
+                        // Handle item unchecked
+                        tagMenuSelect();
+                    }
+                }
+            }
+        });
+
+        searchByContentCheckBox.selectedProperty().addListener(_ -> updateList());
+
+        languageInitialise();
+
+        content.textProperty().addListener((observable, oldValue, newValue) -> {
+            tagsMenu.hide();
+            isEditing = true;
+            done.disableProperty().set(false);
+        });
+
+        title.textProperty().addListener((observable, oldValue, newValue) -> {
+            tagsMenu.hide();
+            isEditing = true;
+            done.disableProperty().set(false);
+        });
+
+        listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
+
+        listView.setOnKeyPressed(this::keyPressed);
+        content.setOnKeyPressed(this::keyPressed);
+        title.setOnKeyPressed(this::keyPressed);
+        searchBox.setOnKeyPressed(this::keyPressed);
+        webview.setOnKeyPressed(this::keyPressed);
+        fileDataListView.setOnKeyPressed(this::keyPressed);
+
+        try {
+            stompClient = new StompClient(new URI("ws://localhost:8080/ws"), this);
+        }
+        catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        stompClient.connect();
+
+        startPolling();
+
+        updateLanguage();
+
+        Platform.runLater(() -> isEditing = true);
+        title.requestFocus();
+    }
+
+    /**
+     * Initialises WebEngine and Webview related processes
+     */
+    public void webInitialisation(){
         webEngine = webview.getEngine();
         URL stylesheet = getClass().getResource("/client/styles/notes.css");
         if (stylesheet != null) {
@@ -440,8 +531,12 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 }
             }
         });
+    }
 
-
+    /**
+     * Initialises file related processes
+     */
+    public void fileInitialisation(){
         fileDataListView.setCellFactory(_ -> new ListCell<>() {
             @Override
             protected void updateItem(FileData fileData, boolean empty) {
@@ -502,51 +597,12 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 }
             }
         });
+    }
 
-        noteFiles = FXCollections.observableArrayList(new ArrayList<FileData>());
-        fileDataListView.setItems(noteFiles);
-
-        listView.setCellFactory(_ -> new ListCell<>() {
-            @Override
-            protected void updateItem(Note item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item.getTitle());
-                }
-            }
-        });
-
-        delete.setOnAction(_ -> {
-            if (isSaveAction) {
-                deleteConfirm();
-            } else {
-                clearFields();
-            }
-        });
-
-
-        tagsMenu.getCheckModel().getCheckedItems().addListener((javafx.collections.ListChangeListener<String>) change -> {
-            while (change.next()) {
-                if (change.wasAdded()) {
-                    for (String addedItem : change.getAddedSubList()) {
-                        // Handle item checked
-                        tagMenuSelect();
-                    }
-                }
-                if (change.wasRemoved()) {
-                    for (String removedItem : change.getRemoved()) {
-                        // Handle item unchecked
-                        tagMenuSelect();
-                    }
-                }
-            }
-        });
-
-
-        searchByContentCheckBox.selectedProperty().addListener(_ -> updateList());
-
+    /**
+     * Initialises language related processes
+     */
+    public void languageInitialise(){
         languageSelectorCombo.setItems(FXCollections.observableArrayList("EN", "NL", "RO", "EL"));
 
         languageSelectorCombo.setCellFactory(cb -> new ListCell<>() {
@@ -596,46 +652,6 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             LanguageManager.loadLocale(selectedLanguage);
             updateLanguage();
         });
-
-        content.textProperty().addListener((observable, oldValue, newValue) -> {
-            tagsMenu.hide();
-            isEditing = true;
-            done.disableProperty().set(false);
-        });
-
-        title.textProperty().addListener((observable, oldValue, newValue) -> {
-            tagsMenu.hide();
-            isEditing = true;
-            done.disableProperty().set(false);
-        });
-
-        listView.getSelectionModel().selectedItemProperty().addListener(this::selectionChanged);
-
-        listView.setOnKeyPressed(this::keyPressed);
-        content.setOnKeyPressed(this::keyPressed);
-        title.setOnKeyPressed(this::keyPressed);
-        searchBox.setOnKeyPressed(this::keyPressed);
-        webview.setOnKeyPressed(this::keyPressed);
-        fileDataListView.setOnKeyPressed(this::keyPressed);
-
-
-        try {
-            stompClient = new StompClient(new URI("ws://localhost:8080/ws"), this);
-        }
-        catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-
-        stompClient.connect();
-
-        startPolling();
-
-        updateLanguage();
-
-        Platform.runLater(() -> isEditing = true);
-        title.requestFocus();
-
-
     }
 
     /**
@@ -663,81 +679,31 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     public void keyPressed(KeyEvent e) {
         switch (e.getCode()) {
             case S:
-                if (e.isControlDown()) {
-                    if (isSaveAction) {
-                        save();
-                    } else {
-                        create();
-                    }
-                    e.consume();
-                }
+                keyPressedS(e);
+                e.consume();
                 break;
             case ESCAPE:
                 searchBox.requestFocus();
                 e.consume();
                 break;
             case UP:
-                if (e.isAltDown()) {
-                    if (listView.getSelectionModel().isEmpty()) {
-                        listView.getSelectionModel().select(0);
-                        e.consume();
-                        break;
-                    } else if (listView.getSelectionModel().getSelectedIndex() <= 0) {
-                        e.consume();
-                        break;
-                    } else {
-                        listView.getSelectionModel().selectPrevious();
-                        title.requestFocus();
-                        title.positionCaret(title.getText().length());
-                    }
-                    e.consume();
-                }
+                keyPressedUP(e);
+                e.consume();
                 break;
             case DOWN:
-                if (e.isAltDown()) {
-                    if (listView.getSelectionModel().isEmpty()) {
-                        listView.getSelectionModel().select(0);
-                        e.consume();
-                        break;
-                    } else {
-                        listView.getSelectionModel().selectNext();
-                        title.requestFocus();
-                        title.positionCaret(title.getText().length());
-                    }
-                    e.consume();
-                }
+                keyPressedDOWN(e);
+                e.consume();
                 break;
             case T:
-                if (e.isControlDown()) {
-                    title.requestFocus();
-                    updateNote();
-                    title.positionCaret(title.getText().length());
-                }
+                keyPressedT(e);
                 e.consume();
                 break;
             case C:
-                if (e.isControlDown()) {
-                    content.requestFocus();
-                    updateNote();
-                    if (content.getText() != null) {
-                        content.positionCaret(content.getText().length());
-                    } else {
-                        content.positionCaret(0);
-                    }
-                } else if (e.isAltDown()) {
-                    openCollectionMenu();
-                }
+                keyPressedC(e);
                 e.consume();
                 break;
             case D:
-                if (e.isControlDown()) {
-                    if (isSaveAction) {
-                        deleteConfirm();
-                        updateNote();
-                    } else {
-                        clearFields();
-                    }
-                }
+                keyPressedD(e);
                 e.consume();
                 break;
             case N:
@@ -759,13 +725,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 e.consume();
                 break;
             case B:
-                if (e.isControlDown()) {
-                    if (searchByContentCheckBox.isSelected()) {
-                        searchByContentCheckBox.selectedProperty().set(false);
-                    } else {
-                        searchByContentCheckBox.selectedProperty().set(true);
-                    }
-                }
+                keyPressedB(e);
                 e.consume();
                 break;
             case R:
@@ -788,6 +748,118 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * Treats the key pressed event for the UP key
+     * @param e key pressed
+     */
+    public void keyPressedUP(KeyEvent e){
+        if(e.isAltDown()){
+            if (listView.getSelectionModel().isEmpty()) {
+                listView.getSelectionModel().select(0);
+                e.consume();
+            } else if (listView.getSelectionModel().getSelectedIndex() <= 0) {
+                e.consume();
+            } else {
+                listView.getSelectionModel().selectPrevious();
+                title.requestFocus();
+                title.positionCaret(title.getText().length());
+            }
+            e.consume();
+        }
+    }
+
+    /**
+     * Treats the key pressed event for the DOWN key
+     * @param e key pressed
+     */
+    public void keyPressedDOWN(KeyEvent e){
+        if (e.isAltDown()) {
+            if (listView.getSelectionModel().isEmpty()) {
+                listView.getSelectionModel().select(0);
+                e.consume();
+            } else {
+                listView.getSelectionModel().selectNext();
+                title.requestFocus();
+                title.positionCaret(title.getText().length());
+            }
+            e.consume();
+        }
+    }
+
+    /**
+     * Treats the key pressed event for the C key
+     * @param e key pressed
+     */
+    public void keyPressedC(KeyEvent e){
+        if (e.isControlDown()) {
+            content.requestFocus();
+            updateNote();
+            if (content.getText() != null) {
+                content.positionCaret(content.getText().length());
+            } else {
+                content.positionCaret(0);
+            }
+        } else if (e.isAltDown()) {
+            openCollectionMenu();
+        }
+    }
+
+    /**
+     * Treats the key pressed event for the B key
+     * @param e key pressed
+     */
+    public void keyPressedB(KeyEvent e){
+        if (e.isControlDown()) {
+            if (searchByContentCheckBox.isSelected()) {
+                searchByContentCheckBox.selectedProperty().set(false);
+            } else {
+                searchByContentCheckBox.selectedProperty().set(true);
+            }
+        }
+    }
+
+    /**
+     * Treats the key pressed event for the T key
+     * @param e
+     */
+    public void keyPressedT(KeyEvent e){
+        if (e.isControlDown()) {
+            title.requestFocus();
+            updateNote();
+            title.positionCaret(title.getText().length());
+        }
+    }
+
+    /**
+     * Treats the key pressed event for the S key
+     * @param e key pressed
+     */
+    public void keyPressedS(KeyEvent e){
+        if (e.isControlDown()) {
+            if (isSaveAction) {
+                save();
+            } else {
+                create();
+            }
+            e.consume();
+        }
+    }
+
+    /**
+     * Treats the key pressed event for the D key
+     * @param e key pressed
+     */
+    public void keyPressedD(KeyEvent e){
+        if (e.isControlDown()) {
+            if (isSaveAction) {
+                deleteConfirm();
+                updateNote();
+            } else {
+                clearFields();
+            }
         }
     }
 
@@ -1267,6 +1339,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         data.add(newNote);
     }
 
+    /**
+     * Deals with note updates received through WebSocket
+     * @param updatedNote the target note
+     */
     @Override
     public void handleNoteUpdate(Note updatedNote){
         try {
@@ -1303,6 +1379,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         }
     }
 
+    /**
+     * Deals with note deletions received through WebSocket
+     * @param deletedNoteID target note ID
+     */
     @Override
     public void handleNoteDeletion(Long deletedNoteID){
         for (Note note : data) {

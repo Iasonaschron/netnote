@@ -34,15 +34,27 @@ public class InformationOverviewCtrl implements Initializable {
         this.server = server;
     }
 
+    /**
+     * Initializes the controller class.
+     * @param location the location of the FXML file
+     * @param resources the resources used in the FXML file
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
     }
 
+    /**
+     * sets the reference to mainNotesCtrl so the methods of that class can be used
+     * @param mainNotesCtrl the controller class of main notes
+     */
     public void setMainNotesCtrl(MainNotesCtrl mainNotesCtrl) {
         this.mainNotesCtrl = mainNotesCtrl;
     }
 
+    /**
+     * Refreshes the language of the shortcuts
+     */
     public void refreshLanguage() {
         shortcutsTitle.setText(LanguageManager.getString("shortcuts_title"));
         shortcuts.setText(LanguageManager.getBundle().getString("shortcuts"));
