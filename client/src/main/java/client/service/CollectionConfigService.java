@@ -2,11 +2,13 @@ package client.service;
 
 import commons.Collection;
 import commons.CollectionConfig;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -179,5 +181,12 @@ public class CollectionConfigService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Collection> getCollections() throws IOException {
+        if(collectionConfig == null) {
+            collectionConfig = readConfig();
+        }
+        return collectionConfig.getCollections();
     }
 }
