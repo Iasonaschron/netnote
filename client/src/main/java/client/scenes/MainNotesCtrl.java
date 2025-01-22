@@ -96,8 +96,7 @@ public class MainNotesCtrl {
      * Sets the stage title.
      */
     public void showInformationOverview() {
-        informationStage.setTitle(LanguageManager.getBundle().getString("information_title"));
-        informationOverviewCtrl.refreshLanguage();
+        informationStage.setTitle("Netnote: Information");
         informationStage.setScene(informationOverview);
         informationStage.setResizable(false);
 
@@ -110,13 +109,12 @@ public class MainNotesCtrl {
      * Sets the stage title.
      */
     public void showDeleteConfirmation() {
-        tertiaryStage.setTitle(LanguageManager.getBundle().getString("delete_confirmation_title"));
+        tertiaryStage.setTitle("Confirm Delete");
         tertiaryStage.setScene(deleteConfirmation);
         tertiaryStage.setResizable(false);
 
         deleteConfirmationCtrl.setNoteOverviewCtrl(noteOverviewCtrl);
         deleteConfirmationCtrl.setMainNotesCtrl(this);
-        deleteConfirmationCtrl.refreshLanguage();
 
         tertiaryStage.showAndWait();
     }

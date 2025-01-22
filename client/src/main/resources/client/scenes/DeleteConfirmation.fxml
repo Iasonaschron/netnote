@@ -9,7 +9,7 @@
    <children>
       <AnchorPane prefHeight="116.0" prefWidth="361.0">
          <children>
-            <Text fx:id="deleteConfirmationText" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="%delete_confirmation" textAlignment="CENTER" wrappingWidth="384.0" AnchorPane.bottomAnchor="59.482421875" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.576171875">
+            <Text layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Are you sure you want to delete this note?" textAlignment="CENTER" wrappingWidth="384.0" AnchorPane.bottomAnchor="59.482421875" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.576171875">
                <font>
                   <Font size="18.0" />
                </font>
@@ -18,8 +18,8 @@
       </AnchorPane>
       <AnchorPane layoutY="84.0" prefHeight="46.0" prefWidth="384.0">
          <children>
-            <Button fx:id="cancelButton" layoutX="11.4" layoutY="8.0" mnemonicParsing="false" onAction="#cancelDeletion" prefHeight="33.0" prefWidth="101.0" text="%cancel" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" />
-            <Button fx:id="deleteButton" layoutX="277.4" layoutY="8.0" mnemonicParsing="false" onAction="#deleteConfirmation" prefHeight="33.0" prefWidth="101.0" style="-fx-background-color: red;" text="%delete" textFill="WHITE" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0" />
+            <Button fx:id="cancelButton" layoutX="11.4" layoutY="8.0" mnemonicParsing="false" onAction="#cancelDeletion" prefHeight="33.0" prefWidth="101.0" text="Cancel" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" />
+            <Button fx:id="deleteButton" layoutX="277.4" layoutY="8.0" mnemonicParsing="false" onAction="#deleteConfirmation" prefHeight="33.0" prefWidth="101.0" style="-fx-background-color: red;" text="Delete" textFill="WHITE" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0" />
          </children>
       </AnchorPane>
    </children>
