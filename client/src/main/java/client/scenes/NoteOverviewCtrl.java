@@ -175,7 +175,6 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        return collectionConfigService.getCollectionByTitle(getSelectedNote().getCollectionTitle());
     }
 
     /**
