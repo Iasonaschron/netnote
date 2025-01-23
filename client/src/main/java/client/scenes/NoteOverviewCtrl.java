@@ -164,7 +164,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 throw new RuntimeException(e);
             }
         }
-        return collectionConfigService.getCollectionByTitle(getSelectedNote().getCollectionId());
+        return collectionConfigService.getCollectionByTitle(getSelectedNote().getCollectionTitle());
     }
 
     /**
@@ -222,7 +222,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * collection
      */
     private List<Note> getNotesBySelectedCollection() {
-        return data.stream().filter(note -> Objects.equals(note.getCollectionId(), getCurrentCollection().getTitle()))
+        return data.stream().filter(note -> Objects.equals(note.getCollectionTitle(), getCurrentCollection().getTitle()))
                 .toList();
     }
 
@@ -1349,7 +1349,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             if (getSelectedNote() != null && updatedNote.getId() == getSelectedNote().getId()) {
                 setSelectedNote(updatedNote);
             }
-            else if (updatedNote.getCollectionId().equals(getCurrentCollection().getTitle())) {
+            else if (updatedNote.getCollectionTitle().equals(getCurrentCollection().getTitle())) {
                 for (Note note : data) {
                     if (note.getId() == updatedNote.getId()) {
                         note.setTitle(updatedNote.getTitle());
@@ -1365,7 +1365,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                     }
                 }
             }
-            else if(updatedNote.getCollectionId().equals(getCurrentCollection().getTitle())){
+            else if(updatedNote.getCollectionTitle().equals(getCurrentCollection().getTitle())){
                 addNoteToData(updatedNote);
                 if (getHasSelectedTag()) {
                     tagUpdateList();

@@ -30,8 +30,8 @@ public class Note {
     @Column(name = "tag")
     private Set<String> tags;
 
-    @Column(name = "collection_id")
-    private String collectionId;
+    @Column(name = "collection_Title")
+    private String collectionTitle;
 
     /**
      * Default constructor required for object mappers
@@ -55,7 +55,7 @@ public class Note {
         else{
             this.content = "";
         }
-        collectionId = null;
+        collectionTitle = null;
         renderRawText(id);
         this.tags = new HashSet<>();
         extractTagsFromContent();
@@ -66,11 +66,11 @@ public class Note {
      *
      * @param title   The title of the note
      * @param content The content of the note
-     * @param collectionId The id of the collection
+     * @param collectionTitle The id of the collection
      */
-    public Note(String title, String content, String collectionId) {
+    public Note(String title, String content, String collectionTitle) {
         this(title, content);
-        this.collectionId = collectionId;
+        this.collectionTitle = collectionTitle;
     }
 
     /**
@@ -138,8 +138,8 @@ public class Note {
      *
      * @return a Collection representing the current collection.
      */
-    public String getCollectionId() {
-        return collectionId;
+    public String getCollectionTitle() {
+        return collectionTitle;
     }
 
     /**
@@ -202,8 +202,8 @@ public class Note {
      *
      * @param collection the new collection that the note now belongs to.
      */
-    public void setCollectionId(String collection) {
-        this.collectionId = collection;
+    public void setCollectionTitle(String collection) {
+        this.collectionTitle = collection;
     }
 
     /**
