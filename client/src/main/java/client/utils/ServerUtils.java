@@ -20,7 +20,6 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import java.io.File;
 import java.io.InputStream;
 import java.net.ConnectException;
-import java.net.UnknownHostException;
 import java.util.List;
 
 import commons.FileData;

@@ -4,7 +4,6 @@ import commons.Collection;
 import commons.CollectionConfig;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
@@ -200,6 +199,11 @@ public class CollectionConfigService {
         }
     }
 
+    /**
+     * Returns a list of all collections in the configuration.
+     * @return List of Collection objects
+     * @throws IOException if an error occurs during file operations.
+     */
     public List<Collection> getCollections() throws IOException {
         if(collectionConfig == null) {
             collectionConfig = readConfig();

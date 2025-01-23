@@ -171,7 +171,6 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         try{
             return collectionConfigService.getOrCreateDefaultCollection();
 
-
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
