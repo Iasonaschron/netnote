@@ -61,7 +61,8 @@ public class CollectionConfig {
      * @throws IllegalArgumentException if no collection with the given title exists or if a collection with the new title already exists.
      */
     public void updateCollection(String oldTitle, Collection updatedCollection) {
-        if (collections.stream().anyMatch(c -> Objects.equals(c.getTitle(), updatedCollection.getTitle()) && !Objects.equals(c.getTitle(), oldTitle))) {
+        if (collections.stream().anyMatch(c -> Objects.equals(c.getTitle(), updatedCollection.getTitle())
+                && !Objects.equals(c.getTitle(), oldTitle))) {
             throw new IllegalArgumentException("A collection with this title already exists.");
         }
 

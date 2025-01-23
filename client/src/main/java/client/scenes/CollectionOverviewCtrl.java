@@ -1,7 +1,5 @@
 package client.scenes;
 
-import client.utils.LanguageManager;
-import commons.AlertMethods;
 import commons.Collection;
 
 import java.io.IOException;
@@ -17,7 +15,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.text.*;
 import javafx.scene.control.*;
 import com.google.inject.Inject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -81,7 +78,8 @@ public class CollectionOverviewCtrl implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // refresh();
 
-        collectionList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {selectedCollectionChange();});
+        collectionList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            selectedCollectionChange();});
     }
 
     /**
@@ -147,7 +145,8 @@ public class CollectionOverviewCtrl implements Initializable {
             return false;
         }
 
-        if(collectionConfigService.getCollections().stream().anyMatch(collection -> collection.getServer().equals(server) && !collection.equals(getCurrentCollection()))){
+        if(collectionConfigService.getCollections().stream().anyMatch(collection -> collection.getServer().equals(server)
+                && !collection.equals(getCurrentCollection()))){
             //AlertMethods.createWarning(LanguageManager.getString("Collection Server already exists"));
 
             return false;
