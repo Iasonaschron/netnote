@@ -22,7 +22,10 @@ public class MarkDownMethods {
         for(int i = 0; i < a1.length; i += 2){
             convertedString += a1[i];
             if(i < a1.length-1){
-                convertedString += "![" + a1[i+1] + "](http://localhost:8080/api/files/" + noteid + "/" + a1[i+1] + ")";
+                if(a1[i+1].matches(".*\\.(png|jpg|jpeg)")){
+                    convertedString += "!";
+                }
+                convertedString += "[" + a1[i+1] + "](http://localhost:8080/api/files/" + noteid + "/" + a1[i+1] + ")";
             }
         }
 
