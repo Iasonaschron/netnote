@@ -31,6 +31,7 @@ import commons.Collection;
 import client.service.CollectionConfigService;
 import javafx.util.Duration;
 import org.controlsfx.control.CheckComboBox;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,6 +51,7 @@ import java.util.concurrent.TimeUnit;
  * Manages a list of notes and provides functionality for creating, viewing, and
  * editing notes.
  */
+@Component
 public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     private MainNotesCtrl mainNotes;
@@ -100,6 +102,11 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     @FXML
     private Button collectionMenuButton;
+
+    @FXML
+    private ChoiceBox<String> collectionMenu;
+
+    private List<String> collectionTitles = new ArrayList<>();
 
     @FXML
     private Button information;
@@ -156,15 +163,19 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * @throws RuntimeException if an error occurs while getting or creating the
      *                          default collection.
      */
-    public Collection getCurrentCollection() {
-        if (getSelectedNote() == null) {
-            try {
-                return collectionConfigService.getOrCreateDefaultCollection();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+    public Collection getCurrentCollection(){
+        String currentCollectionTitle = collectionMenu.getValue();
+        if(currentCollectionTitle != null) {
+            return collectionConfigService.getCollectionByTitle(currentCollectionTitle);
         }
-        return collectionConfigService.getCollectionByTitle(getSelectedNote().getCollectionId());
+        try{
+            return collectionConfigService.getOrCreateDefaultCollection();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -222,7 +233,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * collection
      */
     private List<Note> getNotesBySelectedCollection() {
-        return data.stream().filter(note -> Objects.equals(note.getCollectionId(), getCurrentCollection().getTitle()))
+        return data.stream().filter(note -> Objects.equals(note.getCollectionTitle(), getCurrentCollection().getTitle()))
                 .toList();
     }
 
@@ -488,6 +499,47 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         Platform.runLater(() -> isEditing = true);
         title.requestFocus();
+        try{
+            updateCollectionMenu();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        collectionMenu.setOnAction(event -> setCurrentCollection());
+    }
+
+    /**
+     * updates the Collection Menu to have the latest collection from the CollectionConfig.
+     */
+    public void updateCollectionMenu(){
+        try{
+            ObservableList<String> collectionNames= collectionConfigService.refreshCollections();
+            collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Sets the current Collection upon selection
+     */
+    private void setCurrentCollection(){
+        String currentCollection = collectionMenu.getSelectionModel().getSelectedItem();
+        ObservableList<Note> filtered = FXCollections.observableArrayList(filterNotesByCollection(currentCollection));
+        listView.setItems(filtered);
+    }
+
+    /**
+     * Filters the notes that the user can see by the collection that is selected in the checbox.
+     * @param currentCollection String that has the current collection selected in the checkbox*
+     * @return a List of notes related to that specific collection.
+     */
+    private List<Note> filterNotesByCollection(String currentCollection) {
+        return data.stream().
+                filter(note -> note.getCollectionTitle().equals(currentCollection)).
+                toList();
+
     }
 
     /**
@@ -1136,8 +1188,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         }
 
         var c = content.getText();
+        String currentCollectionTitle = getCurrentCollection().getTitle();
 
-        Note temporary = new Note(t, c, selectedCollection.getTitle());
+        Note temporary = new Note(t, c, currentCollectionTitle);
+        temporary.setCollectionTitle(currentCollectionTitle);
         if (lastSelectedNote != null) {
             temporary.renderRawText(lastSelectedNote.getId());
         }
@@ -1349,7 +1403,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             if (getSelectedNote() != null && updatedNote.getId() == getSelectedNote().getId()) {
                 setSelectedNote(updatedNote);
             }
-            else if (updatedNote.getCollectionId().equals(getCurrentCollection().getTitle())) {
+            else if (updatedNote.getCollectionTitle().equals(getCurrentCollection().getTitle())) {
                 for (Note note : data) {
                     if (note.getId() == updatedNote.getId()) {
                         note.setTitle(updatedNote.getTitle());
@@ -1365,7 +1419,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                     }
                 }
             }
-            else if(updatedNote.getCollectionId().equals(getCurrentCollection().getTitle())){
+            else if(updatedNote.getCollectionTitle().equals(getCurrentCollection().getTitle())){
                 addNoteToData(updatedNote);
                 if (getHasSelectedTag()) {
                     tagUpdateList();

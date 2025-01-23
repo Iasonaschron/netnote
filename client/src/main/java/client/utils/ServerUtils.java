@@ -20,6 +20,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import java.io.File;
 import java.io.InputStream;
 import java.net.ConnectException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import commons.FileData;
@@ -83,11 +84,15 @@ public class ServerUtils {
      * @param note the {@link Note} object to be added
      * @return the added {@link Note} object with any updates from the server
      */
-    public Note addNote(Note note, String server) {
-        return ClientBuilder.newClient(new ClientConfig())
-                .target(server).path("api/notes")
-                .request(APPLICATION_JSON)
-                .post(Entity.entity(note, APPLICATION_JSON), Note.class);
+    public Note addNote(Note note, String server) throws ProcessingException {
+        try{
+            return ClientBuilder.newClient(new ClientConfig())
+                    .target(server).path("api/notes")
+                    .request(APPLICATION_JSON)
+                    .post(Entity.entity(note, APPLICATION_JSON), Note.class);
+        }catch(ProcessingException e){
+            throw new ProcessingException("The server" + server + " is not available");
+        }
     }
 
     /**
