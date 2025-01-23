@@ -17,10 +17,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.text.*;
 import javafx.scene.control.*;
 import com.google.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CollectionOverviewCtrl implements Initializable {
     private MainNotesCtrl mainNotesCtrl;
 
+    private NoteOverviewCtrl noteOverviewCtrl;
     @FXML
     private Button addCollectionButton;
 
@@ -53,13 +57,14 @@ public class CollectionOverviewCtrl implements Initializable {
 
     /**
      * Constructor for the CollectionOverviewCtrl class.
-     *
      * @param server The server utility instance used for server communication.
+     * @param noteOverviewCtrl The noteOverviewCtrl instance used for communication.
      */
     @Inject
-    public CollectionOverviewCtrl(ServerUtils server) {
+    public CollectionOverviewCtrl(ServerUtils server,NoteOverviewCtrl noteOverviewCtrl) {
         this.server = server;
         this.collectionConfigService = new CollectionConfigService();
+        this.noteOverviewCtrl = noteOverviewCtrl;
     }
 
     /**
@@ -294,6 +299,7 @@ public class CollectionOverviewCtrl implements Initializable {
         }
         try {
             collectionConfigService.saveCollections();
+            noteOverviewCtrl.updateCollectionMenu();
             refresh();
             return true;
         } catch (Exception e) {
@@ -347,6 +353,7 @@ public class CollectionOverviewCtrl implements Initializable {
         try {
             collectionConfigService.removeCollectionFromConfig(collection.getTitle());
             collectionConfigService.saveCollections();
+            noteOverviewCtrl.updateCollectionMenu();
             refresh();
             return true;
         } catch (Exception e) {

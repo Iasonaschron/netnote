@@ -2,6 +2,8 @@ package client.service;
 
 import commons.Collection;
 import commons.CollectionConfig;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,6 +47,21 @@ public class CollectionConfigService {
             return objectMapper.readValue(jsonString, CollectionConfig.class);
         }
         return new CollectionConfig(); // Return empty config if no file exists
+    }
+
+    /**
+     * Returns an List of all of the current collections,
+     * @return ObservableList<String> of the collection titles
+     * @throws IOException
+     */
+    public ObservableList<String> refreshCollections() throws IOException {
+        ObservableList<String> collectionNames = FXCollections.observableArrayList();
+
+        for(Collection collection : readConfig().getCollections()){
+            collectionNames.add(collection.getTitle());
+        }
+
+        return collectionNames;
     }
 
     /**
