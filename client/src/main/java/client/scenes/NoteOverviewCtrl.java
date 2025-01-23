@@ -236,6 +236,17 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 .toList();
     }
 
+
+    /**
+     * Is called when the refresh button is pressed. Sets the idEditing flag to false so the refresh method
+     * gets called.
+     */
+    public void refreshButtonPressed() {
+        isEditing = false;
+        refresh();
+        isEditing = true;
+    }
+
     /**
      * Refreshes the list of notes by fetching the latest data from the server.
      * Updates the ListView with the retrieved notes.
@@ -781,7 +792,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 break;
             case R:
                 if (e.isControlDown()) {
-                    refresh();
+                    refreshButtonPressed();
                 }
                 e.consume();
                 break;
