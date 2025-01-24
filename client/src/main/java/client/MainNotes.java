@@ -6,6 +6,7 @@ import client.utils.LanguageManager;
 import client.utils.ServerUtils;
 import com.google.inject.Injector;
 import javafx.application.Application;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -37,7 +38,12 @@ public class MainNotes extends Application {
 
         var serverUtils = INJECTOR.getInstance(ServerUtils.class);
         if (!serverUtils.isServerAvailable("http://localhost:8080/")) {
-            var msg = "Server needs to be started before the client, but it does not seem to be available. Shutting down.";
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Server Error");
+            alert.setHeaderText("Server Unavailable");
+            alert.setContentText("The server is currently down. Please try again later.");
+            alert.showAndWait();
+            var msg = "Server unavailable. Shutting down.";
             System.err.println(msg);
             return;
         }
