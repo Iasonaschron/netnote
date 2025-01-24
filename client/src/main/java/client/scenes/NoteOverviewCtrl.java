@@ -165,6 +165,14 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      */
     public Collection getCurrentCollection(){
         String currentCollectionTitle = collectionMenu.getValue();
+        if("All Notes".equals(currentCollectionTitle)){
+            try{return collectionConfigService.getOrCreateDefaultCollection();}
+            catch(Exception e){
+                e.printStackTrace();
+                throw new RuntimeException();
+            }
+
+        }
         if(currentCollectionTitle != null) {
             return collectionConfigService.getCollectionByTitle(currentCollectionTitle);
         }
@@ -524,6 +532,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     public void updateCollectionMenu(){
         try{
             ObservableList<String> collectionNames= collectionConfigService.refreshCollections();
+            collectionNames.add(0,"All Notes");
             collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
         } catch (IOException e) {
             e.printStackTrace();
@@ -546,6 +555,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * @return a List of notes related to that specific collection.
      */
     private List<Note> filterNotesByCollection(String currentCollection) {
+        if("All Notes".equals(currentCollection)){
+            return data;
+        }
         return data.stream().
                 filter(note -> note.getCollectionTitle().equals(currentCollection)).
                 toList();
@@ -1199,6 +1211,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         var c = content.getText();
         String currentCollectionTitle = getCurrentCollection().getTitle();
+        System.out.println(currentCollectionTitle);
+        
 
         Note temporary = new Note(t, c, currentCollectionTitle);
         temporary.setCollectionTitle(currentCollectionTitle);
