@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.List;
 
+import commons.AlertMethods;
 import commons.FileData;
 import commons.Note;
 import jakarta.ws.rs.client.Client;
@@ -90,6 +91,7 @@ public class ServerUtils {
                     .request(APPLICATION_JSON)
                     .post(Entity.entity(note, APPLICATION_JSON), Note.class);
         }catch(ProcessingException e){
+            AlertMethods.createError("The server" + server + " is not available");
             throw new ProcessingException("The server" + server + " is not available");
         }
     }

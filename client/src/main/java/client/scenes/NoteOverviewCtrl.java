@@ -534,6 +534,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             ObservableList<String> collectionNames= collectionConfigService.refreshCollections();
             collectionNames.add(0,"All Notes");
             collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
+            collectionMenu.getSelectionModel().selectFirst();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1063,11 +1064,21 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         if (!checkInput()) {
             return;
         }
-        try {
-            server.addNote(getNote(), getCurrentCollection().getServer());
-        } catch (NullPointerException | WebApplicationException e) {
-            AlertMethods.createError(e.getMessage());
-            return;
+        if (server.isServerAvailable(getCurrentCollection().getServer())) {
+            AlertMethods.createError("Server not available. Saving to default collection");
+            try {
+                server.addNote(getNote(), collectionConfigService.getOrCreateDefaultCollection().getServer());
+            } catch (NullPointerException | WebApplicationException | IOException e) {
+                AlertMethods.createError(e.getMessage());
+                return;
+            }
+        } else {
+            try {
+                server.addNote(getNote(), getCurrentCollection().getServer());
+            } catch (NullPointerException | WebApplicationException e) {
+                AlertMethods.createError(e.getMessage());
+                return;
+            }
         }
 
         try {
