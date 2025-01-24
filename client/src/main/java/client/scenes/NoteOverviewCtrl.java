@@ -165,6 +165,14 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      */
     public Collection getCurrentCollection(){
         String currentCollectionTitle = collectionMenu.getValue();
+        if("All Notes".equals(currentCollectionTitle)){
+            try{return collectionConfigService.getOrCreateDefaultCollection();}
+            catch(Exception e){
+                e.printStackTrace();
+                throw new RuntimeException();
+            }
+
+        }
         if(currentCollectionTitle != null) {
             return collectionConfigService.getCollectionByTitle(currentCollectionTitle);
         }
@@ -1203,6 +1211,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         var c = content.getText();
         String currentCollectionTitle = getCurrentCollection().getTitle();
+        System.out.println(currentCollectionTitle);
+        
 
         Note temporary = new Note(t, c, currentCollectionTitle);
         temporary.setCollectionTitle(currentCollectionTitle);
