@@ -91,8 +91,8 @@ public class ServerUtils {
                     .request(APPLICATION_JSON)
                     .post(Entity.entity(note, APPLICATION_JSON), Note.class);
         }catch(ProcessingException e){
-            AlertMethods.createError("The server" + server + " is not available");
-            throw new ProcessingException("The server" + server + " is not available");
+//            AlertMethods.createError("The server " + server + " is not available");
+            throw new ProcessingException("The server " + server + " is not available");
         }
     }
 
