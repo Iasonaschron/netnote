@@ -102,9 +102,9 @@ public class ServerUtils {
      * @param noteid The id of the note
      * @return the names of the files related with noteid
      */
-    public List<FileData> fetchFileNames(long noteid) {
+    public List<FileData> fetchFileNames(long noteid, String server) {
         return ClientBuilder.newClient(new ClientConfig())
-                .target(SERVER).path("api/files/" + noteid)
+                .target(server).path("api/files/" + noteid)
                 .request(APPLICATION_JSON)
                 .get(new GenericType<List<FileData>>() {
                 });
@@ -116,9 +116,9 @@ public class ServerUtils {
      * @param filename the filename
      * @return an input stream containing the binary data of the file to be downloaded
      */
-    public InputStream downloadFile(long noteid, String filename){
+    public InputStream downloadFile(long noteid, String filename, String server){
         Client client = ClientBuilder.newClient(new ClientConfig());
-        Response response = client.target(SERVER).path("api/files/" + noteid + "/" + filename + "/download")
+        Response response = client.target(server).path("api/files/" + noteid + "/" + filename + "/download")
                 .request(MediaType.APPLICATION_OCTET_STREAM)
                 .get();
         return response.readEntity(InputStream.class);
@@ -131,10 +131,10 @@ public class ServerUtils {
      * @param newName the new name
      * @return if the operation was successful
      */
-    public boolean changeFileName(long noteid, String oldName, String newName){
+    public boolean changeFileName(long noteid, String oldName, String newName, String server){
         try{
             ClientBuilder.newClient(new ClientConfig())
-                    .target(SERVER).path("api/files/" + noteid + "/" + oldName + "/change")
+                    .target(server).path("api/files/" + noteid + "/" + oldName + "/change")
                     .request(APPLICATION_JSON)
                     .post(Entity.entity(newName, APPLICATION_JSON), String.class);
             return true;
@@ -149,10 +149,10 @@ public class ServerUtils {
      * Makes a request to the server to delete all files
      * @return if the operation was successful
      */
-    public boolean deleteAllFiles(){
+    public boolean deleteAllFiles(String server){
         try{
             ClientBuilder.newClient(new ClientConfig())
-                    .target(SERVER).path("api/files/all")
+                    .target(server).path("api/files/all")
                     .request(APPLICATION_JSON)
                     .delete();
             return true;
@@ -169,17 +169,17 @@ public class ServerUtils {
      * @param filename
      * @return if the operation was successful
      */
-    public boolean deleteFile(long noteid, String filename){
+    public boolean deleteFile(long noteid, String filename, String server){
         try{
             if(filename == null){
                 ClientBuilder.newClient(new ClientConfig())
-                        .target(SERVER).path("api/files/" + noteid + "/all")
+                        .target(server).path("api/files/" + noteid + "/all")
                         .request(APPLICATION_JSON)
                         .delete();
                 return true;
             }
             ClientBuilder.newClient(new ClientConfig())
-                    .target(SERVER).path("api/files/" + noteid + "/" + filename)
+                    .target(server).path("api/files/" + noteid + "/" + filename)
                     .request(APPLICATION_JSON)
                     .delete();
             return true;
@@ -196,7 +196,7 @@ public class ServerUtils {
      * @param noteid the id of the note
      * @return either if the operation was successful or not
      */
-    public boolean uploadFile(File file, long noteid) {
+    public boolean uploadFile(File file, long noteid, String server) {
         try{
             Client client = ClientBuilder.newClient(new ClientConfig());
 
@@ -205,7 +205,7 @@ public class ServerUtils {
             form.bodyPart(new FileDataBodyPart("file", file, MediaType.APPLICATION_OCTET_STREAM_TYPE));
 
             Response response = client
-                    .target(SERVER).path("api/files/" + noteid + "/upload")
+                    .target(server).path("api/files/" + noteid + "/upload")
                     .request(MediaType.APPLICATION_JSON)
                     .post(Entity.entity(form, MediaType.MULTIPART_FORM_DATA_TYPE));
 

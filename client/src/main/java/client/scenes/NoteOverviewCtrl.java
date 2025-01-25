@@ -190,8 +190,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      */
     public void deleteFilesNoteID() {
         try {
-            server.deleteFile(lastSelectedNote.getId(), null);
-            noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId()));
+            server.deleteFile(lastSelectedNote.getId(), null, getCurrentCollection().getServer());
+            noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId(), getCurrentCollection().getServer()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -211,12 +211,12 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                     new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
             File selectedFile = fc.showOpenDialog(stage);
             if (selectedFile != null) {
-                server.uploadFile(selectedFile, lastSelectedNote.getId());
+                server.uploadFile(selectedFile, lastSelectedNote.getId(), getCurrentCollection().getServer());
                 System.out.println("File uploaded");
             } else {
                 System.out.println("no file selected");
             }
-            noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId()));
+            noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId(), getCurrentCollection().getServer()));
         } catch (Exception e) {
             System.out.println("Error uploading file");
             e.printStackTrace();
@@ -228,8 +228,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      */
     public void deleteAllFiles() {
         try {
-            server.deleteAllFiles();
-            noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId()));
+            server.deleteAllFiles(getCurrentCollection().getServer());
+            noteFiles.setAll(server.fetchFileNames(lastSelectedNote.getId(), getCurrentCollection().getServer()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -986,7 +986,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         updateWebView();
 
-        noteFiles.setAll(server.fetchFileNames(newValue.getId()));
+        noteFiles.setAll(server.fetchFileNames(newValue.getId(), getCurrentCollection().getServer()));
 
         lastSelectedNote = newValue;
         delete.disableProperty().set(false);
@@ -1201,8 +1201,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         Long selectedNoteId = selectedNote.getId();
         clearFields();
         server.deleteNoteById(selectedNote.getId(), getCurrentCollection().getServer());
-        server.deleteFile(selectedNote.getId(), null);
-        noteFiles.setAll(server.fetchFileNames(selectedNote.getId()));
+        server.deleteFile(selectedNote.getId(), null, getCurrentCollection().getServer());
+        noteFiles.setAll(server.fetchFileNames(selectedNote.getId(), getCurrentCollection().getServer()));
         try {
             System.out.println("Sending delete message for note with ID: " + selectedNoteId);
             stompClient.send("SEND\n" + "destination:/app/note-deletions\n\n" + objectMapper.writeValueAsString(selectedNote) + "\0");
@@ -1317,7 +1317,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                     Button downloadB = new Button(LanguageManager.getString("file_download_button"));
 
                     deleteB.setOnAction(event -> {
-                        if (server.deleteFile(lastSelectedNote.getId(), fileData.getFileName())) {
+                        if (server.deleteFile(lastSelectedNote.getId(), fileData.getFileName(), getCurrentCollection().getServer())) {
                             getListView().getItems().remove(fileData);
                         }
                     });
@@ -1332,7 +1332,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                         dialog.getDialogPane().getButtonTypes().setAll(okButtonType, cancelButtonType);
                         Optional<String> result = dialog.showAndWait();
                         result.ifPresent(newName -> {
-                            if (server.changeFileName(fileData.getRelatedNoteId(), fileData.getFileName(), newName)) {
+                            if (server.changeFileName(fileData.getRelatedNoteId(), fileData.getFileName(), newName, getCurrentCollection().getServer())) {
                                 fileData.setFileName(newName);
                                 getListView().refresh();
                             }
@@ -1340,7 +1340,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                     });
 
                     downloadB.setOnAction(event -> {
-                        try (InputStream is = server.downloadFile(fileData.getRelatedNoteId(), fileData.getFileName())) {
+                        try (InputStream is = server.downloadFile(fileData.getRelatedNoteId(), fileData.getFileName(), getCurrentCollection().getServer())) {
                             FileChooser fileChooser = new FileChooser();
                             fileChooser.setTitle(LanguageManager.getString("file_save_title"));
                             fileChooser.setInitialFileName(fileData.getFileName());
