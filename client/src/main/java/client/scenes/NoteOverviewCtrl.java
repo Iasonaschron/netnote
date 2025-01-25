@@ -1021,7 +1021,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             server.addNote(getNote(), getCurrentCollection().getServer());
         } catch (ProcessingException e) {
             collectionMenu.getSelectionModel().select("All Notes");
-            AlertMethods.createError("Server not available. Switching to default collection");
+            AlertMethods.createError(LanguageManager.getString("server_down_redirect"));
             if (checkInput()) {
                 server.addNote(getNote(), getCurrentCollection().getServer());
             }
