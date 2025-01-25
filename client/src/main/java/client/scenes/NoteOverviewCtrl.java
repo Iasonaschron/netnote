@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.io.InputStream;
@@ -168,8 +167,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     public Collection getCurrentCollection(){
         String currentCollectionTitle = collectionMenu.getValue();
         if("All Notes".equals(currentCollectionTitle)){
-            try{return collectionConfigService.getOrCreateDefaultCollection();}
-            catch(Exception e){
+            try {
+                return collectionConfigService.getOrCreateDefaultCollection();
+            } catch(Exception e){
                 e.printStackTrace();
                 throw new RuntimeException();
             }
@@ -1331,7 +1331,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                         dialog.getDialogPane().getButtonTypes().setAll(okButtonType, cancelButtonType);
                         Optional<String> result = dialog.showAndWait();
                         result.ifPresent(newName -> {
-                            if (server.changeFileName(fileData.getRelatedNoteId(), fileData.getFileName(), newName, getCurrentCollection().getServer())) {
+                            if (server.changeFileName(fileData.getRelatedNoteId(), fileData.getFileName(), newName,
+                                    getCurrentCollection().getServer())) {
                                 fileData.setFileName(newName);
                                 getListView().refresh();
                             }
@@ -1339,7 +1340,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                     });
 
                     downloadB.setOnAction(event -> {
-                        try (InputStream is = server.downloadFile(fileData.getRelatedNoteId(), fileData.getFileName(), getCurrentCollection().getServer())) {
+                        try (InputStream is = server.downloadFile(fileData.getRelatedNoteId(),
+                                fileData.getFileName(),
+                                getCurrentCollection().getServer())) {
                             FileChooser fileChooser = new FileChooser();
                             fileChooser.setTitle(LanguageManager.getString("file_save_title"));
                             fileChooser.setInitialFileName(fileData.getFileName());
