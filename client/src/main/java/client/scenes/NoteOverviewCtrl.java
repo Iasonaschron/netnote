@@ -526,6 +526,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         }
 
         collectionMenu.setOnAction(event -> setCurrentCollection());
+        collectionMenu.setOnShowing(event -> {
+            updateCollectionMenu();
+        });
     }
 
     /**
