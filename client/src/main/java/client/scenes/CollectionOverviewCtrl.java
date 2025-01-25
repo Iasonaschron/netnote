@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 
 import client.service.CollectionConfigService;
 import client.utils.ServerUtils;
+import commons.CollectionConfig;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -193,8 +194,15 @@ public class CollectionOverviewCtrl implements Initializable {
         }
 
         try {
-            collections = FXCollections
-                    .observableList(collectionConfigService.readConfig().getCollections());
+
+            if(collections == null){
+                collections = FXCollections
+                        .observableList(collectionConfigService.readConfig().getCollections());
+                collectionList.setItems(collections);
+            }
+            else{
+                collections.setAll(collectionConfigService.readConfig().getCollections());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -272,6 +280,10 @@ public class CollectionOverviewCtrl implements Initializable {
 
             try {
                 collectionConfigService.addCollectionToConfig(collection);
+                refresh();
+                collectionTitleField.clear();
+                collectionNameField.clear();
+                collectionServerField.clear();
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -295,6 +307,9 @@ public class CollectionOverviewCtrl implements Initializable {
             collectionConfigService.saveCollections();
             noteOverviewCtrl.updateCollectionMenu();
             refresh();
+            collectionTitleField.clear();
+            collectionNameField.clear();
+            collectionServerField.clear();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -349,6 +364,9 @@ public class CollectionOverviewCtrl implements Initializable {
             collectionConfigService.saveCollections();
             noteOverviewCtrl.updateCollectionMenu();
             refresh();
+            collectionTitleField.clear();
+            collectionNameField.clear();
+            collectionServerField.clear();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
