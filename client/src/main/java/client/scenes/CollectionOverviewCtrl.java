@@ -1,5 +1,7 @@
 package client.scenes;
 
+import client.utils.LanguageManager;
+import commons.AlertMethods;
 import commons.Collection;
 
 import java.io.IOException;
@@ -111,7 +113,7 @@ public class CollectionOverviewCtrl implements Initializable {
 
 
         if( collectionTitleField.getText() == null || collectionTitleField.getText().isBlank() ){
-            //AlertMethods.createWarning(LanguageManager.getString("Collection Title cannot be empty"));
+            AlertMethods.createWarning(LanguageManager.getString("collection_title_empty"));
 
             return false;
         }
@@ -119,14 +121,14 @@ public class CollectionOverviewCtrl implements Initializable {
         String title = collectionTitleField.getText();
         if(collectionConfigService.getCollections().stream().anyMatch(collection -> collection.getTitle().equals(title)
                 && !collection.equals(getCurrentCollection()))){
-            //AlertMethods.createWarning(LanguageManager.getString("Collection Title already exists"));
+            AlertMethods.createWarning(LanguageManager.getString("collection_title_exists"));
 
             return false;
         }
 
 
         if( collectionNameField.getText() == null || collectionNameField.getText().isBlank() ){
-            //AlertMethods.createWarning(LanguageManager.getString("Collection Name cannot be empty"));
+            AlertMethods.createWarning(LanguageManager.getString("collection_name_empty"));
 
             return false;
         }
@@ -134,21 +136,14 @@ public class CollectionOverviewCtrl implements Initializable {
         String name = collectionNameField.getText();
         if(collectionConfigService.getCollections().stream().anyMatch(collection -> collection.getName().equals(name)
                 && !collection.equals(getCurrentCollection()))){
-            //AlertMethods.createWarning(LanguageManager.getString("Collection Name already exists"));
+            AlertMethods.createWarning(LanguageManager.getString("collection_name_exists"));
 
             return false;
         }
 
         String server = collectionServerField.getText();
-        if( server == null || server.isBlank() || (!server.startsWith("http://")) && (!server.startsWith("https://"))){
-            //AlertMethods.createWarning(LanguageManager.getString("Invalid Server URL"));
-            return false;
-        }
-
-        if(collectionConfigService.getCollections().stream().anyMatch(collection -> collection.getServer().equals(server)
-                && !collection.equals(getCurrentCollection()))){
-            //AlertMethods.createWarning(LanguageManager.getString("Collection Server already exists"));
-
+        if( server == null || server.isBlank()){
+            AlertMethods.createWarning(LanguageManager.getString("invalid_server"));
             return false;
         }
         return true;
