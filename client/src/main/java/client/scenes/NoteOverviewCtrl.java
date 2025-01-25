@@ -611,67 +611,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     /**
      * Initialises file related processes
      */
-    public void fileInitialisation(){
-        fileDataListView.setCellFactory(_ -> new ListCell<>() {
-            @Override
-            protected void updateItem(FileData fileData, boolean empty) {
-                super.updateItem(fileData, empty);
-
-                if (empty || fileData == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    Button deleteB = new Button("Delete");
-                    Button renameB = new Button("Rename");
-                    Button downloadB = new Button("Download");
-
-                    deleteB.setOnAction(event -> {
-                        if (server.deleteFile(lastSelectedNote.getId(), fileData.getFileName())) {
-                            getListView().getItems().remove(fileData);
-                        }
-                    });
-
-                    renameB.setOnAction(event -> {
-                        TextInputDialog dialog = new TextInputDialog(fileData.getFileName());
-                        dialog.setTitle("Rename file");
-                        dialog.setHeaderText(null);
-                        dialog.setContentText("New file name: ");
-                        Optional<String> result = dialog.showAndWait();
-                        result.ifPresent(newName -> {
-                            if (server.changeFileName(fileData.getRelatedNoteId(), fileData.getFileName(), newName)) {
-                                fileData.setFileName(newName);
-                                getListView().refresh();
-                            }
-                        });
-                    });
-
-                    downloadB.setOnAction(event -> {
-                        try (InputStream is = server.downloadFile(fileData.getRelatedNoteId(), fileData.getFileName())) {
-                            FileChooser fileChooser = new FileChooser();
-                            fileChooser.setTitle("Save File");
-                            fileChooser.setInitialFileName(fileData.getFileName());
-                            File saveFile = fileChooser.showSaveDialog(null);
-
-                            if(saveFile != null){
-                                Files.copy(is, saveFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                                System.out.println("File downloaded successfully");
-                            }
-                            else{
-                                System.out.println("Download cancelled");
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
-
-
-                    VBox cellLayout = new VBox(10);
-                    cellLayout.getChildren().addAll(deleteB, renameB, downloadB);
-                    setText(fileData.getFileName());
-                    setGraphic(cellLayout);
-                }
-            }
-        });
+    public void fileInitialisation() {
+        fileDataListView.setCellFactory(_ -> createFileCell());
     }
 
     /**
@@ -1352,7 +1293,77 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             ((Stage) mainNotes.getPrimaryStage()).setTitle(LanguageManager.getString("overview_title"));
         }
 
+        fileDataListView.setCellFactory(_ -> createFileCell());
+        fileDataListView.refresh();
+
         refresh();
+    }
+
+    /**
+     * Creates a ListCell for the fileDataListView with appropriate buttons and functionality.
+     */
+    private ListCell<FileData> createFileCell() {
+        return new ListCell<>() {
+            @Override
+            protected void updateItem(FileData fileData, boolean empty) {
+                super.updateItem(fileData, empty);
+
+                if (empty || fileData == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    Button deleteB = new Button(LanguageManager.getString("file_delete_button"));
+                    Button renameB = new Button(LanguageManager.getString("file_rename_button"));
+                    Button downloadB = new Button(LanguageManager.getString("file_download_button"));
+
+                    deleteB.setOnAction(event -> {
+                        if (server.deleteFile(lastSelectedNote.getId(), fileData.getFileName())) {
+                            getListView().getItems().remove(fileData);
+                        }
+                    });
+
+                    renameB.setOnAction(event -> {
+                        TextInputDialog dialog = new TextInputDialog(fileData.getFileName());
+                        dialog.setTitle(LanguageManager.getString("file_rename_title"));
+                        dialog.setHeaderText(null);
+                        dialog.setContentText(LanguageManager.getString("file_rename_prompt"));
+                        ButtonType okButtonType = new ButtonType(LanguageManager.getString("ok_button"), ButtonBar.ButtonData.OK_DONE);
+                        ButtonType cancelButtonType = new ButtonType(LanguageManager.getString("cancel_button"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                        dialog.getDialogPane().getButtonTypes().setAll(okButtonType, cancelButtonType);
+                        Optional<String> result = dialog.showAndWait();
+                        result.ifPresent(newName -> {
+                            if (server.changeFileName(fileData.getRelatedNoteId(), fileData.getFileName(), newName)) {
+                                fileData.setFileName(newName);
+                                getListView().refresh();
+                            }
+                        });
+                    });
+
+                    downloadB.setOnAction(event -> {
+                        try (InputStream is = server.downloadFile(fileData.getRelatedNoteId(), fileData.getFileName())) {
+                            FileChooser fileChooser = new FileChooser();
+                            fileChooser.setTitle(LanguageManager.getString("file_save_title"));
+                            fileChooser.setInitialFileName(fileData.getFileName());
+                            File saveFile = fileChooser.showSaveDialog(null);
+
+                            if (saveFile != null) {
+                                Files.copy(is, saveFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                                System.out.println("File downloaded successfully");
+                            } else {
+                                System.out.println("Download cancelled");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                    VBox cellLayout = new VBox(10);
+                    cellLayout.getChildren().addAll(deleteB, renameB, downloadB);
+                    setText(fileData.getFileName());
+                    setGraphic(cellLayout);
+                }
+            }
+        };
     }
 
     /**

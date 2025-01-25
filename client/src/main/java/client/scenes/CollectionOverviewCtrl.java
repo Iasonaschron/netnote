@@ -47,6 +47,21 @@ public class CollectionOverviewCtrl implements Initializable {
     private Text collectionStatus;
 
     @FXML
+    private Text collectionTitleLabel;
+
+    @FXML
+    private Text collectionServerLabel;
+
+    @FXML
+    private Text collectionNameLabel;
+
+    @FXML
+    private Text collectionStatusLabel;
+
+    @FXML
+    private Button makeDefaultButton;
+
+    @FXML
     private ListView<Collection> collectionList;
     private ObservableList<Collection> collections;
 
@@ -383,6 +398,19 @@ public class CollectionOverviewCtrl implements Initializable {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Refreshes the language of the labels
+     */
+    public void refreshLanguage() {
+        collectionTitleLabel.setText(LanguageManager.getString("collection_title"));
+        collectionServerLabel.setText(LanguageManager.getString("collection_server"));
+        collectionNameLabel.setText(LanguageManager.getString("collection_name"));
+        collectionStatusLabel.setText(LanguageManager.getString("collection_status"));
+        collectionStatus.setText(LanguageManager.getString("collection_status_exists"));
+        saveButton.setText(LanguageManager.getString("collection_save"));
+        makeDefaultButton.setText(LanguageManager.getString("collection_make_default"));
     }
 
 

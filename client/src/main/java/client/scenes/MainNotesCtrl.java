@@ -84,6 +84,7 @@ public class MainNotesCtrl {
      */
     public void showCollectionOverview() {
         secondaryStage.setTitle(LanguageManager.getString("collection_overview_title"));
+        collectionOverviewCtrl.refreshLanguage();
         secondaryStage.setScene(collectionOverview);
         collectionOverviewCtrl.refresh();
 
