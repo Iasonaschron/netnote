@@ -1064,7 +1064,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         if (!checkInput()) {
             return;
         }
-        if (server.isServerAvailable(getCurrentCollection().getServer())) {
+        if (!server.isServerAvailable(getCurrentCollection().getServer())) {
             AlertMethods.createError("Server not available. Saving to default collection");
             try {
                 server.addNote(getNote(), collectionConfigService.getOrCreateDefaultCollection().getServer());
