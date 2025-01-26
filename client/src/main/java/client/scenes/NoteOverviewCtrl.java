@@ -527,10 +527,18 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         collectionMenu.setOnAction(event -> setCurrentCollection());
         collectionMenu.setOnShowing(event -> {
-            try{
-                ObservableList<String> collectionNames= collectionConfigService.refreshCollections();
-                collectionNames.add(0,"All Notes");
+            try {
+                String previousSelection = collectionMenu.getValue();
+
+                ObservableList<String> collectionNames = collectionConfigService.refreshCollections();
+                collectionNames.add(0, "All Notes");
                 collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
+
+                if (previousSelection != null && collectionNames.contains(previousSelection)) {
+                    collectionMenu.setValue(previousSelection);
+                } else {
+                    collectionMenu.setValue("All Notes"); // Default to "All Notes"
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
