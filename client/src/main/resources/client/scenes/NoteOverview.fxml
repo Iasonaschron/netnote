@@ -268,7 +268,7 @@
                                        <children>
                                           <AnchorPane layoutY="4.8" prefHeight="308.0" prefWidth="224.0" AnchorPane.bottomAnchor="161.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="5.0">
                                              <children>
-                                                <TextArea fx:id="content" layoutY="-5.6" minHeight="200.0" minWidth="220.0" onKeyReleased="#savePeriodically" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" prefHeight="370.0" prefWidth="223.0" promptText="\%content_prompt" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-6.0">
+                                                <TextArea fx:id="content" layoutY="-5.6" minHeight="200.0" minWidth="220.0" onKeyTyped="#updateWebView" onMouseClicked="#updateNote" prefHeight="370.0" prefWidth="223.0" promptText="\%content_prompt" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-6.0">
                                                    <font>
                                                       <Font name="Arial" size="14.0" />
                                                    </font>

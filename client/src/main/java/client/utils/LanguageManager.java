@@ -54,12 +54,4 @@ public class LanguageManager {
     public static String getCurrentLanguageCode() {
         return currentLocale.getLanguage();
     }
-
-    /**
-     * Sets the preferences for the language manager
-     * @param preferences The preferences to set
-     */
-    public static void setPreferences(Preferences preferences) {
-        preferences = preferences;
-    }
 }
