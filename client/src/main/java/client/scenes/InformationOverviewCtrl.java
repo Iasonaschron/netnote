@@ -10,7 +10,9 @@ import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.text.Text;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class InformationOverviewCtrl implements Initializable {
 
     @FXML

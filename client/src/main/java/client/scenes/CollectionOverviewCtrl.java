@@ -18,7 +18,9 @@ import javafx.scene.text.*;
 import javafx.scene.control.*;
 import com.google.inject.Inject;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
+@Controller
 @Component
 public class CollectionOverviewCtrl implements Initializable {
     private MainNotesCtrl mainNotesCtrl;

@@ -5,9 +5,11 @@ import commons.Note;
 import javafx.application.Platform;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.springframework.stereotype.Component;
 
 import java.net.URI;
 
+@Component
 public class StompClient extends WebSocketClient {
 
     private final UpdateListener listener;

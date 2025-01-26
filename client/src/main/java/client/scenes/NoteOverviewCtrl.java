@@ -33,6 +33,7 @@ import client.service.CollectionConfigService;
 import javafx.util.Duration;
 import org.controlsfx.control.CheckComboBox;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +53,7 @@ import java.util.concurrent.TimeUnit;
  * Manages a list of notes and provides functionality for creating, viewing, and
  * editing notes.
  */
+@Controller
 @Component
 public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
@@ -137,6 +139,11 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     private boolean isSaveAction = false;
     private boolean justEdited = false;
+
+    private int counter = 0;
+    private int caretBodyPosition = 0;
+    private int caretTitlePosition = 0;
+    private boolean isBodyFocused = false;
 
     private List<String> tags = new ArrayList<>();
 
@@ -1081,6 +1088,26 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     }
 
     /**
+     * Checks whether the periodic save is possible
+     */
+    public void savePossible() {
+        if (isSaveAction && isEditing) {
+            saveNoRefresh();
+        }
+    }
+
+    /**
+     * Saves the currently entered note by sending it to the server every 5 characters typed.
+     */
+    public void savePeriodically() {
+        counter++;
+        if(counter >= 5 && isEditing && isSaveAction) {
+            saveNoRefresh();
+            counter = 0;
+        }
+    }
+
+    /**
      * Updates the currently selected note by sending it to the server.
      * Displays an error alert if the server operation fails.
      * Refreshes the list of notes after successfully updating the note.
@@ -1132,6 +1159,73 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         done.disableProperty().set(false);
         content.requestFocus();
         content.positionCaret(content.getText().length());
+        done.setText(LanguageManager.getString("saved_prompt"));
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.3));
+        pause.setOnFinished(event -> done.setText(LanguageManager.getString("done")));
+        pause.play();
+    }
+
+    public void saveNoRefresh() {
+        if (!checkInput()) {
+            return;
+        }
+
+        Note selectedNote = lastSelectedNote;
+        String displayTitle = title.getText();
+        String displayContent = content.getText();
+        if(title.isFocused()){
+            isBodyFocused = false;
+            caretTitlePosition = title.getCaretPosition();
+        }
+        else {
+            isBodyFocused = true;
+            caretBodyPosition = content.getCaretPosition();
+        }
+
+        if (!selectedNote.getTitle().equalsIgnoreCase(displayTitle)) {
+            updateNoteReferences(selectedNote.getTitle(), displayTitle);
+        }
+
+        try {
+            server.saveNote(selectedNote.getId(), getNote(), getCurrentCollection().getServer());
+            lastSelectedNote = server.getNoteById(selectedNote.getId(), getCurrentCollection().getServer());
+        } catch (NullPointerException | WebApplicationException e) {
+            AlertMethods.createError(e.getMessage());
+            return;
+        }
+
+        selectedNote.setTitle(getNote().getTitle());
+        selectedNote.setContent(getNote().getContent());
+        selectedNote.renderRawText(selectedNote.getId());
+        selectedNote.extractTagsFromContent();
+
+        try {
+            stompClient.send("SEND\n" + "destination:/app/note-updates\n\n" + objectMapper.writeValueAsString(selectedNote) + "\0");
+        }
+        catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        isEditing = false;
+        justEdited = true;
+        int lastSelectedIndex = listView.getSelectionModel().getSelectedIndex();
+        refresh();
+        filterTagList();
+        isEditing = true;
+        justEdited = false;
+        title.setText(displayTitle);
+        content.setText(displayContent);
+        updateWebView();
+        listView.getSelectionModel().select(lastSelectedIndex);
+        done.disableProperty().set(false);
+        if(isBodyFocused) {
+            content.requestFocus();
+            content.positionCaret(caretBodyPosition);
+        }
+        else {
+            title.requestFocus();
+            title.positionCaret(caretTitlePosition);
+        }
         done.setText(LanguageManager.getString("saved_prompt"));
         PauseTransition pause = new PauseTransition(Duration.seconds(1.3));
         pause.setOnFinished(event -> done.setText(LanguageManager.getString("done")));
@@ -1289,6 +1383,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     private void startPolling() {
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(() -> Platform.runLater(this::refresh), 0, 5, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(() -> Platform.runLater(this::savePossible), 0, 10, TimeUnit.SECONDS);
     }
 
     /**
@@ -1489,6 +1584,14 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         try {
             if (getSelectedNote() != null && updatedNote.getId() == getSelectedNote().getId()) {
                 setSelectedNote(updatedNote);
+                if(isBodyFocused) {
+                    content.requestFocus();
+                    content.positionCaret(caretBodyPosition);
+                }
+                else {
+                    title.requestFocus();
+                    title.positionCaret(caretTitlePosition);
+                }
             }
             else if (updatedNote.getCollectionTitle().equals(getCurrentCollection().getTitle())) {
                 for (Note note : data) {
@@ -1497,6 +1600,14 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                         note.setContent(updatedNote.getContent());
                         note.setTags(updatedNote.getTags());
                         note.renderRawText(updatedNote.getId());
+                        if(isBodyFocused) {
+                            content.requestFocus();
+                            content.positionCaret(caretBodyPosition);
+                        }
+                        else {
+                            title.requestFocus();
+                            title.positionCaret(caretTitlePosition);
+                        }
                         if (getHasSelectedTag()) {
                             tagUpdateList();
                             return;
