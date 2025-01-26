@@ -175,7 +175,6 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             }
 
         }
-        System.out.println(currentCollectionTitle);
         if(currentCollectionTitle != null) {
             return collectionConfigService.getCollectionByTitle(currentCollectionTitle);
         }
@@ -545,7 +544,6 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             ObservableList<String> collectionNames = collectionConfigService.refreshCollections();
             collectionNames.add(0, "All Notes");
             collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
-            System.out.println(previousSelection);
             if (previousSelection != null && collectionNames.contains(previousSelection)) {
                 collectionMenu.setValue(previousSelection);
             } else {
@@ -1201,7 +1199,6 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         var c = content.getText();
         String currentCollectionTitle = getCurrentCollection().getTitle();
-        System.out.println(currentCollectionTitle);
         
 
         Note temporary = new Note(t, c, currentCollectionTitle);
