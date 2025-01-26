@@ -137,6 +137,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     private boolean isSaveAction = false;
     private boolean justEdited = false;
+    private boolean shouldRefresh = true;
 
     private List<String> tags = new ArrayList<>();
 
@@ -164,21 +165,21 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * @throws RuntimeException if an error occurs while getting or creating the
      *                          default collection.
      */
-    public Collection getCurrentCollection(){
+    public Collection getCurrentCollection() {
         String currentCollectionTitle = collectionMenu.getValue();
-        if("All Notes".equals(currentCollectionTitle)){
+        if ("All Notes".equals(currentCollectionTitle)) {
             try {
                 return collectionConfigService.getOrCreateDefaultCollection();
-            } catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 throw new RuntimeException();
             }
 
         }
-        if(currentCollectionTitle != null) {
+        if (currentCollectionTitle != null) {
             return collectionConfigService.getCollectionByTitle(currentCollectionTitle);
         }
-        try{
+        try {
             return collectionConfigService.getOrCreateDefaultCollection();
 
         } catch (IOException e) {
@@ -242,13 +243,14 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * collection
      */
     private List<Note> getNotesBySelectedCollection() {
-        return data.stream().filter(note -> Objects.equals(note.getCollectionTitle(), getCurrentCollection().getTitle()))
+        return data.stream()
+                .filter(note -> Objects.equals(note.getCollectionTitle(), getCurrentCollection().getTitle()))
                 .toList();
     }
 
-
     /**
-     * Is called when the refresh button is pressed. Sets the idEditing flag to false so the refresh method
+     * Is called when the refresh button is pressed. Sets the idEditing flag to
+     * false so the refresh method
      * gets called.
      */
     public void refreshButtonPressed() {
@@ -329,8 +331,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         tags = visibleNotes.stream().flatMap(note -> note.getTags().stream()).distinct().toList();
         tagsMenu.getItems().setAll(tags);
 
-
-        for (Integer i: indexes) {
+        for (Integer i : indexes) {
             tagsMenu.getCheckModel().check(i);
         }
 
@@ -385,7 +386,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         clear.disableProperty().set(true);
 
         listView.getSelectionModel().clearSelection();
-        add.disableProperty().set(true);
+        // add.disableProperty().set(true);
         delete.disableProperty().set(false);
         done.disableProperty().set(false);
         done.setOnAction(_ -> create());
@@ -462,22 +463,23 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             }
         });
 
-        tagsMenu.getCheckModel().getCheckedItems().addListener((javafx.collections.ListChangeListener<String>) change -> {
-            while (change.next()) {
-                if (change.wasAdded()) {
-                    for (String addedItem : change.getAddedSubList()) {
-                        // Handle item checked
-                        tagMenuSelect();
+        tagsMenu.getCheckModel().getCheckedItems()
+                .addListener((javafx.collections.ListChangeListener<String>) change -> {
+                    while (change.next()) {
+                        if (change.wasAdded()) {
+                            for (String addedItem : change.getAddedSubList()) {
+                                // Handle item checked
+                                tagMenuSelect();
+                            }
+                        }
+                        if (change.wasRemoved()) {
+                            for (String removedItem : change.getRemoved()) {
+                                // Handle item unchecked
+                                tagMenuSelect();
+                            }
+                        }
                     }
-                }
-                if (change.wasRemoved()) {
-                    for (String removedItem : change.getRemoved()) {
-                        // Handle item unchecked
-                        tagMenuSelect();
-                    }
-                }
-            }
-        });
+                });
 
         searchByContentCheckBox.selectedProperty().addListener(_ -> updateList());
 
@@ -506,8 +508,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         try {
             stompClient = new StompClient(new URI("ws://localhost:8080/ws"), this);
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
 
@@ -519,17 +520,17 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         Platform.runLater(() -> isEditing = true);
         title.requestFocus();
-        try{
+        try {
             updateCollectionMenu();
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         collectionMenu.setOnAction(event -> setCurrentCollection());
         collectionMenu.setOnShowing(event -> {
-            try{
-                ObservableList<String> collectionNames= collectionConfigService.refreshCollections();
-                collectionNames.add(0,"All Notes");
+            try {
+                ObservableList<String> collectionNames = collectionConfigService.refreshCollections();
+                collectionNames.add(0, "All Notes");
                 collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -538,12 +539,13 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     }
 
     /**
-     * updates the Collection Menu to have the latest collection from the CollectionConfig.
+     * updates the Collection Menu to have the latest collection from the
+     * CollectionConfig.
      */
-    public void updateCollectionMenu(){
-        try{
-            ObservableList<String> collectionNames= collectionConfigService.refreshCollections();
-            collectionNames.add(0,"All Notes");
+    public void updateCollectionMenu() {
+        try {
+            ObservableList<String> collectionNames = collectionConfigService.refreshCollections();
+            collectionNames.add(0, "All Notes");
             collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
             collectionMenu.getSelectionModel().selectFirst();
         } catch (IOException e) {
@@ -555,7 +557,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     /**
      * Sets the current Collection upon selection
      */
-    private void setCurrentCollection(){
+    private void setCurrentCollection() {
         String currentCollection = collectionMenu.getSelectionModel().getSelectedItem();
         ObservableList<Note> filtered = FXCollections.observableArrayList(filterNotesByCollection(currentCollection));
         listView.setItems(filtered);
@@ -563,24 +565,25 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     }
 
     /**
-     * Filters the notes that the user can see by the collection that is selected in the checkbox.
-     * @param currentCollection String that has the current collection selected in the checkbox*
+     * Filters the notes that the user can see by the collection that is selected in
+     * the checkbox.
+     * 
+     * @param currentCollection String that has the current collection selected in
+     *                          the checkbox*
      * @return a List of notes related to that specific collection.
      */
     private List<Note> filterNotesByCollection(String currentCollection) {
-        if("All Notes".equals(currentCollection)){
+        if ("All Notes".equals(currentCollection)) {
             return data;
         }
-        return data.stream().
-                filter(note -> note.getCollectionTitle().equals(currentCollection)).
-                toList();
+        return data.stream().filter(note -> note.getCollectionTitle().equals(currentCollection)).toList();
 
     }
 
     /**
      * Initialises WebEngine and Webview related processes
      */
-    public void webInitialisation(){
+    public void webInitialisation() {
         webEngine = webview.getEngine();
         URL stylesheet = getClass().getResource("/client/styles/notes.css");
         if (stylesheet != null) {
@@ -630,7 +633,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     /**
      * Initialises language related processes
      */
-    public void languageInitialise(){
+    public void languageInitialise() {
         languageSelectorCombo.setItems(FXCollections.observableArrayList("EN", "NL", "RO", "EL"));
 
         languageSelectorCombo.setCellFactory(cb -> new ListCell<>() {
@@ -683,12 +686,13 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     }
 
     /**
-     *Implements keyboard shortcuts in the app
+     * Implements keyboard shortcuts in the app
      * S+Control: Saves or adds note (acts like the done button)
      * ESCAPE: Selects the searching search field
      * Up+Alt: Selects the previous note on the list view
      * Down+Alt: Selects the next note on the list view
-     * (Both are usable without having any note selected, automatically selecting the first note)
+     * (Both are usable without having any note selected, automatically selecting
+     * the first note)
      * T+Control: Selects Title text field
      * C+Control: Selects Content text field
      * D+Control: Deletes note, or clears note about to be made
@@ -784,8 +788,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 break;
         }
     }
+
     /**
      * Treats the key pressed event for the RIGHT key
+     * 
      * @param e key pressed
      */
     public void keyPressedRIGHT(KeyEvent e) {
@@ -795,8 +801,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             e.consume();
         }
     }
+
     /**
      * Treats the key pressed event for the LEFT key
+     * 
      * @param e key pressed
      */
     public void keyPressedLEFT(KeyEvent e) {
@@ -809,10 +817,11 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     /**
      * Treats the key pressed event for the UP key
+     * 
      * @param e key pressed
      */
-    public void keyPressedUP(KeyEvent e){
-        if(e.isAltDown()){
+    public void keyPressedUP(KeyEvent e) {
+        if (e.isAltDown()) {
             if (listView.getSelectionModel().isEmpty()) {
                 listView.getSelectionModel().select(0);
                 e.consume();
@@ -829,9 +838,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     /**
      * Treats the key pressed event for the DOWN key
+     * 
      * @param e key pressed
      */
-    public void keyPressedDOWN(KeyEvent e){
+    public void keyPressedDOWN(KeyEvent e) {
         if (e.isAltDown()) {
             if (listView.getSelectionModel().isEmpty()) {
                 listView.getSelectionModel().select(0);
@@ -847,9 +857,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     /**
      * Treats the key pressed event for the C key
+     * 
      * @param e key pressed
      */
-    public void keyPressedC(KeyEvent e){
+    public void keyPressedC(KeyEvent e) {
         if (e.isControlDown()) {
             content.requestFocus();
             updateNote();
@@ -865,9 +876,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     /**
      * Treats the key pressed event for the B key
+     * 
      * @param e key pressed
      */
-    public void keyPressedB(KeyEvent e){
+    public void keyPressedB(KeyEvent e) {
         if (e.isControlDown()) {
             if (searchByContentCheckBox.isSelected()) {
                 searchByContentCheckBox.selectedProperty().set(false);
@@ -879,9 +891,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     /**
      * Treats the key pressed event for the T key
+     * 
      * @param e
      */
-    public void keyPressedT(KeyEvent e){
+    public void keyPressedT(KeyEvent e) {
         if (e.isControlDown()) {
             title.requestFocus();
             updateNote();
@@ -891,9 +904,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     /**
      * Treats the key pressed event for the S key
+     * 
      * @param e key pressed
      */
-    public void keyPressedS(KeyEvent e){
+    public void keyPressedS(KeyEvent e) {
         if (e.isControlDown()) {
             if (isSaveAction) {
                 save();
@@ -906,9 +920,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
     /**
      * Treats the key pressed event for the D key
+     * 
      * @param e key pressed
      */
-    public void keyPressedD(KeyEvent e){
+    public void keyPressedD(KeyEvent e) {
         if (e.isControlDown()) {
             if (isSaveAction) {
                 deleteConfirm();
@@ -950,7 +965,6 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 .filter(note -> note.getTags().stream().anyMatch(tags::contains))
                 .toList();
     }
-
 
     /**
      * Parses the current HTML and replaces notes references with links, checking if
@@ -1012,28 +1026,36 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * @param newValue   the newly selected note
      */
     private void selectionChanged(ObservableValue<? extends Note> observable, Note oldValue, Note newValue) {
-        if (Objects.equals(oldValue, newValue)) {
+
+        if (newValue == null || oldValue == null || newValue.getTitle().equals(oldValue.getTitle()) || !shouldRefresh) {
             return;
         }
 
-        if (newValue == null) {
-            title.setText(null);
-            content.setText(null);
-            return;
+        if (save()) {
+            title.setText(newValue.getTitle());
+            content.setText(newValue.getContent());
+
+            updateWebView();
+
+            noteFiles.setAll(server.fetchFileNames(newValue.getId(), getCurrentCollection().getServer()));
+
+            lastSelectedNote = newValue;
+            delete.disableProperty().set(false);
+            // add.disableProperty().set(false);
+            done.disableProperty().set(true);
+            done.setOnAction(_ -> save());
+            isSaveAction = true;
+
+            listView.getSelectionModel().select(newValue);
+            listView.getFocusModel().focus(listView.getSelectionModel().getSelectedIndex());
+            listView.scrollTo(listView.getSelectionModel().getSelectedIndex());
+        } else {
+            shouldRefresh = false;
+            listView.getSelectionModel().select(oldValue);
+            listView.getFocusModel().focus(listView.getSelectionModel().getSelectedIndex());
+            listView.scrollTo(listView.getSelectionModel().getSelectedIndex());
+            shouldRefresh = true;
         }
-        title.setText(newValue.getTitle());
-        content.setText(newValue.getContent());
-
-        updateWebView();
-
-        noteFiles.setAll(server.fetchFileNames(newValue.getId(), getCurrentCollection().getServer()));
-
-        lastSelectedNote = newValue;
-        delete.disableProperty().set(false);
-        add.disableProperty().set(false);
-        done.disableProperty().set(true);
-        done.setOnAction(_ -> save());
-        isSaveAction = true;
     }
 
     /**
@@ -1042,23 +1064,22 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * Refreshes the list of notes after successfully adding a note.
      */
     public void create() {
-        if (!checkInput()) {
+        if (checkIfFullyEmpty() || !checkInput()) {
             return;
         }
+
         try {
             server.addNote(getNote(), getCurrentCollection().getServer());
         } catch (ProcessingException e) {
             collectionMenu.getSelectionModel().select("All Notes");
             AlertMethods.createError(LanguageManager.getString("server_down_redirect"));
-            if (checkInput()) {
-                server.addNote(getNote(), getCurrentCollection().getServer());
-            }
+            server.addNote(getNote(), getCurrentCollection().getServer());
         }
 
         try {
-            stompClient.send("SEND\n" + "destination:/app/note-updates\n\n" + objectMapper.writeValueAsString(getNote()) + "\0");
-        }
-        catch (JsonProcessingException e) {
+            stompClient.send(
+                    "SEND\n" + "destination:/app/note-updates\n\n" + objectMapper.writeValueAsString(getNote()) + "\0");
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
@@ -1079,10 +1100,15 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * Updates the currently selected note by sending it to the server.
      * Displays an error alert if the server operation fails.
      * Refreshes the list of notes after successfully updating the note.
+     * 
+     * @return True if the note was successfully updated, false otherwise
      */
-    public void save() {
+    public boolean save() {
+        if (checkIfFullyEmpty())
+            return true;
+
         if (!checkInput()) {
-            return;
+            return false;
         }
 
         Note selectedNote = lastSelectedNote;
@@ -1098,7 +1124,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             lastSelectedNote = server.getNoteById(selectedNote.getId(), getCurrentCollection().getServer());
         } catch (NullPointerException | WebApplicationException e) {
             AlertMethods.createError(e.getMessage());
-            return;
+            return false;
         }
 
         selectedNote.setTitle(getNote().getTitle());
@@ -1107,9 +1133,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         selectedNote.extractTagsFromContent();
 
         try {
-            stompClient.send("SEND\n" + "destination:/app/note-updates\n\n" + objectMapper.writeValueAsString(selectedNote) + "\0");
-        }
-        catch (JsonProcessingException e) {
+            stompClient.send("SEND\n" + "destination:/app/note-updates\n\n"
+                    + objectMapper.writeValueAsString(selectedNote) + "\0");
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
@@ -1124,6 +1150,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         content.setText(displayContent);
         updateWebView();
         listView.getSelectionModel().select(lastSelectedIndex);
+        listView.getFocusModel().focus(listView.getSelectionModel().getSelectedIndex());
+        listView.scrollTo(listView.getSelectionModel().getSelectedIndex());
         done.disableProperty().set(false);
         content.requestFocus();
         content.positionCaret(content.getText().length());
@@ -1131,6 +1159,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         PauseTransition pause = new PauseTransition(Duration.seconds(1.3));
         pause.setOnFinished(event -> done.setText(LanguageManager.getString("done")));
         pause.play();
+
+        return true;
     }
 
     /**
@@ -1183,6 +1213,11 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         return true;
     }
 
+    private boolean checkIfFullyEmpty() {
+        return (title.getText() == null || title.getText().isBlank())
+                && (content.getText() == null || content.getText().isBlank());
+    }
+
     /**
      * Creates a new Note object using the current input field values.
      *
@@ -1196,8 +1231,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
 
         var c = content.getText();
         String currentCollectionTitle = getCurrentCollection().getTitle();
-        System.out.println(currentCollectionTitle);
-        
+        // (currentCollectionTitle);
 
         Note temporary = new Note(t, c, currentCollectionTitle);
         temporary.setCollectionTitle(currentCollectionTitle);
@@ -1218,7 +1252,6 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 : listView.getSelectionModel().getSelectedItems().getFirst();
     }
 
-
     /**
      * Shows deletion confirmation menu
      */
@@ -1238,9 +1271,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         noteFiles.setAll(server.fetchFileNames(selectedNote.getId(), getCurrentCollection().getServer()));
         try {
             System.out.println("Sending delete message for note with ID: " + selectedNoteId);
-            stompClient.send("SEND\n" + "destination:/app/note-deletions\n\n" + objectMapper.writeValueAsString(selectedNote) + "\0");
-        }
-        catch (JsonProcessingException e) {
+            stompClient.send("SEND\n" + "destination:/app/note-deletions\n\n"
+                    + objectMapper.writeValueAsString(selectedNote) + "\0");
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
         isEditing = false;
@@ -1264,7 +1297,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     public void updateNote() {
         isEditing = true;
 
-        add.disableProperty().set(true);
+        // add.disableProperty().set(true);
         delete.disableProperty().set(false);
 
         if (isSaveAction && title.getText() != null) {
@@ -1302,7 +1335,6 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         fileSelectButton.setText(LanguageManager.getString("add_file"));
         deleteFilesButton.setText(LanguageManager.getString("delete_files"));
 
-
         switch (LanguageManager.getCurrentLanguageCode().toUpperCase()) {
             case "EN":
                 languageIndicator.setImage(
@@ -1333,7 +1365,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     }
 
     /**
-     * Creates a ListCell for the fileDataListView with appropriate buttons and functionality.
+     * Creates a ListCell for the fileDataListView with appropriate buttons and
+     * functionality.
      */
     private ListCell<FileData> createFileCell() {
         return new ListCell<>() {
@@ -1350,7 +1383,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                     Button downloadB = new Button(LanguageManager.getString("file_download_button"));
 
                     deleteB.setOnAction(event -> {
-                        if (server.deleteFile(lastSelectedNote.getId(), fileData.getFileName(), getCurrentCollection().getServer())) {
+                        if (server.deleteFile(lastSelectedNote.getId(), fileData.getFileName(),
+                                getCurrentCollection().getServer())) {
                             getListView().getItems().remove(fileData);
                         }
                     });
@@ -1360,8 +1394,10 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                         dialog.setTitle(LanguageManager.getString("file_rename_title"));
                         dialog.setHeaderText(null);
                         dialog.setContentText(LanguageManager.getString("file_rename_prompt"));
-                        ButtonType okButtonType = new ButtonType(LanguageManager.getString("ok_button"), ButtonBar.ButtonData.OK_DONE);
-                        ButtonType cancelButtonType = new ButtonType(LanguageManager.getString("cancel_button"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                        ButtonType okButtonType = new ButtonType(LanguageManager.getString("ok_button"),
+                                ButtonBar.ButtonData.OK_DONE);
+                        ButtonType cancelButtonType = new ButtonType(LanguageManager.getString("cancel_button"),
+                                ButtonBar.ButtonData.CANCEL_CLOSE);
                         dialog.getDialogPane().getButtonTypes().setAll(okButtonType, cancelButtonType);
                         Optional<String> result = dialog.showAndWait();
                         result.ifPresent(newName -> {
@@ -1446,10 +1482,11 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      *
      */
     public void openInformation() {
-        mainNotes.showInformationOverview();}
+        mainNotes.showInformationOverview();
+    }
 
-
-     /** Getter for the selected collection ID
+    /**
+     * Getter for the selected collection ID
      *
      * @return The title of the selected collection
      */
@@ -1471,21 +1508,21 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      *
      * @param newNote The new note to add
      */
-    public void addNoteToData(Note newNote){
+    public void addNoteToData(Note newNote) {
         data.add(newNote);
     }
 
     /**
      * Deals with note updates received through WebSocket
+     * 
      * @param updatedNote the target note
      */
     @Override
-    public void handleNoteUpdate(Note updatedNote){
+    public void handleNoteUpdate(Note updatedNote) {
         try {
             if (getSelectedNote() != null && updatedNote.getId() == getSelectedNote().getId()) {
                 setSelectedNote(updatedNote);
-            }
-            else if (updatedNote.getCollectionTitle().equals(getCurrentCollection().getTitle())) {
+            } else if (updatedNote.getCollectionTitle().equals(getCurrentCollection().getTitle())) {
                 for (Note note : data) {
                     if (note.getId() == updatedNote.getId()) {
                         note.setTitle(updatedNote.getTitle());
@@ -1500,8 +1537,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                         return;
                     }
                 }
-            }
-            else if(updatedNote.getCollectionTitle().equals(getCurrentCollection().getTitle())){
+            } else if (updatedNote.getCollectionTitle().equals(getCurrentCollection().getTitle())) {
                 addNoteToData(updatedNote);
                 if (getHasSelectedTag()) {
                     tagUpdateList();
@@ -1509,18 +1545,18 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 }
                 updateList();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("Error processing WebSocket update: " + e.getMessage());
         }
     }
 
     /**
      * Deals with note deletions received through WebSocket
+     * 
      * @param deletedNoteID target note ID
      */
     @Override
-    public void handleNoteDeletion(Long deletedNoteID){
+    public void handleNoteDeletion(Long deletedNoteID) {
         for (Note note : data) {
             if (note.getId() == deletedNoteID) {
                 data.remove(note);
