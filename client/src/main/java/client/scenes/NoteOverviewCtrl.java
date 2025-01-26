@@ -164,7 +164,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * @throws RuntimeException if an error occurs while getting or creating the
      *                          default collection.
      */
-    public Collection getCurrentCollection(){
+    public Collection getCurrentCollection() {
         String currentCollectionTitle = collectionMenu.getValue();
         if("All Notes".equals(currentCollectionTitle)){
             try {
@@ -175,6 +175,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             }
 
         }
+        System.out.println(currentCollectionTitle);
         if(currentCollectionTitle != null) {
             return collectionConfigService.getCollectionByTitle(currentCollectionTitle);
         }
@@ -266,7 +267,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             return;
         }
 
-        data = server.getNotes(selectedCollection.getServer());
+        data = server.getNotes(getCurrentCollection().getServer());
 
         if (hasSelectedTag) {
             tagUpdateList();
@@ -525,15 +526,12 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             e.printStackTrace();
         }
 
-        collectionMenu.setOnAction(event -> setCurrentCollection());
+        collectionMenu.setOnAction(event -> {
+            setCurrentCollection();
+        });
         collectionMenu.setOnShowing(event -> {
-            try{
-                ObservableList<String> collectionNames= collectionConfigService.refreshCollections();
-                collectionNames.add(0,"All Notes");
-                collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            updateCollectionMenu();
+            setCurrentCollection();
         });
     }
 
@@ -542,14 +540,21 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      */
     public void updateCollectionMenu(){
         try{
-            ObservableList<String> collectionNames= collectionConfigService.refreshCollections();
-            collectionNames.add(0,"All Notes");
+            String previousSelection = collectionMenu.getValue();
+
+            ObservableList<String> collectionNames = collectionConfigService.refreshCollections();
+            collectionNames.add(0, "All Notes");
             collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
-            collectionMenu.getSelectionModel().selectFirst();
+            System.out.println(previousSelection);
+            if (previousSelection != null && collectionNames.contains(previousSelection)) {
+                collectionMenu.setValue(previousSelection);
+            } else {
+                collectionMenu.setValue(collectionNames.getFirst());
+            }
+            setCurrentCollection();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
