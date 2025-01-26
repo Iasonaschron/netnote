@@ -176,7 +176,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             }
 
         }
-        if (currentCollectionTitle != null) {
+        System.out.println(currentCollectionTitle);
+        if(currentCollectionTitle != null) {
             return collectionConfigService.getCollectionByTitle(currentCollectionTitle);
         }
         try {
@@ -268,7 +269,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             return;
         }
 
-        data = server.getNotes(selectedCollection.getServer());
+        data = server.getNotes(getCurrentCollection().getServer());
 
         if (hasSelectedTag) {
             tagUpdateList();
@@ -526,15 +527,12 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             e.printStackTrace();
         }
 
-        collectionMenu.setOnAction(event -> setCurrentCollection());
+        collectionMenu.setOnAction(event -> {
+            setCurrentCollection();
+        });
         collectionMenu.setOnShowing(event -> {
-            try {
-                ObservableList<String> collectionNames = collectionConfigService.refreshCollections();
-                collectionNames.add(0, "All Notes");
-                collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            updateCollectionMenu();
+            setCurrentCollection();
         });
     }
 
@@ -542,16 +540,23 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      * updates the Collection Menu to have the latest collection from the
      * CollectionConfig.
      */
-    public void updateCollectionMenu() {
-        try {
+    public void updateCollectionMenu(){
+        try{
+            String previousSelection = collectionMenu.getValue();
+
             ObservableList<String> collectionNames = collectionConfigService.refreshCollections();
             collectionNames.add(0, "All Notes");
             collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
-            collectionMenu.getSelectionModel().selectFirst();
+            System.out.println(previousSelection);
+            if (previousSelection != null && collectionNames.contains(previousSelection)) {
+                collectionMenu.setValue(previousSelection);
+            } else {
+                collectionMenu.setValue(collectionNames.getFirst());
+            }
+            setCurrentCollection();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     /**

@@ -150,6 +150,7 @@ public class CollectionConfigService {
         if (collectionConfig == null) {
             return null;
         }
+        loadCollections();
         return collectionConfig.getCollections().stream()
                 .filter(collection -> collection.getTitle().equals(title))
                 .findFirst().orElse(null);
