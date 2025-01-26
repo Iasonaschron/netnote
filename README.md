@@ -1,21 +1,50 @@
-# CSEP Template Project
+## CSEP Project Features Guide
 
-This repository contains the template for the CSE project. Please extend this README.md with sufficient instructions that will illustrate for your TA and the course staff how they can run your project.
+![img_1.png](ReadMe_img/img_1.png)
 
-To run the template project from the command line, you either need to have [Maven](https://maven.apache.org/install.html) installed on your local system (`mvn`) or you need to use the Maven wrapper (`mvnw`). You can then execute
+This is the main view of the app and where most of the functionality resides.
 
-	mvn clean install
+### Key elements of the main view:
+![img_4.png](ReadMe_img/img_4.png)
 
-to package and install the artifacts for the three subprojects. Afterwards, you can run ...
+- The **filter area** (from top to bottom):
+    - The collection filter
+    - The tag filter (empty until tags are added)
+    - The search bar: implicitly searches notes by title
+    - The search-by-content checkbox: toggles searching notes by content
 
-	cd server
-	mvn spring-boot:run
+![img_3.png](ReadMe_img/img_3.png)
+- The **control area** (top to bottom, left to right):
+    - The delete all files button
+    - The refresh button
+    - The collection access button
+    - The delete note button (has to have a note selected)
+    - The add new note button
 
-to start the server or ...
+![img.png](ReadMe_img/img.png)
+- The **file area**:
+    - The file list (empty until a file is uploaded)
+    - The add file to note button
+    - The delete all files in selected note button
 
-	cd client
-	mvn javafx:run
+### 4.2 Multi-Collection
+![img_2.png](ReadMe_img/img_2.png)
+Once the user clicks on the collection button, the collection view appears.
+Here, similarly to the main view, the user can add, modify and delete collections.
 
-to run the client. Please note that the server needs to be running, before you can start the client.
+### 4.3 Embedded Files
+![img_5.png](ReadMe_img/img_5.png)
 
-Once this is working, you can try importing the project into your favorite IDE!
+Once the user adds a file, they can delete, rename or download it, as well as embed it with the following syntax:  
+`[[embedded]](MyFile.txt)`.  
+This generates a link, and for photos a preview, both of which can be accessed in the WebView.
+
+### 4.4 Interconnected content
+Tags can be added, viewed and accessed as specified in the backlog.
+The small x symbol in the filtering area can be used to remove all tag filtering at once if multiple tags are selected.
+
+### Accessibility
+![img_6.png](ReadMe_img/img_6.png)
+
+The information symbol at the top left of the application's main view opens a tab with descriptions of all the available shortcuts for the app.
+
