@@ -162,12 +162,6 @@ public class CollectionOverviewCtrl implements Initializable {
             return false;
         }
 
-//        if (collectionConfigService.getCollections().stream()
-//                .anyMatch(collection -> normalizeServer(collection.getServer()).equals(normalizeServer(server)))) {
-//            AlertMethods.createWarning(LanguageManager.getString("duplicate_server"));
-//            return false;
-//        }
-
         return true;
 
     }
