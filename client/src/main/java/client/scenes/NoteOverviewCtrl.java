@@ -266,7 +266,7 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
             return;
         }
 
-        data = server.getNotes(selectedCollection.getServer());
+        data = server.getNotes(getCurrentCollection().getServer());
 
         if (hasSelectedTag) {
             tagUpdateList();
@@ -533,12 +533,13 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 ObservableList<String> collectionNames = collectionConfigService.refreshCollections();
                 collectionNames.add(0, "All Notes");
                 collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
-
+                System.out.println(previousSelection);
                 if (previousSelection != null && collectionNames.contains(previousSelection)) {
                     collectionMenu.setValue(previousSelection);
                 } else {
-                    collectionMenu.setValue("All Notes"); // Default to "All Notes"
+                    collectionMenu.setValue(collectionNames.getFirst());
                 }
+                setCurrentCollection();
             } catch (IOException e) {
                 e.printStackTrace();
             }
