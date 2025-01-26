@@ -150,6 +150,11 @@ public class CollectionConfigService {
         if (collectionConfig == null) {
             return null;
         }
+        try {
+            collectionConfig = readConfig();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return collectionConfig.getCollections().stream()
                 .filter(collection -> collection.getTitle().equals(title))
                 .findFirst().orElse(null);
