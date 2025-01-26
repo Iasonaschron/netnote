@@ -6,12 +6,14 @@ import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.springframework.stereotype.Controller;
 
 /**
  * The main controller class responsible for managing the primary stage and
  * navigating between scenes
  * in the Notes application.
  */
+@Controller
 public class MainNotesCtrl {
     private Stage primaryStage;
     private Stage secondaryStage;
