@@ -722,6 +722,12 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 keyPressedDOWN(e);
                 e.consume();
                 break;
+            case RIGHT:
+                keyPressedRIGHT(e);
+                e.consume();
+            case LEFT:
+                keyPressedLEFT(e);
+                e.consume();
             case T:
                 keyPressedT(e);
                 e.consume();
@@ -776,6 +782,28 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                 break;
             default:
                 break;
+        }
+    }
+    /**
+     * Treats the key pressed event for the RIGHT key
+     * @param e key pressed
+     */
+    public void keyPressedRIGHT(KeyEvent e) {
+        if (e.isAltDown()) {
+            collectionMenu.show();
+            setCurrentCollection();
+            e.consume();
+        }
+    }
+    /**
+     * Treats the key pressed event for the LEFT key
+     * @param e key pressed
+     */
+    public void keyPressedLEFT(KeyEvent e) {
+        if (e.isAltDown()) {
+            collectionMenu.show();
+            setCurrentCollection();
+            e.consume();
         }
     }
 
