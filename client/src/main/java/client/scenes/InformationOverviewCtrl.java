@@ -60,4 +60,11 @@ public class InformationOverviewCtrl implements Initializable {
         shortcuts.setText(LanguageManager.getBundle().getString("shortcuts"));
     }
 
+    /**
+     * Returns the mainNotesCtrl
+     * @return the mainNotesCtrl
+     */
+    public MainNotesCtrl getMainNotesCtrl() {
+        return mainNotesCtrl;
+    }
 }
