@@ -10,7 +10,6 @@ import java.util.ResourceBundle;
 
 import client.service.CollectionConfigService;
 import client.utils.ServerUtils;
-import commons.CollectionConfig;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;

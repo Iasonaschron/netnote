@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 import commons.AlertMethods;
 import commons.FileData;
 import commons.Note;
+import jakarta.ws.rs.ProcessingException;
 import jakarta.ws.rs.WebApplicationException;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -166,8 +167,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
     public Collection getCurrentCollection(){
         String currentCollectionTitle = collectionMenu.getValue();
         if("All Notes".equals(currentCollectionTitle)){
-            try{return collectionConfigService.getOrCreateDefaultCollection();}
-            catch(Exception e){
+            try {
+                return collectionConfigService.getOrCreateDefaultCollection();
+            } catch(Exception e){
                 e.printStackTrace();
                 throw new RuntimeException();
             }
@@ -355,17 +357,17 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
      */
     public List<Note> getVisibleNotes(String filter) {
         if (filter.isBlank()) {
-            return data;
+            return getNotesBySelectedCollection();
         } else {
             if (searchByContentCheckBox.isSelected()) {
                 // Filter based on content
                 final String contentFilter = filter.substring(1);
-                return data.stream()
+                return getNotesBySelectedCollection().stream()
                         .filter(note -> note.getContent().toLowerCase().contains(contentFilter.toLowerCase()))
                         .toList();
             } else {
                 // Filter based on title
-                return data.stream()
+                return getNotesBySelectedCollection().stream()
                         .filter(note -> (note.getTitle().toLowerCase().contains(filter.toLowerCase())))
                         .toList();
             }
@@ -524,6 +526,15 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         }
 
         collectionMenu.setOnAction(event -> setCurrentCollection());
+        collectionMenu.setOnShowing(event -> {
+            try{
+                ObservableList<String> collectionNames= collectionConfigService.refreshCollections();
+                collectionNames.add(0,"All Notes");
+                collectionMenu.setItems(FXCollections.observableArrayList(collectionNames));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -548,10 +559,11 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         String currentCollection = collectionMenu.getSelectionModel().getSelectedItem();
         ObservableList<Note> filtered = FXCollections.observableArrayList(filterNotesByCollection(currentCollection));
         listView.setItems(filtered);
+        filterTagList();
     }
 
     /**
-     * Filters the notes that the user can see by the collection that is selected in the checbox.
+     * Filters the notes that the user can see by the collection that is selected in the checkbox.
      * @param currentCollection String that has the current collection selected in the checkbox*
      * @return a List of notes related to that specific collection.
      */
@@ -1005,20 +1017,13 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
         if (!checkInput()) {
             return;
         }
-        if (!server.isServerAvailable(getCurrentCollection().getServer())) {
-            AlertMethods.createError("Server not available. Saving to default collection");
-            try {
-                server.addNote(getNote(), collectionConfigService.getOrCreateDefaultCollection().getServer());
-            } catch (NullPointerException | WebApplicationException | IOException e) {
-                AlertMethods.createError(e.getMessage());
-                return;
-            }
-        } else {
-            try {
+        try {
+            server.addNote(getNote(), getCurrentCollection().getServer());
+        } catch (ProcessingException e) {
+            collectionMenu.getSelectionModel().select("All Notes");
+            AlertMethods.createError(LanguageManager.getString("server_down_redirect"));
+            if (checkInput()) {
                 server.addNote(getNote(), getCurrentCollection().getServer());
-            } catch (NullPointerException | WebApplicationException e) {
-                AlertMethods.createError(e.getMessage());
-                return;
             }
         }
 
@@ -1332,7 +1337,8 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                         dialog.getDialogPane().getButtonTypes().setAll(okButtonType, cancelButtonType);
                         Optional<String> result = dialog.showAndWait();
                         result.ifPresent(newName -> {
-                            if (server.changeFileName(fileData.getRelatedNoteId(), fileData.getFileName(), newName, getCurrentCollection().getServer())) {
+                            if (server.changeFileName(fileData.getRelatedNoteId(), fileData.getFileName(), newName,
+                                    getCurrentCollection().getServer())) {
                                 fileData.setFileName(newName);
                                 getListView().refresh();
                             }
@@ -1340,7 +1346,9 @@ public class NoteOverviewCtrl implements Initializable, UpdateListener {
                     });
 
                     downloadB.setOnAction(event -> {
-                        try (InputStream is = server.downloadFile(fileData.getRelatedNoteId(), fileData.getFileName(), getCurrentCollection().getServer())) {
+                        try (InputStream is = server.downloadFile(fileData.getRelatedNoteId(),
+                                fileData.getFileName(),
+                                getCurrentCollection().getServer())) {
                             FileChooser fileChooser = new FileChooser();
                             fileChooser.setTitle(LanguageManager.getString("file_save_title"));
                             fileChooser.setInitialFileName(fileData.getFileName());

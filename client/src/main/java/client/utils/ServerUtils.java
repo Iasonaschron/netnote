@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.List;
 
-import commons.AlertMethods;
 import commons.FileData;
 import commons.Note;
 import jakarta.ws.rs.client.Client;
@@ -91,8 +90,8 @@ public class ServerUtils {
                     .request(APPLICATION_JSON)
                     .post(Entity.entity(note, APPLICATION_JSON), Note.class);
         }catch(ProcessingException e){
-            AlertMethods.createError("The server" + server + " is not available");
-            throw new ProcessingException("The server" + server + " is not available");
+//            AlertMethods.createError("The server " + server + " is not available");
+            throw new ProcessingException("The server " + server + " is not available");
         }
     }
 
@@ -100,6 +99,7 @@ public class ServerUtils {
      * Performs a request to the server
      *
      * @param noteid The id of the note
+     * @param server The server
      * @return the names of the files related with noteid
      */
     public List<FileData> fetchFileNames(long noteid, String server) {
@@ -114,6 +114,7 @@ public class ServerUtils {
      *
      * @param noteid the note id
      * @param filename the filename
+     * @param server The server
      * @return an input stream containing the binary data of the file to be downloaded
      */
     public InputStream downloadFile(long noteid, String filename, String server){
@@ -129,6 +130,7 @@ public class ServerUtils {
      * @param noteid the id of the note
      * @param oldName the name to be changed
      * @param newName the new name
+     * @param server The server
      * @return if the operation was successful
      */
     public boolean changeFileName(long noteid, String oldName, String newName, String server){
@@ -147,6 +149,7 @@ public class ServerUtils {
 
     /**
      * Makes a request to the server to delete all files
+     * @param server The server
      * @return if the operation was successful
      */
     public boolean deleteAllFiles(String server){
@@ -167,6 +170,7 @@ public class ServerUtils {
      * Makes a request to the server to delete a specific file, or all files in a note, if filename is null
      * @param noteid
      * @param filename
+     * @param server The server
      * @return if the operation was successful
      */
     public boolean deleteFile(long noteid, String filename, String server){
@@ -194,6 +198,7 @@ public class ServerUtils {
      *
      * @param file the file to be uploaded
      * @param noteid the id of the note
+     * @param server The server
      * @return either if the operation was successful or not
      */
     public boolean uploadFile(File file, long noteid, String server) {
