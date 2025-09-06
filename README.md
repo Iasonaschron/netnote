@@ -1,4 +1,4 @@
-## CSEP Project Features Guide
+## Netnote Features Guide
 
 ![img_1.png](ReadMe_img/img_1.png)
 
